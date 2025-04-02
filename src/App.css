@@ -1,0 +1,38 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.btn-rad{
+  border-radius: 28px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  width: 800px;
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Holder list table */
+.table-hl {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: "#d9e8fc";
+}
+
+.table-hl th, .table-hl td {
+  border: 2px solid #adb9c9; /* Puedes cambiar el color y grosor del borde */
+  padding: 6px;
+  text-align: left;
+}
