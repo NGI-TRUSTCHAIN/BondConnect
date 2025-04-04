@@ -23,7 +23,7 @@ export const registerInvestor = createAsyncThunk(
   async (dataI: { investor: Investor | Issuer; particular: boolean }, { rejectWithValue }) => {
     console.log("Before sending:", JSON.stringify(dataI.investor));
     try {
-      const response = await fetch("http://localhost:8080/register-investor", {
+      const response = await fetch("/api/api/register-investor", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -52,7 +52,7 @@ export const registerInvestor = createAsyncThunk(
 
 export const readInvestors = createAsyncThunk("user/readInvestors", async (_, { rejectWithValue }) => {
   try {
-    const response = await fetch("http://localhost:8080/investors", { method: "GET" });
+    const response = await fetch("/api/investors", { method: "GET" });
 
     if (!response.ok) {
       // const error = await response.json();
@@ -76,7 +76,7 @@ export const readInvestors = createAsyncThunk("user/readInvestors", async (_, { 
 export const registerIssuer = createAsyncThunk("user/registerIssuer", async (issuer: Issuer, { rejectWithValue }) => {
   console.log("Before sending:", JSON.stringify(issuer));
   try {
-    const response = await fetch("http://localhost:8080/register-issuer", {
+    const response = await fetch("/api/register-issuer", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -104,7 +104,7 @@ export const registerIssuer = createAsyncThunk("user/registerIssuer", async (iss
 
 export const readIssuers = createAsyncThunk("user/readIssuers", async (_, { rejectWithValue }) => {
   try {
-    const response = await fetch("http://localhost:8080/issuers", { method: "GET" });
+    const response = await fetch("/api/issuers", { method: "GET" });
 
     if (!response.ok) {
       // const error = await response.json();
@@ -130,7 +130,7 @@ export const login = createAsyncThunk(
   async (log: { profile: string; email: string; password: string }, { rejectWithValue }) => {
     console.log("Before sending:", JSON.stringify(log));
     try {
-      const response = await fetch("http://localhost:8080/login", {
+      const response = await fetch("/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -27,7 +27,8 @@ const InvestmentWallet: React.FC = () => {
     const rec = generatePaymentRecords(bonds!);
     setRecord(rec);
     console.log(record);
-  }, [bonds, record]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="card mt-4" style={{ position: "relative", padding: "20px" }}>
@@ -93,7 +94,7 @@ const InvestmentWallet: React.FC = () => {
         <button
           type="button"
           className="btn btn-primary col-sm-2"
-          onClick={() => navigate("/issuer-dash")}
+          onClick={() => navigate(-1)}
           style={{ backgroundColor: "aliceblue", color: "#0d6efd", width: "90px" }}>
           Cancel
         </button>

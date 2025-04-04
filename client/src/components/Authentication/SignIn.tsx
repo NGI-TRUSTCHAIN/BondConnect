@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector} from "../../app/hooks";
 import { login } from "../../features/userSlice";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -132,6 +132,7 @@ const SignIn = () => {
           </div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };
