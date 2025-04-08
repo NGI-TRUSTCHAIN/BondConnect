@@ -6,10 +6,5 @@ services:
     container_name: 'BondConnect'
     ports:
       - 5000:5000
-    volumes:
-    - .:/app
-    environment:
-      - NODE_ENV=development
+      - 5173:5173
     restart: always
-    command: >
-      sh -c "npm run build:client && npm run server"

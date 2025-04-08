@@ -13,7 +13,7 @@ import { ethers } from "ethers";
 
 dotenv.config();
 
-const host = process.env.VITE_HOST_IP || "localhost";
+const host = process.env.VITE_HOST_IP || "0.0.0.0";
 
 const app = express();
 
@@ -29,6 +29,12 @@ app.use("/api", router());
 
 // Servir los archivos estáticos de React
 app.use(express.static(path.resolve(__dirname, "../../client/dist/")));
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../../client/dist/index.html"));
+});
+// app.get('/', function(req, res) {
+//   res.sendFile(path.join(__dirname, '../../client/dist/'));
+// });
 
 // Conectar con MongoDB
 const mongoUrl = process.env.MONGO_URL;
