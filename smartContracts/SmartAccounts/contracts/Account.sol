@@ -14,7 +14,7 @@ contract Account is ERC20Account, Ownable {
         address spender,
         uint256 value
     ) public override onlyOwner returns (bool) {
-        return super.approveERC20(tokenContract, spender, value);
+        return ERC20Account.approveERC20(tokenContract, spender, value);
     }
 
     function transferERC20(
@@ -22,13 +22,13 @@ contract Account is ERC20Account, Ownable {
         address to,
         uint256 amount
     ) public override onlyOwner returns (bool) {
-        return super.transferERC20(tokenContract, to, amount);
+        return ERC20Account.transferERC20(tokenContract, to, amount);
     }
 
     function burnERC20(
         IERC20Burnable tokenContract,
         uint256 amount
     ) public override onlyOwner returns (bool) {
-        return super.burnERC20(tokenContract, amount);
+        return ERC20Account.burnERC20(tokenContract, amount);
     }
 }
