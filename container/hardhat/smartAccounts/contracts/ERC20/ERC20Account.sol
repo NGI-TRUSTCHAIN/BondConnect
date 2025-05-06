@@ -6,6 +6,9 @@ import {IERC20Account} from './IERC20Account.sol';
 import {IERC20Burnable} from './IERC20Account.sol';
 
 abstract contract ERC20Account is IERC20Account {
+    
+     address internal constant DEAD = address(0x000000000000000000000000000000000000dEaD);
+
     function allowanceERC20(
         IERC20 tokenContract,
         address spender
@@ -35,11 +38,24 @@ abstract contract ERC20Account is IERC20Account {
         return tokenContract.transfer(to, amount);
     }
 
+   /// @inheritdoc IERC20Account
+    /// @dev Primero intenta burn(), luego burnFrom(), y si ambos fallan, transfiere a dirección DEAD.
     function burnERC20(
         IERC20Burnable tokenContract,
         uint256 amount
-    ) public virtual  returns (bool) {
-        tokenContract.burn(amount);
-        return true;
+    ) public virtual override returns (bool) {
+        // 1) Intento de burn() nativo
+        try tokenContract.burn(amount) {
+            return true;
+        } catch {
+            // 2) Intento de burnFrom(this, amount)
+            try tokenContract.burnFrom(address(this), amount) {
+                return true;
+            } catch {
+                // 3) Fallback: envío a “dead” (no reduce supply, pero inmoviliza los tokens)
+                IERC20(address(tokenContract)).transfer(DEAD, amount);
+                return true;
+            }
+        }
     }
 }
