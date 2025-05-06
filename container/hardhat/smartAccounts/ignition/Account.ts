@@ -10,26 +10,26 @@ import hre from "hardhat";
 dotenvx.config();
 
 async function main() {
-  // Despliega usando Ignition
+
   const deployment = await ignition.deploy(accountModule);
   const deployedAddress = deployment.account.target;
   console.log(`✅ Account deployed at: ${deployedAddress}`);
 
-  // Obtenemos el artifact de compilación
+
   const artifact = await hre.artifacts.readArtifact("Account");
 
   const abiCoder = new AbiCoder();
 
 const constructorArgs = abiCoder.encode(["address"], [process.env.API_WALLET_PUBLIC_KEY]);
 
-  // Creamos el creation bytecode completo
+  // Creation bytecode 
   const creationBytecode = artifact.bytecode + constructorArgs.slice(2);
 
-  // Ruta de salida
+  // output
   const outputPath = path.join(__dirname, "../deployed/accountBytecode.json");
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 
-  // Escribimos el archivo JSON
+  // 
   fs.writeFileSync(
     outputPath,
     JSON.stringify(
@@ -51,3 +51,4 @@ main().catch((err) => {
   console.error("❌ Deployment failed:", err);
   process.exit(1);
 });
+// npx hardhat run ignition/Account.ts --network <NAME_OF_NETWORK> 
