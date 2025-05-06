@@ -18,3 +18,23 @@
 [ERC20 Contract API] [2025-05-06 11:10:46] [INFO] - Loading 6 contracts...
 [ERC20 Contract API] [2025-05-06 11:10:46] [INFO] - Loaded 6 contracts successfully.
 [ERC20 Contract API] [2025-05-06 11:10:48] [INFO] - Waiting for confirmations
+[Default] [2025-05-06 12:16:08] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-06 12:16:08] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-06 12:16:08] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-06 12:16:08] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-06 12:16:08] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-06 12:16:08] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-06 12:17:58] [INFO] - POST /createBond
+[ERC20 Contract API] [2025-05-06 12:17:58] [INFO] - CREATING CreateBond IN alastria
+[ERC20 Contract API] [2025-05-06 12:17:58] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-06 12:17:58] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-06 12:17:58] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-06 12:18:01] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-06 12:18:07] [INFO] - account alastri: 0x3D26718FF12a038e3C68555a4C6A9E35bBb15EE5
+[ERC20 Contract API] [2025-05-06 12:18:39] [INFO] - POST /mintBond
+[ERC20 Contract API] [2025-05-06 12:18:39] [INFO] - INITIALIZING SERVICES mintBond
+[ERC20 Contract API] [2025-05-06 12:18:39] [INFO] - CREATING IN alastria
+[ERC20 Contract API] [2025-05-06 12:18:39] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-06 12:18:39] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-06 12:18:39] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-06 12:18:42] [INFO] - Waiting for confirmations

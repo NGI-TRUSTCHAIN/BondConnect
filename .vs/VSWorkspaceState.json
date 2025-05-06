@@ -1,7 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\container"
+    "\\testApp",
+    "\\testApp\\bounce-dapp",
+    "\\testApp\\bounce-dapp\\src\\app",
+    "\\testApp\\bounce-dapp\\src\\app\\components",
+    "\\testApp\\bounce-dapp\\src\\app\\components\\admin-panel",
+    "\\testApp\\bounce-dapp\\src\\app\\components\\index",
+    "\\testApp\\bounce-dapp\\src\\app\\services",
+    "\\tokenization-API",
+    "\\tokenization-API\\ERC20"
   ],
+  "SelectedNode": "\\testApp\\bounce-dapp\\.gitignore",
   "PreviewInSolutionExplorer": false
 }
