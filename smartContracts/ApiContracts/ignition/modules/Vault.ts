@@ -4,13 +4,13 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
 
-const accountFactoryModule = buildModule("AccountFactory", (m) => {
+const VaultModule = buildModule("Vault", (m) => {
 
-  const account = m.contract("AccountFactory", [], {
+  const vault = m.contract("RepresentativeBondTokenFactory", [], {
      //
   });
  
-  return { account };
+  return { vault };
 });
 
-export default accountFactoryModule;
+export default VaultModule;
