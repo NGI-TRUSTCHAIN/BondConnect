@@ -1,0 +1,11 @@
+export const environment = {
+  production: false,
+  BSC_RPC_URL: 'https://bsc-dataseed.binance.org/',
+  TOKEN_CONTRACT_BSC: '0xTOKEN_CONTRACT_BSC',
+  BRIDGE_VAULT: '0xBRIDGE_VAULT',
+  TOKEN_CONTRACT_POLYGON: '0xTOKEN_CONTRACT_POLYGON',
+  HOST_SMART_ACCOUNT: "http://localhost:4000",
+  HOST_BRIDGE: "http://localhost:3000" ,
+  PRIVATE_API_KEY_SMART_ACCOUNT: "574c8880-3456-11ef-9a9c-0800200c9a66" ,
+  PRIVATE_API_KEY_BRIDGE: "574c8880-3456-11ef-9a9c-0800200c9a66",
+};

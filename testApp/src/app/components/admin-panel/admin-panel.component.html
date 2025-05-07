@@ -1,0 +1,98 @@
+<div class="admin-panel">
+  <h2>Panel Admin</h2>
+  <p><strong>Cuenta:</strong> {{ wallet }}</p>
+  <p><strong>Cuenta principal:</strong> {{ wallet }}</p>
+
+  <hr />
+
+  <div class="balances">
+    <p>Tokens en BSC: {{ tokensBSC }}</p>
+    <p>Tokens en Bridge: {{ tokensBridge }}</p>
+  </div>
+
+  <hr>
+
+  <div *ngIf="accounts?.length">
+    <h3>Cuentas por Red</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Red</th>
+          <th>Dirección</th>
+          <th>Tx Hash</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let acc of accounts">
+          <td>{{ acc.network }}</td>
+          <td>{{ acc.address || '—' }}</td>
+          <td>
+            <a *ngIf="acc.transactionHash"
+               [href]="getExplorerUrl(acc.network, acc.transactionHash)"
+               target="_blank"
+               rel="noopener noreferrer">
+              🔗 Ver Tx en la red
+            </a>
+            <span *ngIf="!acc.transactionHash">—</span>
+          </td>
+          <td>
+            <button *ngIf="isMissing(acc)" (click)="retryAccount(acc.network)">Reintentar</button>
+            <span *ngIf="!isMissing(acc)">✅</span>
+          </td>
+          <td>
+            <button *ngIf="acc.network === 'ALASTRIA'" (click)="toggleBondForm()">⚖️ Manage Bonds</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="showBondForm" class="bond-form">
+    <h3>Crear Bono en ALASTRIA</h3>
+    <label>Nombre del Bono: <input [(ngModel)]="bondName" /></label><br />
+    <label>Símbolo: <input [(ngModel)]="bondSymbol" /></label><br />
+    <label>Precio: <input type="number" [(ngModel)]="bondPrice" /></label><br />
+    <label>
+      Wallet Alastria:
+      <input [(ngModel)]="bondWallet" readonly />
+    </label><br />
+    <button [disabled]="!bondName || !bondSymbol || !bondPrice || !bondWallet  || isGenerating " (click)="createBond()">Crear Bono</button>
+    <br />
+    <br />
+    <h4>Bonos Generados   {{ bonds.length}}</h4>
+
+    <div *ngIf="bonds.length">
+
+      <ul>
+        <li *ngFor="let bond of bonds">
+          <strong>{{ bond.network }} -- {{ bond.name }} ({{ bond.symbol }})</strong> - {{ bond.address }} - {{ bond.price }} USDT  ---- {{ bond.tokens }} Tokens
+          <button (click)="showInput = !showInput">✍️ Generar Créditos</button>
+
+          <div *ngIf="showInput">
+            <input type="number" [(ngModel)]="creditAmount" placeholder="Cantidad a mintear" />
+            <button [disabled]="isGeneratingToken" (click)="mintBond(bond, creditAmount)">OK</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <h4>Ultimas mint Token trx  {{ mintToken.length}}</h4>
+    <div *ngIf="mintToken.length" >   
+      <ul>
+        <li *ngFor="let tx of mintToken">
+          <strong>Network:</strong> {{ tx.network }}
+          <strong>Tokens:</strong> {{ tx.qty }}
+          <a [href]="'https://testnet.bscscan.com/tx/' + tx.trx"
+             target="_blank"
+             rel="noopener noreferrer">
+            Ver Tx
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+

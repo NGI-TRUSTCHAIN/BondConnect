@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\app",
+    "\\src\\app\\components",
+    "\\src\\app\\components\\admin-panel",
+    "\\src\\app\\components\\index",
+    "\\src\\app\\models",
+    "\\src\\app\\services",
+    "\\src\\enviroments"
+  ],
+  "SelectedNode": "\\src\\app\\services\\blockchain.service.ts",
+  "PreviewInSolutionExplorer": false
+}
