@@ -5,13 +5,16 @@ const ethers = require("ethers");
 
 dotenvx.config();
 
- async function checkNodeStatus(provider: any, networkName: string): Promise<void> {
+ async function checkNodeStatus(provider: any, networkName: string): Promise<boolean> {
       try {
         await provider.getBlockNumber();
         console.log(`The node for ${networkName} is working correctly.`);
+        return true as boolean;
       } catch (error) {
         console.error(`The node for ${networkName} has issues:`, (error as Error).message);
+        return false as boolean;
       }
+
     }
 
 
@@ -26,8 +29,13 @@ async function main() {
     const bscProvider = new ethers.JsonRpcProvider(NETWORK_BSC);
     const amoyProvider = new ethers.JsonRpcProvider(NETWORK_AMOY);
 
-    await checkNodeStatus(bscProvider, "BSC Testnet");
-    await checkNodeStatus(amoyProvider, "Amoy Network");
+    const bscOk = await checkNodeStatus(bscProvider, "BSC Testnet");
+    const amoyOk = await checkNodeStatus(amoyProvider, "Amoy Network");
+
+    if (!bscOk || !amoyOk) {
+        console.error("One or both nodes are not working correctly. Exiting...");
+        return;
+    }
 
 
     console.log(`NETWORK_AMOY, NETWORK_BSC`, NETWORK_AMOY, NETWORK_BSC);
