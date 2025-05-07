@@ -1,6 +1,7 @@
-import express from 'express';
-import { createIssuer, getIssuers } from '../db/Issuer'; // Asegúrate de importar el modelo correctamente
+import express, { json } from 'express';
+import { createIssuer, getIssuerByEmail, getIssuers } from '../db/Issuer'; // Asegúrate de importar el modelo correctamente
 import { MongoServerError } from 'mongodb';
+import { useBlockchainService } from '../services/blockchain.service'
 
 /**
  * Obtener todos los usuarios
@@ -25,6 +26,7 @@ export const registerIssuer = async (req: express.Request, res: express.Response
   try {
     console.log("📩 Recibido en req.body:", req.body);
     const issuer = req.body;
+    const { createCompany } = useBlockchainService();
 
     // Validación de campos requeridos
     if (!issuer.entityLegalName || !issuer.country || !issuer.taxIdNumber || !issuer.name || !issuer.website
@@ -47,7 +49,15 @@ export const registerIssuer = async (req: express.Request, res: express.Response
         });
         return;
       }
+      return res.status(500).json({ error: "Server error" });
     });
+
+    // Crear company en blockchain y guardar wallet address
+    // const issuerId = getIssuerByEmail(newIssuer)
+    // if (newIssuer){
+    //   await createCompany()
+    // }
+    
 
     console.log("nuevo",newIssuer)
     res.status(201).json(newIssuer);

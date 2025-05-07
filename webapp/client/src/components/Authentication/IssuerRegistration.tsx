@@ -16,6 +16,7 @@ export interface Issuer {
   idCard: string;
   email: string;
   password: string;
+  // Añadir walletAddress
 }
 
 type Props = {
