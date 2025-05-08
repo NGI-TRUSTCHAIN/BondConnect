@@ -20,6 +20,7 @@ const BondSchema = new mongoose.Schema({
   tokenState: [
     {blockchain: {type: String, required:true}, amount: {type: Number, required:true}}
   ]
+  // atributo para identificar que empresa ha creado el bono
 });
 BondSchema.index({ bondName: 1 }, { unique: true });
 
