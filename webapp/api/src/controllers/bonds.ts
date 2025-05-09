@@ -103,22 +103,38 @@ export const addBond = async (req: express.Request, res: express.Response) => {
       }
     });
 
-    const { createCompanyBond } = useBlockchainService();
+    const { createCompanyBond, mintBond } = useBlockchainService();
 
     if (!bond) return;
   
+    console.log("\nBond: ");
+    console.log(bond);
+
     const foundBond = getBondById(bond._id.toString());
     const wallet = (await getIssuerById(bond.creatorCompany)).walleAddress;
 
-    console.log("Wallet Address: " + wallet);
-    console.log("Bond name: " + bond.bondName);
+    console.log("\nWallet Address: " + wallet);
+    console.log("\nBond name: " + bond.bondName);
    
-    const response = await createCompanyBond(bond.bondName, "TST", 1, wallet);
+    // REVISAR bondSymbol y bondPrice
+    const responsecreateCompanyBond = await createCompanyBond(bond.bondName, "TST", 1, wallet);
+    const account = responsecreateCompanyBond.accounts;
 
-    console.log("Respuesta:");
-    console.log(response);
-    console.log("Bond:");
-    console.log(bond);
+    var cuenta = "";
+    account.forEach(account => {
+      console.log("\nDireccion: "+ account.address);
+      cuenta = account.address;
+    });
+    
+    // REVISAR creaditAmount
+    const responseMint = await mintBond(cuenta, wallet, 1);
+    
+
+    console.log("\nRespuesta createCompanyBond: ");
+    console.log(responsecreateCompanyBond);
+    console.log("\nRespuesta mintBond: ");
+    console.log(responseMint);
+    
     res.status(201).json(bond);
   } catch (error) {
     console.error(error);
