@@ -47,7 +47,7 @@ export const useBlockchainService = () => {
   };
 
   // Crear un bono (similar al método createBond en Angular)
-  const createBond = async (bondName: string, bondSymbol: string, bondPrice: number, bondWallet: string) => {
+  const createCompanyBond = async (bondName: string, bondSymbol: string, bondPrice: number, bondWallet: string) => {
     try {
       const response = await useApiBridge.createBond(bondName, bondSymbol, bondPrice, bondWallet);
       return response;
@@ -88,7 +88,7 @@ export const useBlockchainService = () => {
 
   return {
     createCompany,
-    createBond,
+    createCompanyBond,
     mintBond,
     // bridgeTokens,
     // getBSCBalance,

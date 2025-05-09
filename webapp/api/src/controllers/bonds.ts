@@ -1,6 +1,9 @@
 import express from "express";
 import { getBonds, getBondById, deleteBondById, createBond, BondModel } from "../db/bonds";
 import { MongoServerError } from "mongodb";
+import { useBlockchainService } from '../services/blockchain.service'
+import { getIssuerById } from '../db/Issuer'; 
+import { add } from "lodash";
 // import { authentication, random } from "../helpers";
 
 // export const getBond = async (
@@ -100,7 +103,22 @@ export const addBond = async (req: express.Request, res: express.Response) => {
       }
     });
 
-    console.log(bond)
+    const { createCompanyBond } = useBlockchainService();
+
+    if (!bond) return;
+  
+    const foundBond = getBondById(bond._id.toString());
+    const wallet = (await getIssuerById(bond.creatorCompany)).walleAddress;
+
+    console.log("Wallet Address: " + wallet);
+    console.log("Bond name: " + bond.bondName);
+   
+    const response = await createCompanyBond(bond.bondName, "TST", 1, wallet);
+
+    console.log("Respuesta:");
+    console.log(response);
+    console.log("Bond:");
+    console.log(bond);
     res.status(201).json(bond);
   } catch (error) {
     console.error(error);
