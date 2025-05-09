@@ -1,7 +1,14 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import { readBonds } from "../../features/bondSlice";
+import { addRetailMktBond, readBonds } from "../../features/bondSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
+
+export interface MarketData {
+  _id?: string;
+  investToken: string;
+  numTokensOffered?: number;
+  destinationBlockchain: string;
+}
 
 const RetailMarket = () => {
   const errorMessage = useAppSelector((state) => state.bond.error);
@@ -11,10 +18,10 @@ const RetailMarket = () => {
   const registeredBonds = useAppSelector((state) => state.bond.bonds);
 
   const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility
-  const [marketData, setMarketData] = useState({
+  const [marketData, setMarketData] = useState<MarketData>({
     _id: undefined,
     investToken: "",
-    purchasedTokens: undefined,
+    numTokensOffered: undefined,
     destinationBlockchain: "",
   });
 
@@ -41,9 +48,10 @@ const RetailMarket = () => {
     console.log(marketData);
     setShowPopup(true);
   };
-  const handleConfirmSubmit = (e: FormEvent) => {
+  const handleConfirmSubmit = async (e: FormEvent) => {
     e.preventDefault();
     console.log(marketData);
+    await addRetailMktBond(marketData)
     navigate('/issuer-dash')
   };
   return (
@@ -69,20 +77,20 @@ const RetailMarket = () => {
               </option>
               {!errorMessage &&
                 registeredBonds?.map((bond) => (
-                  <option key={bond._id} value={bond.bondName}>
+                  <option key={bond._id} value={bond._id}>
                     {bond.bondName}
                   </option>
                 ))}
             </select>
           </div>
           <div className="col-sm-6 mb-3">
-            <label htmlFor="purchasedTokens" className="form-label">
+            <label htmlFor="numTokensOffered" className="form-label">
               Number of Tokens:
             </label>
             <input
               type="number"
-              id="purchasedTokens"
-              name="purchasedTokens"
+              id="numTokensOffered"
+              name="numTokensOffered"
               className="form-control bg-form"
               placeholder={`15`}
               onChange={handleData}
@@ -142,7 +150,7 @@ const RetailMarket = () => {
                   <strong>Token Sent Name:</strong> <em>{marketData?.investToken}</em>
                 </li>
                 <li>
-                  <strong>Number of Tokens:</strong> <em>{marketData?.purchasedTokens}</em>
+                  <strong>Number of Tokens:</strong> <em>{marketData?.numTokensOffered}</em>
                 </li>
                 <li>
                   <strong>Destination Blockchain Network:</strong> <em>{marketData?.destinationBlockchain}</em>

@@ -17,6 +17,7 @@ export interface Bond {
     otherBlockchainNetwork: string | undefined; // Custom blockchain network, if "Other" is selected
     walletAddress: string; // Wallet address for bond management
     tokenState: TokenState[];
+    creatorCompany: string | undefined
 };
 
 export interface TokenState{

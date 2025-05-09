@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 const FormBondCreationC = () => {
   // const dispatch = useAppDispatch();
   const errorMessage = useAppSelector((state) => state.bond.error);
+  const user = useAppSelector((state) => state.user.userLoged);
   const navigate = useNavigate();
 
   // Define the state to manage form inputs
@@ -29,8 +30,9 @@ const FormBondCreationC = () => {
     redemptionFinishDate: undefined,
     blockchainNetwork: "",
     otherBlockchainNetwork: undefined,
-    walletAddress: "",
+    // walletAddress: "",
     tokenState: [],
+    creatorCompany: user?._id
   });
 
   const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility

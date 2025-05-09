@@ -1,5 +1,5 @@
-import express, { json } from 'express';
-import { createIssuer, getIssuerByEmail, getIssuers, IIssuer } from '../db/Issuer'; // Asegúrate de importar el modelo correctamente
+import express from 'express';
+import { createIssuer, getIssuerByEmail, getIssuers, IIssuer, updateIssuerById } from '../db/Issuer'; // Asegúrate de importar el modelo correctamente
 import { MongoServerError } from 'mongodb';
 import { useBlockchainService } from '../services/blockchain.service'
 
@@ -54,10 +54,11 @@ export const registerIssuer = async (req: express.Request, res: express.Response
     if (!newIssuer) return;
     // Crear company en blockchain y guardar wallet address
     
-    const foundIssuer = await getIssuerByEmail(newIssuer.email);
-    const { address, createdAt, accounts} = await createCompany(newIssuer._id.toString())
+    const foundIssuer = (await getIssuerByEmail(newIssuer.email))._id.toString();
+    console.log(foundIssuer)
+    const { address, createdAt, accounts} = await createCompany(foundIssuer)
     
-    
+    await updateIssuerById(foundIssuer, { walleAddress: address, accounts: accounts});
 
     console.log("nuevo",newIssuer)
     res.status(201).json(newIssuer);

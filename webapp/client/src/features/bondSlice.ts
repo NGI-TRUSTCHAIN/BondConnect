@@ -4,6 +4,7 @@ import { TransferInfo } from "../components/issuer/BlockchainTransfer";
 import { UserData } from "../components/UserRegistration";
 import { SaleReceipt } from "../components/TokenSale";
 import { SettlementReceipt } from "../components/TokenSettlement";
+import { MarketData } from "../components/issuer/RetailMarket";
 
 interface BondState {
   bonds: Bond[] | null;
@@ -301,6 +302,35 @@ export const registerUser = createAsyncThunk("bond/registerUser", async (userDat
   }
 });
 
+export const addRetailMktBond = createAsyncThunk("retailMktBond/addToMarket", async (formData: Partial<MarketData>, { rejectWithValue }) => {
+    console.log("Before sending:", JSON.stringify(formData));
+
+    try {
+      const response = await fetch("/api/addToMarket", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        try {
+          const error = await response.json();
+          return rejectWithValue(error.message || "Error desconocido");
+        } catch {
+          return rejectWithValue(`Unexpected response: ${response.statusText}`);
+        }
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue((error as Error).message || "Error en la red");
+    }
+  }
+);
+
 const bondSlice = createSlice({
   name: "bond",
   initialState,
@@ -417,6 +447,18 @@ const bondSlice = createSlice({
         state.users = action.payload;
       })
       .addCase(readUsers.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
+      })
+      .addCase(addRetailMktBond.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(addRetailMktBond.fulfilled, (state) => {
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(addRetailMktBond.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
       });

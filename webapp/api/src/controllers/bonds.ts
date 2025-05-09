@@ -90,16 +90,9 @@ export const addBond = async (req: express.Request, res: express.Response) => {
     console.log("ok - all data");
 
     // Create the bond using the createBond method
-    const bond = await createBond(bondData).catch((error: MongoServerError) => {
-      if (error.code === 11000) {
-        res.status(400).json({
-          error: "Duplicate bondName detected",
-          message: "Duplicate bondName detected.",
-        });
-        return;
-      }
-    });
+    const bond = await createBond(bondData)
 
+    console.log(bond)
     res.status(201).json(bond);
   } catch (error) {
     console.error(error);

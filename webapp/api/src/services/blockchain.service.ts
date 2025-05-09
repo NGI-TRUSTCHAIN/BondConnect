@@ -4,14 +4,15 @@ import { createAccount } from './api-smart-account.service'; // Simulando tu ser
 import { useApiBridge } from './api-bridge.service'; // Simulando tu servicio ApiBridge
 
 export const useBlockchainService = () => {
-  const [provider, setProvider] = useState(null);
-  const [mockBalance, setMockBalance] = useState(0);
-  const [bridgeBalance, setBridgeBalance] = useState(0);
+  // const [provider, setProvider] = useState(null);
+  // const [mockBalance, setMockBalance] = useState(0);
+  // const [bridgeBalance, setBridgeBalance] = useState(0);
 
-  useEffect(() => {
-    const newProvider = new ethers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
-    setProvider(newProvider);
-  }, []);
+  // useEffect(() => {
+  //   const newProvider = new ethers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
+  //   // setProvider(newProvider);
+
+  // }, []);
 
   // Crear una empresa (similar al método createCompany en Angular)
   const createCompany = async (companyName: any) => {
@@ -66,31 +67,31 @@ export const useBlockchainService = () => {
   };
 
   // Bridge de tokens (similar al método bridge en Angular)
-  const bridgeTokens = async (toPolygon: any, qty: number) => {
-    if (toPolygon) {
-      console.log(`Mock bridge out ${qty}`);
-      setMockBalance(mockBalance - qty);
-      setBridgeBalance(bridgeBalance + qty);
-    } else {
-      console.log(`Mock bridge in ${qty}`);
-      setMockBalance(mockBalance + qty);
-      setBridgeBalance(bridgeBalance - qty);
-    }
-    return true;
-  };
+  // const bridgeTokens = async (toPolygon: any, qty: number) => {
+  //   if (toPolygon) {
+  //     console.log(`Mock bridge out ${qty}`);
+  //     setMockBalance(mockBalance - qty);
+  //     setBridgeBalance(bridgeBalance + qty);
+  //   } else {
+  //     console.log(`Mock bridge in ${qty}`);
+  //     setMockBalance(mockBalance + qty);
+  //     setBridgeBalance(bridgeBalance - qty);
+  //   }
+  //   return true;
+  // };
 
   // Obtener balance (similar a getBSCBalance en Angular)
-  const getBSCBalance = async (address: any) => {
-    console.log(`Mock get balance for ${address}`);
-    return mockBalance;
-  };
+  // const getBSCBalance = async (address: any) => {
+  //   console.log(`Mock get balance for ${address}`);
+  //   return mockBalance;
+  // };
 
   return {
     createCompany,
     createBond,
     mintBond,
-    bridgeTokens,
-    getBSCBalance,
-    provider,
+    // bridgeTokens,
+    // getBSCBalance,
+    // provider,
   };
 };
