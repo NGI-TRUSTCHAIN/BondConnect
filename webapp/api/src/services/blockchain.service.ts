@@ -10,7 +10,7 @@ export const useBlockchainService = () => {
 
   // useEffect(() => {
   //   const newProvider = new ethers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
-  //   // setProvider(newProvider);
+  //    setProvider(newProvider);
 
   // }, []);
 
