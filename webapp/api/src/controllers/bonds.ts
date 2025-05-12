@@ -117,7 +117,10 @@ export const addBond = async (req: express.Request, res: express.Response) => {
     console.log("\nBond name: " + bond.bondName);
    
     // REVISAR bondSymbol y bondPrice
-    const responsecreateCompanyBond = await createCompanyBond(bond.bondName, "TST", 1, wallet);
+    const bondPrice = bond.goalAmount / bond.numberTokens;
+    console.log("\nBond price: " + bondPrice);
+    const responsecreateCompanyBond = await createCompanyBond(bond.bondName, "TST", bondPrice, wallet);
+
     const account = responsecreateCompanyBond.accounts;
 
     var cuenta = "";
@@ -126,10 +129,9 @@ export const addBond = async (req: express.Request, res: express.Response) => {
       cuenta = account.address;
     });
     
-    // REVISAR creaditAmount
-    const responseMint = await mintBond(cuenta, wallet, 1);
+    // REVISAR creditAmount 
+    const responseMint = await mintBond(cuenta, wallet, bond.goalAmount);
     
-
     console.log("\nRespuesta createCompanyBond: ");
     console.log(responsecreateCompanyBond);
     console.log("\nRespuesta mintBond: ");
