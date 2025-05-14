@@ -70,9 +70,7 @@ function setupApi() {
 
 function manageMethodGet(method: string): (req: Request, res: Response, logger: Logger) => Promise<any> {
     switch (method) {
-        case "balance":
-            return balance;
-
+       
         case "":
             return callContractMethodController;
 
@@ -96,8 +94,10 @@ function manageMethodPost(method: string): (req: Request, res: Response, logger:
             return burn;
 
         case "requestTransfer":
-            return requestTransfer;            
-
+            return requestTransfer;        
+            
+        case "balance":
+            return balance;
         default:
             return executeContractMethodController;
     }
