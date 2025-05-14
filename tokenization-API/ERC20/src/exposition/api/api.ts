@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import cors from 'cors';
-import { callContractMethodController, executeContractMethodController, mintBond, bridge, burn, createBond } from "../controllers/contract.controller";
+import { callContractMethodController, executeContractMethodController, mintBond, bridge, burn, createBond, requestTransfer, balance } from "../controllers/contract.controller";
 import handleControllerCall from "../controllers";
 
 import Logger from "../../helpers/logger.helper";
@@ -70,8 +70,8 @@ function setupApi() {
 
 function manageMethodGet(method: string): (req: Request, res: Response, logger: Logger) => Promise<any> {
     switch (method) {
-        case "":
-            return callContractMethodController;
+        case "balance":
+            return balance;
 
         case "":
             return callContractMethodController;
@@ -85,6 +85,7 @@ function manageMethodPost(method: string): (req: Request, res: Response, logger:
     switch (method) {
         case "createBond":
             return createBond;
+
         case "mintBond":
             return mintBond;
 
@@ -93,7 +94,9 @@ function manageMethodPost(method: string): (req: Request, res: Response, logger:
 
         case "burn":
             return burn;
-      
+
+        case "requestTransfer":
+            return requestTransfer;            
 
         default:
             return executeContractMethodController;

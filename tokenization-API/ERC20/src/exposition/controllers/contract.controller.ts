@@ -58,7 +58,7 @@ export async function executeContractMethodController(req: Request): Promise<App
   const options: Overrides = req.body.options || {};
 
 
-  logger.info(`INITIALIZING SERVICES executeContractMethodController`); 
+  logger.info(`INITIALIZING SERVICES`); 
   const contracts = await loadAllContracts(config, logger);
  //initContractsService(logger, contracts, config);
 
@@ -79,9 +79,10 @@ export async function createBond(req: Request): Promise<AppResult> {
     const args: any[] = req.body.args || [];
     const options: Overrides = req.body.options || {};
 
-    const results: { network: string; address: string | null }[] = [];
+    let transactionHash = null;
+    const results: { network: string; transactionHash: string | null; address: string | null }[] = [];
 
-    logger.info(`CREATING CreateBond IN alastria`);
+    logger.info(`Start Alastria CreateBond`);
     const contracts = await loadAllContracts(config, logger);
     initContractsService(logger, contracts, config, "ALASTRIA");
 
@@ -90,11 +91,12 @@ export async function createBond(req: Request): Promise<AppResult> {
 
     if (resultAlastria && 'logs' in resultAlastria && resultAlastria.logs.length > 0) {
         const address = resultAlastria.logs[0].address;
-        logger.info(`account alastri: ${resultAlastria.logs[0].address}`);
-        results.push({ network: "ALASTRIA", address });
+        transactionHash = resultAlastria.hash;  
+        logger.info(`Address Bond in Alastria: ${resultAlastria.logs[0].address}`);
+        results.push({ network: "ALASTRIA", transactionHash, address });
     } else {
         logger.warn("No logs returned from Alastria deployment.");
-        results.push({ network: "ALASTRIA", address: null });
+        results.push({ network: "ALASTRIA", transactionHash: resultAlastria?.hash ?? null, address: null });
     }
 
     return {
@@ -104,6 +106,38 @@ export async function createBond(req: Request): Promise<AppResult> {
             accounts: results,
         },
     };
+}
+
+export async function balance(req: Request): Promise<AppResult> {
+    const contractName: string = "Bond";
+    const methodName: string = "balanceOf";
+    const args: any[] = req.body.args || [];
+    const options: Overrides = req.body.options || {};
+
+    // este es el caller de la function
+    const bondAddress: string = args[0];
+    const accountAddressOwner: string = args[1];
+    const network: string = args[2];
+
+    // SIEMPRE EN ALASTRIA 
+    const results: { network: string; address: string | null }[] = [];
+
+    logger.info(`INITIALIZING SERVICES mintBond`);
+
+    logger.info(`CREATING IN alastria`);
+    const contracts = await loadAllContracts(config, logger);
+
+    const newArgs: any[] = [accountAddressOwner];
+
+    initContractsService(logger, contracts, config, network);
+    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, bondAddress, methodName, newArgs, options);
+
+    return {
+        statusCode: 201,
+        body: {
+            message: resultAlastria            
+        }
+    }
 }
 
 export async function mintBond(req: Request): Promise<AppResult> {   
@@ -138,8 +172,7 @@ export async function mintBond(req: Request): Promise<AppResult> {
     return {
         statusCode: 201,
         body: {
-            message: transactionHash,
-            resultAlastria
+            message: transactionHash             
         }
     }
 }
@@ -208,7 +241,7 @@ export async function bridge(req: Request): Promise<AppResult> {
 
                 // esto hay q devolverlo para guardarlo en el mongo --> se manda en la siguiente llamada. 
                 addressTokenAmoy = resultAmoy.logs[0].address;
-
+                const transactionHash = resultAmoy && 'hash' in resultAmoy ? resultAmoy.hash : 'N/A';
                 logger.info(`account amoy: ${resultAmoy.logs[0].address}`);
                 logger.info(`INITIALIZING SERVICES    --    Mint in amoy representative tokens`);
 
@@ -223,8 +256,8 @@ export async function bridge(req: Request): Promise<AppResult> {
                 return {
                     statusCode: 201,
                     body: {
-                        message: resultTokenMint instanceof ContractTransactionReceipt ? 'Transaction executed' : 'Transacion processed',
-                        resultTokenMint
+                        message: transactionHash,
+                        contract: addressTokenAmoy
                     }
                 }
 
@@ -256,6 +289,50 @@ export async function bridge(req: Request): Promise<AppResult> {
     } 
 }
 
+export async function requestTransfer(req: Request): Promise<AppResult> {
+ 
+    const args: any[] = req.body.args || [];
+    const options: Overrides = req.body.options || {};
+    const contractAddressVault: string = config.CONTRACT.ADDRESS_VAULT;
+
+    const toAddress: string = args[0];  //a quien mandamos el token
+    const fromAddress: string = args[1];// quien manda el token 
+    const amount: string = args[2];  // cantidad a enviar
+    const network: string = args[3];  // red 
+    const contractAddress: string = args[4]; // la direccion del owner q se genera en createAccount
+    const nativePriceToken: string = args[5];  // el contrato q se genera en createBond
+
+    const contractName: string = "Account";
+    const methodName: string = "transferERC20";   
+
+    const burnArgs: any[] = [contractAddress,toAddress, amount];
+
+    logger.info(`INITIALIZING SERVICES  ---      Transfer`);
+    const contracts = await loadAllContracts(config, logger);
+    initContractsService(logger, contracts, config, network);
+
+    const resultBurn: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, fromAddress, methodName, burnArgs, options);
+    if (resultBurn && "status" in resultBurn && resultBurn.status === 1) {
+
+        const transactionHash = resultBurn && 'hash' in resultBurn ? resultBurn.hash : 'N/A';
+        return {
+            statusCode: 201,
+            body: {
+                message: transactionHash               
+            }
+        }
+    } else {
+        return {
+            statusCode: 500,
+            body: {
+                message: "burn error"
+            }
+        }
+    }
+
+}
+
+
 export async function burn(req: Request): Promise<AppResult> {
     // validar en la app de petre la cantidad a desbloqeuar q sea = min al max
    // const contractName: string = "RepresentativeBondToken"; 
@@ -265,16 +342,15 @@ export async function burn(req: Request): Promise<AppResult> {
     const contractAddressVault: string = config.CONTRACT.ADDRESS_VAULT;
 
     const contractName: string = "Account";
-    const methodName: string = "transferERC20";
+    const methodName: string = "burnERC20";
     const bondRepresentativeAddress: string = args[0];  // el contrato de la red donde queremos hacer el swap (origin)
     const amount: string = args[1];  
     const network: string = args[2];  // red desde la q vamos a swapear
     const companyAddress: string = args[3]; // la direccion del owner q se genera en createAccount
     const bondAddress: string = args[4];  // el contrato q se genera en createBond
-    const burnAddress: string ="0x000000000000000000000000000000000000dEaD";
 
-    const burnArgs: any[] = [bondRepresentativeAddress, burnAddress ,amount];
 
+    const burnArgs: any[] = [bondRepresentativeAddress, amount];
 
     logger.info(`INITIALIZING SERVICES  ---      BURN`);
     const contracts = await loadAllContracts(config, logger);
