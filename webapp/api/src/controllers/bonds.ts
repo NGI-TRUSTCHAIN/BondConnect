@@ -34,7 +34,7 @@ export const getAllBonds = async (req: express.Request, res: express.Response) =
 
 export const addBond = async (req: express.Request, res: express.Response) => {
 
-  const { createCompanyBond, mintBond } = useBlockchainService();
+  const { createCompanyBond, mintBond, balance } = useBlockchainService();
   const { calculateBondPrice, getBondNetWorkAccount } = useBusinessService();
 
   try {
@@ -124,35 +124,17 @@ export const addBond = async (req: express.Request, res: express.Response) => {
    
     //Pendiente SYMBOL
     const responseCreateCompanyBond = await createCompanyBond(bond.bondName, "TST", bondPrice, wallet);
+    const accountList = responseCreateCompanyBond.accounts;
     
-
-    const cuenta = await getBondNetWorkAccount(responseCreateCompanyBond.accounts, bond.blockchainNetwork);
-
-    const bondList = await getBonds().catch((error: MongoServerError) => {
-      if (error.code === 11000) {
-        res.status(400).json({
-          error: "Not bonds found",
-          message: "Not bonds found.",
-        });
-        return;
-      }
-    });
-
-    console.log("HAY BONOS: " + bondList);
+    const networkName = bond.blockchainNetwork.toUpperCase();
+    const contractAddress = await getBondNetWorkAccount(accountList, networkName);
 
     //Comprobar que el addrees no es vacio y despues lanzar el mint bont
     //Pasar el address del contrato como primer parametro
-    const responseMintBond = await mintBond(cuenta, wallet, bond.goalAmount);
+    const creditAmount = bond.goalAmount;
+    const responseMintBond = await mintBond(contractAddress, wallet, creditAmount);
 
-
-    
-    console.log("\nRespuesta createCompanyBond: ");
-    console.log(responseCreateCompanyBond);
-    console.log("\nRespuesta mintBond: ");
-    console.log(responseMintBond);
-
-    // const x = getBscBalance("0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462");
-    // console.log("\nBalance: " + x);
+    const responseBalance = balance(contractAddress, wallet, networkName);
     
     res.status(201).json(bond);
   } catch (error) {

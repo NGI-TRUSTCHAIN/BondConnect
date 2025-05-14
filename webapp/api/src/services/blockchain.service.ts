@@ -66,6 +66,16 @@ export const useBlockchainService = () => {
     }
   };
 
+  // Mint de un bono (similar a mintBond en Angular)
+  const balance = async (bondAddress: any, accountAddressOwner: any, network: any) => {
+    try {
+      const response = await useApiBridge.balance(bondAddress, accountAddressOwner, network);
+      return response;
+    } catch (err) {
+      console.error('Error balance bond:', err);
+    }
+  };
+
   // Bridge de tokens (similar al método bridge en Angular)
   // const bridgeTokens = async (toPolygon: any, qty: number) => {
   //   if (toPolygon) {
@@ -90,6 +100,7 @@ export const useBlockchainService = () => {
     createCompany,
     createCompanyBond,
     mintBond,
+    balance
     // bridgeTokens,
     // getBSCBalance,
     // provider,

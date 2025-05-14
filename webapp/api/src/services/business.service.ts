@@ -25,12 +25,9 @@ export const useBusinessService = () => {
     };
 
     const getBondNetWorkAccount = async (accounts: any[], network: string) => {
-        console.log("Call getBondNetWorkAccount() ::: Accounts: " +  accounts + " Network: " + network);
         try {
             for (const account of accounts) {
-                console.log("\nAddress: " + account.address);
-                console.log("\nNetwork: " + network);
-                if(account.network === network.toUpperCase()){
+                if(account.network === network){
                     return account.address;
                 }
             }

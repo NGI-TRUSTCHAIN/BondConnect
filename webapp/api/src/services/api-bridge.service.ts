@@ -24,6 +24,23 @@ async function post<T = any>(endpoint: string, body: object): Promise<T> {
   return await response.json();
 }
 
+async function get<T = any>(endpoint: string, params: object): Promise<T> {
+  // Construye la URL con los parámetros
+  const queryString = new URLSearchParams(params as Record<string, string>).toString();
+  const url = `${baseUrl}${endpoint}?${queryString}`;
+  console.log("baseUrl: " + baseUrl + " endpoint: " + endpoint + " queryString: " + queryString);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: defaultHeaders,
+  });
+
+  if (!response.ok) {
+    throw new Error(`API Error: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
 export const useApiBridge = {
   async createBond(name: string, symbol: string, price: number, wallet: string): Promise<CreateBondResponse> {
     return await post('/createBond', { name, symbol, price, wallet });
@@ -31,6 +48,10 @@ export const useApiBridge = {
 
   async mintBond(bondAddress: string, toWallet: string, amount: number): Promise<CreateBondResponse> {
     return await post('/mintBond', { bondAddress, toWallet, amount });
+  },
+
+  async balance(bondAddress: string, accountAddressOwner: string, network: string): Promise<CreateBondResponse> {
+    return await get('/balance', { bondAddress, accountAddressOwner, network });
   },
 
   async bridge(
@@ -47,7 +68,7 @@ export const useApiBridge = {
       creditAmount,
       bondName,
       bondSymbol,
-      bondPrice,
+      bondPrice
     });
   },
 
