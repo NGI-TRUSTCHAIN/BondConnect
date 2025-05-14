@@ -5,13 +5,11 @@
     "\\tokenization-API\\ERC20",
     "\\tokenization-API\\ERC20\\src",
     "\\tokenization-API\\ERC20\\src\\exposition",
-    "\\tokenization-API\\ERC20\\src\\exposition\\api",
     "\\tokenization-API\\ERC20\\src\\exposition\\controllers",
     "\\tokenization-API\\SA",
     "\\tokenization-API\\SA\\src",
     "\\tokenization-API\\SA\\src\\exposition",
     "\\tokenization-API\\SA\\src\\exposition\\controllers"
   ],
-  "SelectedNode": "\\tokenization-API\\ERC20\\src\\exposition\\api\\api.ts",
   "PreviewInSolutionExplorer": false
 }
