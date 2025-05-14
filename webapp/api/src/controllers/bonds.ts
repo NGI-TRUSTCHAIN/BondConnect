@@ -2,8 +2,9 @@ import express from "express";
 import { getBonds, getBondById, deleteBondById, createBond, BondModel } from "../db/bonds";
 import { MongoServerError } from "mongodb";
 import { useBlockchainService } from '../services/blockchain.service'
+import { useBusinessService } from '../services/business.service'
+import { getBscBalance } from '../services/api-business.service'
 import { getIssuerById } from '../db/Issuer'; 
-import { add } from "lodash";
 // import { authentication, random } from "../helpers";
 
 // export const getBond = async (
@@ -32,6 +33,10 @@ export const getAllBonds = async (req: express.Request, res: express.Response) =
 };
 
 export const addBond = async (req: express.Request, res: express.Response) => {
+
+  const { createCompanyBond, mintBond } = useBlockchainService();
+  const { calculateBondPrice, getBondNetWorkAccount } = useBusinessService();
+
   try {
     console.log(req.body);
     const bondData = req.body;
@@ -103,39 +108,34 @@ export const addBond = async (req: express.Request, res: express.Response) => {
       }
     });
 
-    const { createCompanyBond, mintBond } = useBlockchainService();
+    
 
     if (!bond) return;
   
     console.log("\nBond: ");
     console.log(bond);
 
-    const foundBond = getBondById(bond._id.toString());
     const wallet = (await getIssuerById(bond.creatorCompany)).walleAddress;
 
     console.log("\nWallet Address: " + wallet);
     console.log("\nBond name: " + bond.bondName);
    
-    // REVISAR bondSymbol y bondPrice
-    const bondPrice = bond.goalAmount / bond.numberTokens;
-    console.log("\nBond price: " + bondPrice);
-    const responsecreateCompanyBond = await createCompanyBond(bond.bondName, "TST", bondPrice, wallet);
+    const bondPrice = await calculateBondPrice(bond);
+   
+    //Pendiente SYMBOL
+    const responseCreateCompanyBond = await createCompanyBond(bond.bondName, "TST", bondPrice, wallet);
 
-    const account = responsecreateCompanyBond.accounts;
+    const cuenta = await getBondNetWorkAccount(responseCreateCompanyBond.accounts, bond.blockchainNetwork);
 
-    var cuenta = "";
-    account.forEach(account => {
-      console.log("\nDireccion: "+ account.address);
-      cuenta = account.address;
-    });
-    
-    // REVISAR creditAmount 
-    const responseMint = await mintBond(cuenta, wallet, bond.goalAmount);
+    const responseMintBond = await mintBond(cuenta, wallet, bond.goalAmount);
     
     console.log("\nRespuesta createCompanyBond: ");
-    console.log(responsecreateCompanyBond);
+    console.log(responseCreateCompanyBond);
     console.log("\nRespuesta mintBond: ");
-    console.log(responseMint);
+    console.log(responseMintBond);
+
+    const x = getBscBalance("0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462");
+    console.log("\nBalance: " + x);
     
     res.status(201).json(bond);
   } catch (error) {
