@@ -135,6 +135,14 @@ export const addBond = async (req: express.Request, res: express.Response) => {
     const responseMintBond = await mintBond(contractAddress, wallet, creditAmount);
 
     const responseBalance = balance(contractAddress, wallet, networkName);
+
+    console.log("\nRespuesta createCompanyBond: ");
+    console.log(responseCreateCompanyBond);
+    console.log("\nRespuesta mintBond: ");
+    console.log(responseMintBond);
+
+    // const x = getBscBalance("0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462");
+    console.log("\nBalance: " + responseBalance);
     
     res.status(201).json(bond);
   } catch (error) {
