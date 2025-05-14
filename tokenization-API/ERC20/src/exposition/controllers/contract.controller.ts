@@ -108,6 +108,38 @@ export async function createBond(req: Request): Promise<AppResult> {
     };
 }
 
+export async function balance(req: Request): Promise<AppResult> {
+    const contractName: string = "Bond";
+    const methodName: string = "balanceOf";
+    const args: any[] = req.body.args || [];
+    const options: Overrides = req.body.options || {};
+
+    // este es el caller de la function
+    const bondAddress: string = args[0];
+    const accountAddressOwner: string = args[1];
+    const network: string = args[2];
+
+    // SIEMPRE EN ALASTRIA 
+    const results: { network: string; address: string | null }[] = [];
+
+    logger.info(`INITIALIZING SERVICES mintBond`);
+
+    logger.info(`CREATING IN alastria`);
+    const contracts = await loadAllContracts(config, logger);
+
+    const newArgs: any[] = [accountAddressOwner];
+
+    initContractsService(logger, contracts, config, network);
+    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, bondAddress, methodName, newArgs, options);
+
+    return {
+        statusCode: 201,
+        body: {
+            message: resultAlastria            
+        }
+    }
+}
+
 export async function mintBond(req: Request): Promise<AppResult> {   
     const contractName: string = "Bond";    
     const methodName: string = "mint";

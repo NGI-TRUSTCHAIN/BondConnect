@@ -1,0 +1,132 @@
+[Default] [2025-05-13 09:47:48] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-13 09:47:48] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-13 09:47:48] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-13 09:47:48] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-13 09:47:48] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-13 09:47:48] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-13 09:49:56] [INFO] - POST /createBond
+[ERC20 Contract API] [2025-05-13 09:49:56] [INFO] - Start Alastria CreateBond
+[ERC20 Contract API] [2025-05-13 09:49:56] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 09:49:56] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-13 09:49:56] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-13 09:49:59] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 09:50:00] [INFO] - Address Bond in Alastria: 0xb70D972F3518981ab818bFC632d6803Ee4EFdde7
+[ERC20 Contract API] [2025-05-13 09:50:35] [INFO] - POST /mintBond
+[ERC20 Contract API] [2025-05-13 09:50:35] [INFO] - INITIALIZING SERVICES mintBond
+[ERC20 Contract API] [2025-05-13 09:50:35] [INFO] - CREATING IN alastria
+[ERC20 Contract API] [2025-05-13 09:50:35] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 09:50:35] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-13 09:50:35] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-13 09:50:37] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 09:51:40] [INFO] - POST /bridge
+[ERC20 Contract API] [2025-05-13 09:51:40] [INFO] - INITIALIZING SERVICES    --     approveERC20
+[ERC20 Contract API] [2025-05-13 09:51:40] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 09:51:40] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-13 09:51:40] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-13 09:51:42] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 09:51:43] [INFO] - Approve transaction succeeded. Waiting 10 seconds...
+[ERC20 Contract API] [2025-05-13 09:51:53] [INFO] - INITIALIZING SERVICES    --     deposit
+[ERC20 Contract API] [2025-05-13 09:51:56] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 09:52:02] [ERROR] - Error: transaction execution reverted (action="sendTransaction", data=null, reason=null, invocation=null, revert=null, transaction={ "data": "", "from": "0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462", "to": "0x0C699d5d19058695f0873a2e62a30d458933497a" }, receipt={ "_type": "TransactionReceipt", "blobGasPrice": null, "blobGasUsed": null, "blockHash": "0x922d559fd5defe14056489abd7b6eed843dd3f28a1c15e4f65d32d2f008c8e9c", "blockNumber": 51806081, "contractAddress": null, "cumulativeGasUsed": "23350", "from": "0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462", "gasPrice": "5000000000", "gasUsed": "23350", "hash": "0x7dd94cf7553af49deb9433ed0dec24d0b5815386f07647db0b206a3faf32144a", "index": 0, "logs": [  ], "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", "root": null, "status": 0, "to": "0x0C699d5d19058695f0873a2e62a30d458933497a" }, code=CALL_EXCEPTION, version=6.13.2)
+[ERC20 Contract API] [2025-05-13 09:55:06] [INFO] - POST /bridge
+[ERC20 Contract API] [2025-05-13 09:55:06] [INFO] - INITIALIZING SERVICES    --     approveERC20
+[ERC20 Contract API] [2025-05-13 09:55:06] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 09:55:06] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-13 09:55:06] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-13 09:55:08] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 09:55:14] [INFO] - Approve transaction succeeded. Waiting 10 seconds...
+[ERC20 Contract API] [2025-05-13 09:55:24] [INFO] - INITIALIZING SERVICES    --     deposit
+[ERC20 Contract API] [2025-05-13 09:55:26] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 09:55:32] [ERROR] - Error: transaction execution reverted (action="sendTransaction", data=null, reason=null, invocation=null, revert=null, transaction={ "data": "", "from": "0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462", "to": "0x0C699d5d19058695f0873a2e62a30d458933497a" }, receipt={ "_type": "TransactionReceipt", "blobGasPrice": null, "blobGasUsed": null, "blockHash": "0x1819621128269bf8cdaacad2b8648472449b99ab9c181bcd970fd6714402bdbf", "blockNumber": 51806221, "contractAddress": null, "cumulativeGasUsed": "23350", "from": "0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462", "gasPrice": "5000000000", "gasUsed": "23350", "hash": "0x68e8a27082ce9871e948e149bbd877ce18d03a703e97b51b67f3e4cdb6f66bbf", "index": 0, "logs": [  ], "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", "root": null, "status": 0, "to": "0x0C699d5d19058695f0873a2e62a30d458933497a" }, code=CALL_EXCEPTION, version=6.13.2)
+[Default] [2025-05-13 09:58:17] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-13 09:58:17] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-13 09:58:17] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-13 09:58:17] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-13 09:58:17] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-13 09:58:17] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-13 09:58:40] [INFO] - POST /bridge
+[ERC20 Contract API] [2025-05-13 09:58:40] [INFO] - INITIALIZING SERVICES    --     approveERC20
+[ERC20 Contract API] [2025-05-13 09:58:40] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 09:58:40] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-13 09:58:40] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-13 09:58:43] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 09:58:48] [INFO] - Approve transaction succeeded. Waiting 10 seconds...
+[ERC20 Contract API] [2025-05-13 09:58:58] [INFO] - INITIALIZING SERVICES    --     deposit
+[ERC20 Contract API] [2025-05-13 09:59:01] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 09:59:06] [ERROR] - Error: transaction execution reverted (action="sendTransaction", data=null, reason=null, invocation=null, revert=null, transaction={ "data": "", "from": "0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462", "to": "0x0C699d5d19058695f0873a2e62a30d458933497a" }, receipt={ "_type": "TransactionReceipt", "blobGasPrice": null, "blobGasUsed": null, "blockHash": "0x2fcc3de51150ccd82500ae45e8e946b3119f047ebc8858653dd33cc9f4f53a65", "blockNumber": 51806364, "contractAddress": null, "cumulativeGasUsed": "44350", "from": "0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462", "gasPrice": "5000000000", "gasUsed": "23350", "hash": "0x1efc8f2035261ad4389484c933424eca929998d1f6b3b1b439751dd89cec925a", "index": 1, "logs": [  ], "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", "root": null, "status": 0, "to": "0x0C699d5d19058695f0873a2e62a30d458933497a" }, code=CALL_EXCEPTION, version=6.13.2)
+[Default] [2025-05-13 10:13:25] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-13 10:13:25] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-13 10:13:25] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-13 10:13:25] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-13 10:13:25] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-13 10:13:25] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-13 10:13:44] [INFO] - POST /bridge
+[ERC20 Contract API] [2025-05-13 10:13:44] [INFO] - INITIALIZING SERVICES    --     approveERC20
+[ERC20 Contract API] [2025-05-13 10:13:44] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 10:13:44] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-13 10:13:44] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-13 10:13:47] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 10:13:48] [INFO] - Approve transaction succeeded. Waiting 10 seconds...
+[ERC20 Contract API] [2025-05-13 10:13:58] [INFO] - INITIALIZING SERVICES    --     deposit
+[ERC20 Contract API] [2025-05-13 10:14:00] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 10:14:01] [INFO] - INITIALIZING SERVICES    --     createRepresentativeBondToken
+[ERC20 Contract API] [2025-05-13 10:14:04] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 10:14:09] [INFO] - account amoy: 0x86ca8FD42FcC33Ce8fa44E430e7147ad9626A5e5
+[ERC20 Contract API] [2025-05-13 10:14:09] [INFO] - INITIALIZING SERVICES    --    Mint in amoy representative tokens
+[ERC20 Contract API] [2025-05-13 10:14:11] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 10:21:25] [INFO] - POST /burn
+[ERC20 Contract API] [2025-05-13 10:21:25] [INFO] - INITIALIZING SERVICES  ---      BURN
+[ERC20 Contract API] [2025-05-13 10:21:25] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 10:21:25] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-13 10:21:25] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-13 10:21:27] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 10:21:36] [INFO] - INITIALIZING SERVICES  ---    UNLOCK
+[ERC20 Contract API] [2025-05-13 10:21:39] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 10:22:41] [INFO] - POST /burn
+[ERC20 Contract API] [2025-05-13 10:22:41] [INFO] - INITIALIZING SERVICES  ---      BURN
+[ERC20 Contract API] [2025-05-13 10:22:41] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 10:22:41] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-13 10:22:41] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-13 10:22:43] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 10:22:52] [INFO] - INITIALIZING SERVICES  ---    UNLOCK
+[ERC20 Contract API] [2025-05-13 10:22:55] [INFO] - Waiting for confirmations
+[Default] [2025-05-13 10:56:49] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-13 10:56:49] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-13 10:56:49] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-13 10:56:49] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-13 10:56:49] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-13 10:56:49] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-13 10:56:56] [INFO] - POST /requestTransfer
+[ERC20 Contract API] [2025-05-13 10:56:56] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-13 10:56:56] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 10:56:56] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-13 10:56:56] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-13 10:56:58] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 11:02:04] [INFO] - POST /createBond
+[ERC20 Contract API] [2025-05-13 11:02:04] [INFO] - Start Alastria CreateBond
+[ERC20 Contract API] [2025-05-13 11:02:04] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 11:02:04] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-13 11:02:04] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-13 11:02:06] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 11:02:07] [INFO] - Address Bond in Alastria: 0xF26353e7799F32b8E38DA8eC84053b4470eCB70E
+[ERC20 Contract API] [2025-05-13 11:02:20] [INFO] - POST /mintBond
+[ERC20 Contract API] [2025-05-13 11:02:20] [INFO] - INITIALIZING SERVICES mintBond
+[ERC20 Contract API] [2025-05-13 11:02:20] [INFO] - CREATING IN alastria
+[ERC20 Contract API] [2025-05-13 11:02:20] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 11:02:20] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-13 11:02:20] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-13 11:02:22] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 11:03:16] [INFO] - POST /bridge
+[ERC20 Contract API] [2025-05-13 11:03:16] [INFO] - INITIALIZING SERVICES    --     approveERC20
+[ERC20 Contract API] [2025-05-13 11:03:16] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 11:03:16] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-13 11:03:16] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-13 11:03:18] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 11:03:20] [INFO] - Approve transaction succeeded. Waiting 10 seconds...
+[ERC20 Contract API] [2025-05-13 11:03:30] [INFO] - INITIALIZING SERVICES    --     deposit
+[ERC20 Contract API] [2025-05-13 11:03:32] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 11:03:38] [INFO] - INITIALIZING SERVICES    --     createRepresentativeBondToken
+[ERC20 Contract API] [2025-05-13 11:03:40] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 11:03:45] [INFO] - account amoy: 0xa12016Cda911E7f553AB2eaa5323a40F3a71d0d2
+[ERC20 Contract API] [2025-05-13 11:03:45] [INFO] - INITIALIZING SERVICES    --    Mint in amoy representative tokens
+[ERC20 Contract API] [2025-05-13 11:03:47] [INFO] - Waiting for confirmations
