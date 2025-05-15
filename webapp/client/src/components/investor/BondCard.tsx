@@ -3,7 +3,7 @@ import { Bond } from "../../Bond";
 import { useNavigate } from "react-router-dom";
 import { Investor } from "../Authentication/InvestorRegistration";
 
-const BondCard: React.FC<{ bond: Bond, user: Investor }> = ({ bond, user }) => {
+const BondCard: React.FC<{ bond: Bond, user: Investor, marketData: unknown }> = ({ bond, user, marketData }) => {
   const navigate = useNavigate()
   return (
     <div className="bond-card" style={{width: 'fit-content'}}>
@@ -23,7 +23,7 @@ const BondCard: React.FC<{ bond: Bond, user: Investor }> = ({ bond, user }) => {
           </li>
         </ul>
 
-        <button className="btn btn-primary-sm" onClick={() => navigate(`/bond-details/${bond._id}`,  { state: { bond, user } })}>See More</button>
+        <button className="btn btn-primary-sm" onClick={() => navigate(`/bond-details/${bond._id}`,  { state: { bond, user, marketData } })}>See More</button>
       </div>
     </div>
   );

@@ -18,6 +18,7 @@ const RetailMarket = () => {
   const registeredBonds = useAppSelector((state) => state.bond.bonds);
 
   const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility
+  const [created, setCreated] = useState(null);
   const [marketData, setMarketData] = useState<MarketData>({
     _id: undefined,
     investToken: "",
@@ -43,16 +44,24 @@ const RetailMarket = () => {
     }
   }, [errorMessage, dispatch]);
 
+  useEffect(() => {
+    if (created) {
+      navigate("/issuer-dash");
+    }
+  }, [created]);
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log(marketData);
     setShowPopup(true);
   };
+
   const handleConfirmSubmit = async (e: FormEvent) => {
     e.preventDefault();
     console.log(marketData);
-    await addRetailMktBond(marketData)
-    navigate('/issuer-dash')
+    const market = await dispatch(addRetailMktBond(marketData)).unwrap();
+    setCreated(market);
+    console.log(market);
   };
   return (
     <div className="container-fluid mt-3 d-flex justify-content-center align-items-center">

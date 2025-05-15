@@ -12,10 +12,14 @@ const FormBondCreationC = () => {
   const user = useAppSelector((state) => state.user.userLoged);
   const navigate = useNavigate();
 
+  const bonds = useAppSelector((state) => state.bond.bonds);
+  const [errors, setErrors] = useState<{ bondName?: string; bondSymbol?: string }>({});
+
   // Define the state to manage form inputs
   const [formData, setFormData] = useState<Bond>({
     _id: undefined,
     bondName: "",
+    bondSymbol: "",
     bondStartDate: new Date(),
     bondMaturityDate: undefined,
     bondPurpose: "",
@@ -23,16 +27,16 @@ const FormBondCreationC = () => {
     paymentFreq: "",
     goalAmount: undefined,
     numberTokens: undefined,
+    price: 0,
     earlyRedemptionClauses: "no",
     penalty: undefined,
     // redemptionPeriods: "",
     redemptionStartDate: undefined,
     redemptionFinishDate: undefined,
     blockchainNetwork: "",
-    otherBlockchainNetwork: undefined,
     // walletAddress: "",
     tokenState: [],
-    creatorCompany: user?._id
+    creatorCompany: user?._id,
   });
 
   const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility
@@ -46,10 +50,11 @@ const FormBondCreationC = () => {
       },
     ];
     console.log(tokenState);
-
+    const price = formData.goalAmount! / formData.numberTokens!;
     const bond: Bond = {
       ...formData,
       tokenState,
+      price,
     };
     try {
       console.log("Form data submitted:", bond);
@@ -70,6 +75,32 @@ const FormBondCreationC = () => {
       toast.success("Draft created successfully!");
     } catch (error) {
       toast.error(`Failed to save draft.\n Erorr: ${error}`);
+    }
+  };
+
+  const validateUniqueness = (field: "bondName" | "bondSymbol", value: string) => {
+    const normalizedValue = value.trim().toLowerCase();
+    return !bonds!.some((bond) => bond[field]?.trim().toLowerCase() === normalizedValue);
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    if (name === "bondName" || name === "bondSymbol") {
+      const isUnique = validateUniqueness(name, value);
+
+      if (!isUnique) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: `${name === "bondName" ? "Bond name" : "Bond symbol"} already exists.`,
+        }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[name];
+          return newErrors;
+        });
+      }
     }
   };
 
@@ -120,7 +151,7 @@ const FormBondCreationC = () => {
           <div className="container-md m-3">
             <h4 className="text-primary">Basic Bond Information</h4>
             <div className="row">
-              <div className="col-12 mb-3">
+              <div className="col-8 mb-3">
                 <label htmlFor="bondName" className="form-label">
                   Enter Name:
                 </label>
@@ -132,8 +163,24 @@ const FormBondCreationC = () => {
                   placeholder="E.g., SME Bond 2024"
                   value={formData.bondName}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                 />
-              </div>
+              </div>{errors.bondName && <div className="invalid-feedback">{errors.bondName}</div>}
+              <div className="col-4 mb-3">
+                <label htmlFor="bondSymbol" className="form-label">
+                  Enter Name:
+                </label>
+                <input
+                  type="text"
+                  id="bondSymbol"
+                  name="bondSymbol"
+                  className="form-control bg-form"
+                  placeholder="E.g., SME-24"
+                  value={formData.bondSymbol}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              </div>{errors.bondSymbol && <div className="invalid-feedback">{errors.bondSymbol}</div>}
               <div className="mb-3">
                 <label htmlFor="bondPurpose" className="form-label">
                   Bond Purpose:
@@ -321,24 +368,6 @@ const FormBondCreationC = () => {
                   <option value="Other">Other</option>
                 </select>
               </div>
-              {formData.blockchainNetwork === "Other" && (
-                // Show input field for custom blockchain network
-                <div className="col-sm-8">
-                  <label
-                    htmlFor="otherBlockchainNetwork"
-                    className="form-label"
-                    style={{ marginBottom: "10px" }}></label>
-                  <input
-                    type="text"
-                    id="otherBlockchainNetwork"
-                    name="otherBlockchainNetwork"
-                    className="form-control bg-form mb-3"
-                    placeholder="Specify different blockchain network"
-                    value={formData.otherBlockchainNetwork}
-                    onChange={handleChange}
-                  />
-                </div>
-              )}
             </div>
           </div>
 

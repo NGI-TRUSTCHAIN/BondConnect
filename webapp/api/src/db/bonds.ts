@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 
 // Define the Mongoose Schema for the FormData type
 const BondSchema = new mongoose.Schema({
-  bondName: {type: String,required: true},
+  bondName: {type: String,required: true, unique: true},
+  bondSymbol: {type: String,required: true, unique: true},
   bondStartDate: {type: Date,required: true},
   bondMaturityDate: {type: Date,required: true},
   bondPurpose: {type: String,required: true},
@@ -10,13 +11,12 @@ const BondSchema = new mongoose.Schema({
   paymentFreq: {type: String,enum: ["Monthly", "Quarterly", "Semi-annualy", "Annualy"],required: true,},
   goalAmount: {type: Number,required: true},
   numberTokens: {type: Number,required: true},
+  price: {type: Number,required: true},
   earlyRedemptionClauses: {type: String,enum: ["yes", "no"], required: true,},
   penalty: {type: Number, required: function () {return this.earlyRedemptionClauses === "yes";}},
-  // redemptionPeriods: {type: String, required: function () {return this.earlyRedemptionClauses === "yes"; }},
   redemptionStartDate: {type: Date, required: function () {return this.earlyRedemptionClauses === "yes";}},
   redemptionFinishDate: {type: Date, required: function () {return this.earlyRedemptionClauses === "yes";}},
-  blockchainNetwork: {type: String,enum: ["Ethereum", "Alastria", "Binance Smart Chain", "Polygon", "Other"], required: true},
-  otherBlockchainNetwork: {type: String, required: function () {return this.blockchainNetwork === "other";}},
+  blockchainNetwork: {type: String,enum: ["Alastria"], required: true},
   tokenState: [
     {blockchain: {type: String, required:true}, amount: {type: Number, required:true}}
   ],

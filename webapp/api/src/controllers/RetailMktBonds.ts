@@ -3,7 +3,7 @@ import { getRetailMktBonds, getRetailMktBondById, createRetailMktBond, updateRet
 import { MongoServerError } from 'mongodb';
 
 // Obtener todos los bonds
-export const getAllRetailMktBonds = async (_req: express.Request, res: express.Response) => {
+export const getAllRetailMktBonds = async (req: express.Request, res: express.Response) => {
   try {
     const bonds = await getRetailMktBonds();
     res.status(200).json(bonds);

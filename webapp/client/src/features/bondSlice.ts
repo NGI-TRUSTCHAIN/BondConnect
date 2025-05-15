@@ -8,6 +8,7 @@ import { MarketData } from "../components/issuer/RetailMarket";
 
 interface BondState {
   bonds: Bond[] | null;
+  retailBonds: MarketData[] | null;
   users: UserData[];
   transferHistory: TransferInfo[] | null;
   status: "idle" | "loading" | "succeeded" | "failed";
@@ -16,6 +17,7 @@ interface BondState {
 
 const initialState: BondState = {
   bonds: null,
+  retailBonds: null,
   users: [],
   transferHistory: null,
   status: "idle",
@@ -179,7 +181,7 @@ export const readTransferHistory = createAsyncThunk("bond/readTransferHistory", 
     }
 
     const data = await response.json();
-    console.log("Fetched Bonds:", data); // Debugging step
+    console.log("Fetched TransferHistory:", data); // Debugging step
     return data as TransferInfo[];
   } catch (error) {
     return rejectWithValue(error);
@@ -331,6 +333,29 @@ export const addRetailMktBond = createAsyncThunk("retailMktBond/addToMarket", as
   }
 );
 
+export const getRetailMktBonds = createAsyncThunk("retailMktBond/readAllRetailBonds", async (_, { rejectWithValue }) => {
+  try {
+    const response = await fetch("/api/getAllMarketBonds", { method: "GET" });
+
+    if (!response.ok) {
+      // const error = await response.json();
+      // return rejectWithValue(error.message);
+      try {
+        const error = await response.json();
+        return rejectWithValue(error.message || "Error desconocido");
+      } catch {
+        return rejectWithValue(`Unexpected response: ${response.statusText}`);
+      }
+    }
+
+    const data = await response.json();
+    console.log("Fetched RetailBonds:", data); // Debugging step
+    return data as MarketData[];
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+});
+
 const bondSlice = createSlice({
   name: "bond",
   initialState,
@@ -459,6 +484,19 @@ const bondSlice = createSlice({
         state.error = null;
       })
       .addCase(addRetailMktBond.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
+      })
+      .addCase(getRetailMktBonds.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(getRetailMktBonds.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.retailBonds = action.payload
+        state.error = null;
+      })
+      .addCase(getRetailMktBonds.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
       });

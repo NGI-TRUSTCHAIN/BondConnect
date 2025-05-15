@@ -10,13 +10,26 @@ import { toast, ToastContainer } from "react-toastify";
 const BondDetails = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
-  const navigate = useNavigate()
-  const { bond, user }: { bond: Bond; user: Investor } = location.state;
+  const navigate = useNavigate();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { bond, user, marketData }: { bond: Bond; user: Investor; marketData: any } = location.state;
 
   const error = useAppSelector((state) => state.bond.error);
 
   const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility
-  const [tokens, setTokens] = useState(0);
+  const [tokens, setTokens] = useState<number>(0);
+
+  const [selectedBlockchain, setSelectedBlockchain] = useState<string>(marketData.blockchains[0]?.destinationBlockchain || "");
+  const selectedEntry = marketData.blockchains.find(
+    (entry: { destinationBlockchain: string; numTokensOffered: number }) => entry.destinationBlockchain === selectedBlockchain
+  );
+  useEffect(() => {
+    setUserData((prev) => ({
+      ...prev,
+      destinationBlockchain: selectedBlockchain,
+      purchasedTokens: tokens,
+    }));
+  }, [selectedBlockchain, tokens]);
 
   const [userData, setUserData] = useState<UserData>({
     _id: undefined,
@@ -31,14 +44,13 @@ const BondDetails = () => {
     console.log("Bond:", bond);
     console.log("User:", user);
   }, [bond, user]);
- 
-  useEffect(() => {
-    setUserData((prevUserData) => ({
-      ...prevUserData,
-      purchasedTokens: tokens,
-    }));
-  }, [tokens]);
-  
+
+  // useEffect(() => {
+  //   setUserData((prevUserData) => ({
+  //     ...prevUserData,
+  //     purchasedTokens: tokens,
+  //   }));
+  // }, [tokens]);
 
   useEffect(() => {
     if (error) {
@@ -69,7 +81,7 @@ const BondDetails = () => {
   const handleConfirmBuy = async () => {
     await dispatch(registerUser(userData));
     setShowPopup(false);
-    navigate('/investor-dash')
+    navigate("/investor-dash");
   };
 
   return (
@@ -185,19 +197,6 @@ const BondDetails = () => {
                 />
               </div>
               <div className="col-sm-6 mb-3">
-                <label htmlFor="destinationBlockchain" className="form-label">
-                  Destination Blockchain:
-                </label>
-                <input
-                  id="destinationBlockchain"
-                  name="destinationBlockchain"
-                  value={bond.blockchainNetwork}
-                  className="form-control bg-form"
-                  disabled
-                />
-              </div>
-
-              <div className="col-sm-6 mb-3">
                 <label htmlFor="investToken" className="form-label">
                   Token Selection:
                 </label>
@@ -206,6 +205,61 @@ const BondDetails = () => {
                   name="investToken"
                   className="form-control bg-form"
                   value={bond.bondName}
+                  disabled
+                />
+              </div>
+
+              <div className="col-sm-6 mb-3">
+                <label htmlFor="destinationBlockchain" className="form-label">
+                  Destination Blockchain:
+                </label>
+                <select
+                  id="destinationBlockchain"
+                  name="destinationBlockchain"
+                  className="form-control bg-form"
+                  value={selectedBlockchain}
+                  onChange={(e) => {
+                    setSelectedBlockchain(e.target.value);
+                    setTokens(0); // Reiniciar tokens al cambiar de blockchain
+                  }}>
+                  {marketData.blockchains.map((entry: { destinationBlockchain: string; numTokensOffered: number }) => (
+                    <option key={entry.destinationBlockchain} value={entry.destinationBlockchain}>
+                      {entry.destinationBlockchain}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-sm-6 mb-3">
+                <label htmlFor="purchasedTokens" className="form-label">
+                  Number of Tokens:
+                </label>
+                <input
+                  type="number"
+                  id="purchasedTokens"
+                  name="purchasedTokens"
+                  className="form-control bg-form"
+                  value={tokens}
+                  min={0}
+                  max={selectedEntry?.numTokensOffered ?? 0}
+                  placeholder={`${selectedEntry?.numTokensOffered ?? 0}`}
+                  disabled={!selectedEntry}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const value = Number(e.target.value);
+                    const max = selectedEntry?.numTokensOffered ?? 0;
+                    setTokens(Math.min(value, max));
+                  }}
+                />
+              </div>
+              {/* <div className="col-sm-6 mb-3">
+                <label htmlFor="destinationBlockchain" className="form-label">
+                  Destination Blockchain:
+                </label>
+                <input
+                  id="destinationBlockchain"
+                  name="destinationBlockchain"
+                  value={bond.blockchainNetwork}
+                  className="form-control bg-form"
                   disabled
                 />
               </div>
@@ -222,7 +276,7 @@ const BondDetails = () => {
                   placeholder={`15`}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTokens(Number(e.target.value))}
                 />
-              </div>
+              </div> */}
             </div>
             <div className="popup-actions mt-5" style={{ textAlign: "center" }}>
               <button className="btn btn-primary" onClick={handleConfirmBuy}>

@@ -7,6 +7,7 @@ const ManageBonds = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const bonds = useAppSelector((state) => state.bond.bonds);
+  const userLoged = useAppSelector((state) => state.user.userLoged);
   useEffect(() => {
     dispatch(readBonds());
   }, [dispatch]);
@@ -42,7 +43,7 @@ const ManageBonds = () => {
           </thead>
           <tbody>
             {bonds?.map((bond, index) => (
-              <tr key={index} className="bg-light">
+              (userLoged?._id === bond.creatorCompany) && <tr key={index} className="bg-light">
                 <td className="p-3 fst-italic">"{bond.bondName}"</td>
                 <td className="p-3">{bond.blockchainNetwork}</td>
                 <td className="p-3 fst-italic">{bond.numberTokens}</td>
