@@ -1,6 +1,7 @@
 import express from "express";
 import { MongoServerError } from "mongodb";
-import { createInvestor, getInvestors } from "../db/Investor";
+import { createInvestor, getInvestors, getInvestorByEmail } from "../db/Investor";
+import { useBlockchainService } from '../services/blockchain.service'
 
 /**
  * Obtener todos los usuarios
@@ -23,6 +24,7 @@ export const getAllInvestors = async (req: express.Request, res: express.Respons
  */
 export const registerInvestor = async (req: express.Request, res: express.Response) => {
   try {
+    const { createCompany } = useBlockchainService();
     console.log("📩 Recibido en req.body:", req.body);
     const investor = req.body.investor;
     const particular = req.body.particular;
@@ -63,6 +65,16 @@ export const registerInvestor = async (req: express.Request, res: express.Respon
       }
       throw error; // Lanza otros errores para que sean manejados en el catch principal
     }
+
+    if (!newInvestor) return;
+
+    const foundInvestor = (await getInvestorByEmail(newInvestor.email))._id.toString();
+
+    const { address, createdAt, accounts} = await createCompany(foundInvestor)
+        
+    // ¡¡¡ IMPORTANTE !!! Revisar con petre
+    //await updateIssuerById(foundIssuer, { walleAddress: address, accounts: accounts});
+
 
     console.log(newInvestor);
     res.status(201).json(newInvestor);

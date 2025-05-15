@@ -14,20 +14,24 @@ export const useBusinessService = () => {
                 const bondPrice = goalAmount / numberTokens;
                 console.log('Bond price: ' + bondPrice);
                 if (bondPrice) {
-                    return bondPrice;
+                    // Convertir el precio del bono a una cadena con coma decimal
+                    const bondPriceFormatted = bondPrice.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(',', '.');
+                    // Convertir de nuevo a número
+                    const bondPriceNumber = parseFloat(bondPriceFormatted);
+                    return bondPriceNumber;
                 }
             }
         } catch (err) {
             console.error('Error calculateBondPrice() :: ', err);
             return null;
         }
-
     };
+
 
     const getBondNetWorkAccount = async (accounts: any[], network: string) => {
         try {
             for (const account of accounts) {
-                if(account.network === network){
+                if (account.network === network) {
                     return account.address;
                 }
             }

@@ -17,8 +17,8 @@ export const createNewUser = async (req: express.Request, res: express.Response)
     console.log(req.body);
     const user = req.body
     
-
     // Validate required fields
+    // IMPORTANTE LLAMAR a requestTransfer
     if (!user.userId || !user.destinationBlockchain || !user.investToken || !user.purchasedTokens) {
       res.status(400).json({
         error: "Missing required fields",

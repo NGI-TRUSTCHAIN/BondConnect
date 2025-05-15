@@ -108,42 +108,21 @@ export const addBond = async (req: express.Request, res: express.Response) => {
       }
     });
 
-    
-
     if (!bond) return;
   
-    console.log("\nBond: ");
-    console.log(bond);
-
     const wallet = (await getIssuerById(bond.creatorCompany)).walleAddress;
-
-    console.log("\nWallet Address: " + wallet);
-    console.log("\nBond name: " + bond.bondName);
-   
+    
     const bondPrice = await calculateBondPrice(bond);
    
-    //Pendiente SYMBOL
+    // //¡¡¡¡ PENDIENTE !!!!  Pendiente SYMBOL
     const responseCreateCompanyBond = await createCompanyBond(bond.bondName, "TST", bondPrice, wallet);
-    const accountList = responseCreateCompanyBond.accounts;
-    
-    const networkName = bond.blockchainNetwork.toUpperCase();
-    const contractAddress = await getBondNetWorkAccount(accountList, networkName);
+    const contractAddress = await getBondNetWorkAccount(responseCreateCompanyBond.accounts, bond.blockchainNetwork.toUpperCase());
+    const responseMintBond = await mintBond(contractAddress, wallet, bond.goalAmount);
 
-    //Comprobar que el addrees no es vacio y despues lanzar el mint bont
-    //Pasar el address del contrato como primer parametro
-    const creditAmount = bond.goalAmount;
-    const responseMintBond = await mintBond(contractAddress, wallet, creditAmount);
+    //const responseBalance = balance(contractAddress, wallet, networkName);
 
-    const responseBalance = balance(contractAddress, wallet, networkName);
-
-    console.log("\nRespuesta createCompanyBond: ");
-    console.log(responseCreateCompanyBond);
-    console.log("\nRespuesta mintBond: ");
-    console.log(responseMintBond);
-
-    // const x = getBscBalance("0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462");
-    console.log("\nBalance: " + responseBalance);
-    
+    // //¡¡¡¡ PENDIENTE !!!!  Contract Address AÑADIR A MONGO  !!!
+    // //¡¡¡¡ OPCIONAL !!!!  Añadir trx a una pagina de TRX en mongo  !!!
     res.status(201).json(bond);
   } catch (error) {
     console.error(error);
