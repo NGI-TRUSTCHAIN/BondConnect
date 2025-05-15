@@ -10,7 +10,7 @@ export const useBlockchainService = () => {
 
   // useEffect(() => {
   //   const newProvider = new ethers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
-  //   // setProvider(newProvider);
+  //    setProvider(newProvider);
 
   // }, []);
 
@@ -47,7 +47,7 @@ export const useBlockchainService = () => {
   };
 
   // Crear un bono (similar al método createBond en Angular)
-  const createBond = async (bondName: string, bondSymbol: string, bondPrice: number, bondWallet: string) => {
+  const createCompanyBond = async (bondName: string, bondSymbol: string, bondPrice: number, bondWallet: string) => {
     try {
       const response = await useApiBridge.createBond(bondName, bondSymbol, bondPrice, bondWallet);
       return response;
@@ -63,6 +63,16 @@ export const useBlockchainService = () => {
       return response;
     } catch (err) {
       console.error('Error minting bond:', err);
+    }
+  };
+
+  // Mint de un bono (similar a mintBond en Angular)
+  const balance = async (bondAddress: any, accountAddressOwner: any, network: any) => {
+    try {
+      const response = await useApiBridge.balance(bondAddress, accountAddressOwner, network);
+      return response;
+    } catch (err) {
+      console.error('Error balance bond:', err);
     }
   };
 
@@ -88,8 +98,9 @@ export const useBlockchainService = () => {
 
   return {
     createCompany,
-    createBond,
+    createCompanyBond,
     mintBond,
+    balance
     // bridgeTokens,
     // getBSCBalance,
     // provider,

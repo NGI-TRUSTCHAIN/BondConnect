@@ -33,6 +33,10 @@ export const useApiBridge = {
     return await post('/mintBond', { bondAddress, toWallet, amount });
   },
 
+  async balance(bondAddress: string, accountAddressOwner: string, network: string): Promise<CreateBondResponse> {
+    return await post('/balance', { bondAddress, accountAddressOwner, network });
+  },
+
   async bridge(
     bondAddress: string,
     wallet: string,
@@ -47,17 +51,24 @@ export const useApiBridge = {
       creditAmount,
       bondName,
       bondSymbol,
-      bondPrice,
+      bondPrice
     });
   },
 
-  async withdraw(
-    amoyAddress: string,
+  async requestTransfer(
+    toAddress: string,
+    fromAddress: string,
     amount: number,
     network: string,
-    wallet: string,
-    bondWallet: string
+    contractAddress: string
   ): Promise<CreateBondResponse> {
-    return await post('/burn', { amoyAddress, amount, network, wallet, bondWallet });
+    return await post('/requestTransfer', {
+      toAddress,
+      fromAddress,
+      amount,
+      network,
+      contractAddress
+    });
   },
+
 };

@@ -5,13 +5,15 @@ const ethers = require("ethers");
 
 dotenvx.config();
 
- async function checkNodeStatus(provider: any, networkName: string): Promise<void> {
+ async function checkNodeStatus(provider: any, networkName: string): Promise<boolean> {
       try {
         await provider.getBlockNumber();
         console.log(`The node for ${networkName} is working correctly.`);
       } catch (error) {
         console.error(`The node for ${networkName} has issues:`, (error as Error).message);
+        return false; // Node is not working
       }
+      return true; // Node is working
     }
 
 
@@ -26,13 +28,17 @@ async function main() {
     const bscProvider = new ethers.JsonRpcProvider(NETWORK_BSC);
     const amoyProvider = new ethers.JsonRpcProvider(NETWORK_AMOY);
 
-    await checkNodeStatus(bscProvider, "BSC Testnet");
-    await checkNodeStatus(amoyProvider, "Amoy Network");
+    const bscOK = await checkNodeStatus(bscProvider, "BSC Testnet");
+    const amoyOk = await checkNodeStatus(amoyProvider, "Amoy Network");
 
+    if (!bscOK || !amoyOk) {
+        console.error("One or more nodes are not working correctly. Exiting...");
+        return;
+    }
 
     console.log(`NETWORK_AMOY, NETWORK_BSC`, NETWORK_AMOY, NETWORK_BSC);
     try {
-      console.log(`Comprobando balances de Admin wallet...`);
+      console.log(`Check balances of adminAccount address...`);
       const bscProvider = new ethers.JsonRpcProvider(NETWORK_BSC);
       const amoyProvider = new ethers.JsonRpcProvider(NETWORK_AMOY);
       let bscBalance = await bscProvider.getBalance(adminAccountAddress);
@@ -42,7 +48,7 @@ async function main() {
       console.log(`bsc testnet balance: ${ethers.formatEther(bscBalance)}`);
       console.log(`amoy balance: ${ethers.formatEther(amoyBalance)}`);
       console.log(`\n`);
-      console.log(`Comprobando balances de API account...`);
+      console.log(`Check balances of apiAddress.....`);
       bscBalance = await bscProvider.getBalance(adminApiAddress);
       await new Promise(resolve => setTimeout(resolve, 2000));
       amoyBalance = await amoyProvider.getBalance(adminApiAddress);

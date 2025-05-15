@@ -1,6 +1,10 @@
 import express from "express";
 import { getBonds, getBondById, deleteBondById, createBond, BondModel } from "../db/bonds";
 import { MongoServerError } from "mongodb";
+import { useBlockchainService } from '../services/blockchain.service'
+import { useBusinessService } from '../services/business.service'
+import { getBscBalance } from '../services/api-business.service'
+import { getIssuerById } from '../db/Issuer'; 
 // import { authentication, random } from "../helpers";
 
 // export const getBond = async (
@@ -29,6 +33,10 @@ export const getAllBonds = async (req: express.Request, res: express.Response) =
 };
 
 export const addBond = async (req: express.Request, res: express.Response) => {
+
+  const { createCompanyBond, mintBond, balance } = useBlockchainService();
+  const { calculateBondPrice, getBondNetWorkAccount } = useBusinessService();
+
   try {
     console.log(req.body);
     const bondData = req.body;
@@ -100,7 +108,21 @@ export const addBond = async (req: express.Request, res: express.Response) => {
       }
     });
 
-    console.log(bond)
+    if (!bond) return;
+  
+    const wallet = (await getIssuerById(bond.creatorCompany)).walleAddress;
+    
+    const bondPrice = await calculateBondPrice(bond);
+   
+    // //¡¡¡¡ PENDIENTE !!!!  Pendiente SYMBOL
+    const responseCreateCompanyBond = await createCompanyBond(bond.bondName, "TST", bondPrice, wallet);
+    const contractAddress = await getBondNetWorkAccount(responseCreateCompanyBond.accounts, bond.blockchainNetwork.toUpperCase());
+    const responseMintBond = await mintBond(contractAddress, wallet, bond.goalAmount);
+
+    //const responseBalance = balance(contractAddress, wallet, networkName);
+
+    // //¡¡¡¡ PENDIENTE !!!!  Contract Address AÑADIR A MONGO  !!!
+    // //¡¡¡¡ OPCIONAL !!!!  Añadir trx a una pagina de TRX en mongo  !!!
     res.status(201).json(bond);
   } catch (error) {
     console.error(error);
