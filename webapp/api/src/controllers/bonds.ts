@@ -1,5 +1,5 @@
 import express from "express";
-import { getBonds, getBondById, deleteBondById, createBond, BondModel } from "../db/bonds";
+import { getBonds, getBondById, deleteBondById, createBond, BondModel, updateBondById } from "../db/bonds";
 import { MongoServerError } from "mongodb";
 import { useBlockchainService } from '../services/blockchain.service'
 import { useBusinessService } from '../services/business.service'
@@ -88,17 +88,12 @@ export const addBond = async (req: express.Request, res: express.Response) => {
       return;
     }
 
-    if (blockchainNetwork === "other" && (!otherBlockchainNetwork || otherBlockchainNetwork.trim() === "")) {
-      res.status(400).json({
-        error: "Missing blockchain network details",
-        message: "If the blockchain network is not in the list, specify an alternative blockchian network.",
-      });
-      return;
-    }
     console.log("ok - all data");
 
+    let createdBond;
+
     // Create the bond using the createBond method
-    const bond = await createBond(bondData).catch((error: MongoServerError) => {
+    createdBond = await createBond(bondData).catch((error: MongoServerError) => {
       if (error.code === 11000) {
         res.status(400).json({
           error: "Duplicate bondName detected",
@@ -108,22 +103,37 @@ export const addBond = async (req: express.Request, res: express.Response) => {
       }
     });
 
-    if (!bond) return;
+    if (!createdBond) return;
   
-    const wallet = (await getIssuerById(bond.creatorCompany)).walleAddress;
-    
-    const bondPrice = await calculateBondPrice(bond);
-   
-    // //¡¡¡¡ PENDIENTE !!!!  Pendiente SYMBOL
-    const responseCreateCompanyBond = await createCompanyBond(bond.bondName, "TST", bondPrice, wallet);
-    const contractAddress = await getBondNetWorkAccount(responseCreateCompanyBond.accounts, bond.blockchainNetwork.toUpperCase());
-    const responseMintBond = await mintBond(contractAddress, wallet, bond.goalAmount);
+    try {
+      const wallet = (await getIssuerById(createdBond.creatorCompany)).walleAddress;
+      
+      const bondPrice = await calculateBondPrice(createdBond);
+      console.log(bondPrice);
+      // //¡¡¡¡ PENDIENTE !!!!  Pendiente SYMBOL
+      const responseCreateCompanyBond = await createCompanyBond(createdBond.bondName, "TST", bondPrice, wallet);
+      console.log(responseCreateCompanyBond);
+      const contractAddress = await getBondNetWorkAccount(responseCreateCompanyBond.accounts, createdBond.blockchainNetwork.toUpperCase());
+      console.log(contractAddress);
+      const responseMintBond = await mintBond(contractAddress, wallet, createdBond.goalAmount);
+      console.log(responseMintBond);
+      //const responseBalance = balance(contractAddress, wallet, networkName);
 
-    //const responseBalance = balance(contractAddress, wallet, networkName);
-
-    // //¡¡¡¡ PENDIENTE !!!!  Contract Address AÑADIR A MONGO  !!!
-    // //¡¡¡¡ OPCIONAL !!!!  Añadir trx a una pagina de TRX en mongo  !!!
-    res.status(201).json(bond);
+      // Update the bond with the contract address in tokenState
+      await updateBondById(createdBond._id.toString(), { 
+        tokenState: [{
+          blockchain: createdBond.blockchainNetwork,
+          amount: createdBond.numberTokens,
+          contractAddress: contractAddress
+        }]
+      });
+      // //¡¡¡¡ OPCIONAL !!!!  Añadir trx a una pagina de TRX en mongo  !!!
+      res.status(201).json(createdBond);
+    } catch (error) {
+      // Si algo falla en las operaciones de blockchain, eliminamos el documento creado
+      await deleteBondById(createdBond._id.toString());
+      throw error; // Re-lanzamos el error para que sea capturado por el catch exterior
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({

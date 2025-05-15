@@ -1,7 +1,8 @@
 import express from "express";
 import { MongoServerError } from "mongodb";
-import { createInvestor, getInvestors, getInvestorByEmail } from "../db/Investor";
+import { createInvestor, getInvestors, getInvestorByEmail, updateInvestorById } from "../db/Investor";
 import { useBlockchainService } from '../services/blockchain.service'
+import { update } from "lodash";
 
 /**
  * Obtener todos los usuarios
@@ -73,7 +74,7 @@ export const registerInvestor = async (req: express.Request, res: express.Respon
     const { address, createdAt, accounts} = await createCompany(foundInvestor)
         
     // ¡¡¡ IMPORTANTE !!! Revisar con petre
-    //await updateIssuerById(foundIssuer, { walleAddress: address, accounts: accounts});
+    await updateInvestorById(foundInvestor, { walletAddress: address, accounts: accounts});
 
 
     console.log(newInvestor);

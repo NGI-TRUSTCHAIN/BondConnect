@@ -13,6 +13,8 @@ export interface Investor {
   country: string;
   email: string;
   password: string;
+  walletAddress: string;
+  accounts: any;
 }
 
 const InvestorRegistration = () => {
@@ -26,6 +28,8 @@ const InvestorRegistration = () => {
     country: "",
     email: "",
     password: "",
+    walletAddress: "",
+    accounts: {},
   });
   const [pass, setPass] = useState("");
   const [confimPass, setConfirmPass] = useState("");
@@ -70,7 +74,7 @@ const InvestorRegistration = () => {
 
   const isInvestorValid = (investor: Investor) => {
     return Object.entries(investor).every(([key, value]) => {
-      if (key === "_id") return true; // Ignorar _id
+      if (key === "_id" || key === "walletAddress" || key === "accounts") return true; // Ignorar _id, wallet y accounts
       return value !== "" && value !== undefined;
     });
   };

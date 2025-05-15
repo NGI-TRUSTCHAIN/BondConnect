@@ -55,6 +55,7 @@ const Oportunities = () => {
     dispatch(getRetailMktBonds())
   }, [dispatch]);
 
+  console.log(user);
   return (
     <>
       <div className="container mt-3 ">

@@ -23,7 +23,7 @@ export const registerInvestor = createAsyncThunk(
   async (dataI: { investor: Investor | Issuer; particular: boolean }, { rejectWithValue }) => {
     console.log("Before sending:", JSON.stringify(dataI.investor));
     try {
-      const response = await fetch("/api/api/register-investor", {
+      const response = await fetch("/api/register-investor", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

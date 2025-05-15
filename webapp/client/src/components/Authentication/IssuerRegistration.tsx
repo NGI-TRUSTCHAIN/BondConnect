@@ -16,7 +16,8 @@ export interface Issuer {
   idCard: string;
   email: string;
   password: string;
-  // Añadir walletAddress
+  walletAddress: string;
+  accounts: any;
 }
 
 type Props = {
@@ -46,6 +47,8 @@ const IssuerRegistration: React.FC<Props> = ({ investor = false }) => {
     idCard: "",
     email: "",
     password: "",
+    walletAddress: "",
+    accounts: {},
   });
 
 

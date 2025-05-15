@@ -62,3 +62,9 @@
 [ERC20 Contract API] [2025-05-14 12:00:11] [INFO] - Loading contract file from ./contracts.json...
 [ERC20 Contract API] [2025-05-14 12:00:11] [INFO] - Loading 6 contracts...
 [ERC20 Contract API] [2025-05-14 12:00:11] [INFO] - Loaded 6 contracts successfully.
+[Default] [2025-05-15 15:01:16] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-15 15:01:16] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-15 15:01:16] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-15 15:01:16] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-15 15:01:16] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-15 15:01:16] [INFO] - Express server running on port 3000...

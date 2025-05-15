@@ -36,3 +36,15 @@
 [ERC20 Contract API] [2025-05-13 11:00:11] [INFO] - STARTING API EXPOSITION
 [ERC20 Contract API] [2025-05-13 11:00:11] [INFO] - STARTING API
 [ERC20 Contract API] [2025-05-13 11:00:11] [INFO] - Express server running on port 4000...
+[Default] [2025-05-15 14:56:14] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-15 14:56:14] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-15 14:56:14] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-15 14:56:14] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-15 14:56:14] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-15 14:56:14] [INFO] - Express server running on port 4000...
+[ERC20 Contract API] [2025-05-15 15:15:47] [INFO] - POST /createAccount
+[ERC20 Contract API] [2025-05-15 15:15:47] [INFO] - CREATING IN alastria
+[ERC20 Contract API] [2025-05-15 15:15:47] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-15 15:15:47] [INFO] - Loading 1 contracts...
+[ERC20 Contract API] [2025-05-15 15:15:47] [INFO] - Loaded 1 contracts successfully.
+[ERC20 Contract API] [2025-05-15 15:15:48] [ERROR] - TypeError: invalid BytesLike value (argument="value", value="DEFAULT", code=INVALID_ARGUMENT, version=6.13.2)

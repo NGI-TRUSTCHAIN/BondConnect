@@ -361,11 +361,8 @@ const FormBondCreationC = () => {
                   <option value="" disabled>
                     Select blockchain network
                   </option>
-                  <option value="Ethereum">Ethereum</option>
-                  <option value="Alastria">Alastria</option>
-                  <option value="Binance Smart Chain">Binance Smart Chain</option>
-                  <option value="Polygon">Polygon</option>
-                  <option value="Other">Other</option>
+                  <option value="ALASTRIA">Alastria</option>
+                  <option value="AMOY">Amoy</option>
                 </select>
               </div>
             </div>
