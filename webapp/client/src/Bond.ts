@@ -23,7 +23,7 @@ export interface Bond {
 export interface TokenState{
     blockchain: string;    
     amount: number;
-    amountAvaliable: number;
+    amountAvaliable?: number;
 }
-// añadir un timeStamp de cuando se creo 
-// añadir 
+// aï¿½adir un timeStamp de cuando se creo 
+// aï¿½adir 

@@ -16,11 +16,8 @@ export const useBlockchainService = () => {
 
   // Crear una empresa (similar al método createCompany en Angular)
   const createCompany = async (companyName: any) => {
-    const saltHex = encodeBytes32String(companyName);
-    console.log('Salt generada:', saltHex);
-
     try {
-      const response = await createAccount(saltHex);
+      const response = await createAccount(companyName);
       const accounts = response?.accounts ?? [];
       const missingAccounts = accounts.filter((acc: { address: string; }) => !acc.address || acc.address.trim() === '');
 
