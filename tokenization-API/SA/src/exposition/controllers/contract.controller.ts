@@ -117,40 +117,52 @@ export async function createAccountMultiple(req: Request): Promise<AppResult> {
         timestamp,
     });
 
-    
-    logger.info(`CREATING IN amoy`);
-    initContractsService(logger, contracts, config, "AMOY");
-    const resultAmoy: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, newArgs, options);
+    try {
+        logger.info(`CREATING IN amoy`);
+        initContractsService(logger, contracts, config, "AMOY");
 
-    let addressAmoy: string | null = null;
-    let transactionHashAmoy: string | null = null;
-    let timestampAmoy: string | null = null;
+        const resultAmoy: ContractTransactionResponse | ContractTransactionReceipt | null =
+            await executeContractMethod(contractName, contractAddress, methodName, newArgs, options);
 
-    if (resultAmoy && 'logs' in resultAmoy && resultAmoy.logs.length > 0) {
-        addressAmoy = resultAmoy.logs[0].address;
-        transactionHashAmoy = resultAmoy.hash;
-        logger.info(`account amoy: ${addressAmoy}`);
-    } else {
-        logger.warn("No logs returned from Amoy deployment.");
-    }
+        let addressAmoy: string | null = null;
+        let transactionHashAmoy: string | null = null;
+        let timestampAmoy: string | null = null;
 
-    results.push({
-        network: "AMOY",
-        address: addressAmoy,
-        transactionHash: transactionHashAmoy,
-        timestamp: timestampAmoy,
-    });
-         
+        if (resultAmoy && 'logs' in resultAmoy && resultAmoy.logs.length > 0) {
+            addressAmoy = resultAmoy.logs[0].address;
+            transactionHashAmoy = resultAmoy.hash;
+            logger.info(`account amoy: ${addressAmoy}`);
+        } else {
+            logger.warn("No logs returned from Amoy deployment.");
+        }
 
-    return {
-        statusCode: 201,
-        body: {
-           // message: resultAlastria instanceof ContractTransactionReceipt ? 'Transaction executed' : 'Transacion processed',
-           // resultAlastria
-            message: "Transactions executed successfully",          
-            accounts: results,
-        },
-    };
+        results.push({
+            network: "AMOY",
+            address: addressAmoy,
+            transactionHash: transactionHashAmoy,
+            timestamp: timestampAmoy,
+        });
+
+        return {
+            statusCode: 201,
+            body: {
+                message: "Transactions executed successfully",
+                accounts: results,
+            },
+        };
+
+    } catch (error) {
+        logger.error(`Error in AMOY deployment: ${error}`);
+
+        return {
+            statusCode: 500,
+            body: {
+                message: "Transaction failed",
+                accounts: results,
+            },
+        };
+    }        
+
 }
 
 export async function createIndividualAccountRetry(req: Request): Promise<AppResult> {

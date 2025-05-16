@@ -9,7 +9,11 @@
     "\\tokenization-API\\SA",
     "\\tokenization-API\\SA\\src",
     "\\tokenization-API\\SA\\src\\exposition",
-    "\\tokenization-API\\SA\\src\\exposition\\controllers"
+    "\\tokenization-API\\SA\\src\\exposition\\controllers",
+    "\\webapp\\api",
+    "\\webapp\\api\\src",
+    "\\webapp\\api\\src\\db"
   ],
+  "SelectedNode": "\\tokenization-API\\SA\\package.json",
   "PreviewInSolutionExplorer": false
 }
