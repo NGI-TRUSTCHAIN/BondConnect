@@ -24,12 +24,20 @@ const BlockchainTransfer = () => {
   });
 
   const handleData = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target; // Extract name and value from the event
-    //setFormData({ ...formData, [name]: value }); // Update state dynamically
-    setTransferData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    const { name, value } = e.target;
+    
+    // Special handling for tokenNumber to ensure it's converted to a number
+    if (name === 'tokenNumber') {
+      setTransferData((prevData) => ({
+        ...prevData,
+        [name]: value === '' ? undefined : Number(value),
+      }));
+    } else {
+      setTransferData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   // const [token, setToken] = useState("");
@@ -57,17 +65,17 @@ const BlockchainTransfer = () => {
   useEffect(() => {
     if (transferData.tokenName) {
       console.log(`Input value changed: ${transferData.tokenName}`);
-      const bond = registeredBonds?.find((bond) => bond.bondName === transferData.tokenName) || null;
+      const bond = registeredBonds?.find((bond) => bond._id === transferData.tokenName) || null;
       setSelectedBond(bond);
-      console.log(selectedBond);
-      selectedBond?.tokenState.forEach((block) => {
+      console.log('Selected bond:', bond);
+      bond?.tokenState.forEach((block) => {
         if (block.blockchain === transferData.originBlockchain) {
           setTokensLeft(block.amount);
+          console.log('Tokens left:', block.amount);
         }
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transferData.tokenName, transferData.originBlockchain, selectedBond]);
+  }, [transferData.tokenName, transferData.originBlockchain, registeredBonds]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission behavior
@@ -101,7 +109,6 @@ const BlockchainTransfer = () => {
 
     try {
       console.log("transferData: ", transferData);
-      await dispatch(updateBond(bond)).unwrap();
       await dispatch(createTransferHistoric(transferData)).unwrap();
       toast.success("Success");
     } catch (error) {
@@ -218,6 +225,7 @@ const BlockchainTransfer = () => {
                   name="tokenNumber"
                   className="form-control bg-form"
                   placeholder={`${tokensLeft} available`}
+                  value={transferData.tokenNumber}
                   onChange={handleData}
                 />
               </div>
@@ -249,7 +257,7 @@ const BlockchainTransfer = () => {
               </h2>
               <h3 style={{ textAlign: "left" }}>Origin: {transferData.originBlockchain}</h3>
               <h3 style={{ textAlign: "left" }}>Destination: {transferData.destinationBlockchain}</h3>
-              <h3 style={{ textAlign: "left" }}>Token: {selectedBond?.bondName}</h3>
+              <h3 style={{ textAlign: "left" }}>Token: {transferData?.tokenName}</h3>
               <h3 style={{ textAlign: "left" }}>Number: {transferData.tokenNumber}</h3>
 
               <div className="popup-actions">

@@ -14,7 +14,7 @@ const RetailMarket = () => {
   const errorMessage = useAppSelector((state) => state.bond.error);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const blockchains = ["Ethereum", "Alastria", "Binance Smart Chain", "Polygon"];
+  const blockchains = [ "ALASTRIA", "AMOY"];
   const registeredBonds = useAppSelector((state) => state.bond.bonds);
 
   const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility

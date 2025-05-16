@@ -1,5 +1,5 @@
 import express from "express";
-import { getBondByBondName } from "../db/bonds";
+import { getBondByBondName, getBondById, updateBondById } from "../db/bonds";
 import { createTransferData, getTransferData } from "../db/BlockchainTransfer";
 import { getIssuerById } from "../db/Issuer";
 import { useApiBridge } from "../services/api-bridge.service";
@@ -32,23 +32,40 @@ export const addTransferTicket = async (req: express.Request, res: express.Respo
       return;
     }  
     console.log('ok - all data');
-
-    const bond = await getBondByBondName(transferData.tokenName);
+    console.log('tranferdata ' ,transferData);
+    const bond = await getBondById(transferData.tokenName);
+    console.log(bond);
+    
     const issuer = await getIssuerById(bond.creatorCompany);
     const orgContractAddress = bond.tokenState.find((block: any) => 
       block.blockchain === transferData.originBlockchain).contractAddress;
     
     if (transferData.destinationBlockchain === bond.blockchainNetwork) {
       // Si la blockchain de destino es la misma que la del bond
-      await useApiBridge.burn(orgContractAddress, transferData.tokenNumber, transferData.destinationBlockchain, 
-        issuer.walletAddress, bond.contractAddress);
+      console.log('contrato AMOy', orgContractAddress);
+      console.log('issuer: ', issuer.walletAddress);
+      console.log('blockchain de origen', transferData.originBlockchain);
+      console.log('tokenNumber', transferData.tokenNumber);
+      console.log('bond: ', bond.tokenState.find((token: any) => (token.blockchain === 'ALASTRIA')).contractAddress);
+      
+      await useApiBridge.burn(orgContractAddress, transferData.tokenNumber, transferData.originBlockchain, 
+        issuer.walletAddress, bond.tokenState.find((token: any) => (token.blockchain === 'ALASTRIA')).contractAddress);
+      bond.tokenState.find((token: any) => (token.blockchain === 'ALASTRIA')).amount += Number(transferData.tokenNumber)
+      bond.tokenState.find((token: any) => (token.blockchain === 'AMOY')).amount -= Number(transferData.tokenNumber)
     } else {
       // Si la blockchain de destino es diferente, ejecutamos el bridge
-      await useApiBridge.bridge(bond.contractAddress, issuer.walletAddress, transferData.tokenNumber,
-        transferData.tokenName, bond.bondSymbol, Math.floor(bond.price));
+      console.log('bond.contractAddress', bond.contractAddress);
+      console.log('issuer: ', issuer.walletAddress);
+      
+      const response = await useApiBridge.bridge(bond.tokenState.find((token: any) => (token.blockchain === 'ALASTRIA')).contractAddress, issuer.walletAddress,transferData.tokenNumber,
+        bond.bondName, bond.bondSymbol, Math.floor(bond.price));
+      bond.tokenState.push({blockchain: transferData.destinationBlockchain,
+        amount: Number(transferData.tokenNumber), contractAddress: response.contract});
+      bond.tokenState.find((token: any) => (token.blockchain === 'ALASTRIA')).amount -= Number(transferData.tokenNumber)
     }
-    
     // Create the bond using the createBond method
+    /// IMPORTANTE Actualizar BOnd
+    await updateBondById(bond._id.toString(), bond);
     const transferTicket = await createTransferData(transferData);
 
     res.status(201).json(transferTicket);

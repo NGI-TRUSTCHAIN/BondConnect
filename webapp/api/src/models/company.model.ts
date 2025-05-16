@@ -33,4 +33,5 @@ export interface BondAccount {
 export interface CreateBondResponse {
   message: string;
   accounts: BondAccount[];
+  contract: string;
 }

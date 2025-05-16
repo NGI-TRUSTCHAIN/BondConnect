@@ -17,7 +17,7 @@ export interface IBond {
   redemptionStartDate?: Date;
   redemptionFinishDate?: Date;
   blockchainNetwork: "ALASTRIA" | "AMOY";
-  tokenState: Array<{blockchain: string, amount: number, contractAddress?: string}>;
+  tokenState: Array<{blockchain: string, amount: number, contractAddress?: string, amountAvaliable?: number}>;
   creatorCompany: string;
   contractAddress?: string;
 }

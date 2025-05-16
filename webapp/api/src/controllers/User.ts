@@ -28,11 +28,11 @@ export const purchase = async (req: express.Request, res: express.Response) => {
     const bond = await getBondByBondName(purchaseData.investToken);
 
     const contractAddress = bond.tokenState.find((block: any) => 
-      block.blockchain === purchaseData.destinationBlockchain).contractAddress;
+      block.blockchain.toUpperCase() === purchaseData.destinationBlockchain.toUpperCase()).contractAddress;
     const issuer = await getIssuerById(bond.creatorCompany);
     const inversor = await getInvestorByEmail(purchaseData.userId);
 
-    await useApiBridge.requestTransfer(inversor.walletAddress,issuer.walletAddress, purchaseData.purchasedTokens,
+    await useApiBridge.requestTransfer(inversor.walletAddress, issuer.walletAddress, purchaseData.purchasedTokens,
       purchaseData.destinationBlockchain.toUpperCase(), contractAddress);
     // Validate required fields
     if (!purchaseData.userId || !purchaseData.destinationBlockchain || !purchaseData.investToken || !purchaseData.purchasedTokens) {
