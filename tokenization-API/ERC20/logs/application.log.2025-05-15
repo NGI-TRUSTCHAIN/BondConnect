@@ -1,0 +1,66 @@
+[ERC20 Contract API] [2025-05-15 16:27:15] [INFO] - POST /createBond
+[ERC20 Contract API] [2025-05-15 16:27:15] [INFO] - Start Alastria CreateBond
+[ERC20 Contract API] [2025-05-15 16:27:15] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-15 16:27:15] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-15 16:27:15] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-15 16:27:18] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-15 16:27:19] [INFO] - Address Bond in Alastria: 0xA6967Ed20544199b1dfd7C53891114b33bE05664
+[ERC20 Contract API] [2025-05-15 16:33:21] [INFO] - POST /createBond
+[ERC20 Contract API] [2025-05-15 16:33:21] [INFO] - Start Alastria CreateBond
+[ERC20 Contract API] [2025-05-15 16:33:21] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-15 16:33:21] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-15 16:33:21] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-15 16:33:23] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-15 16:33:29] [INFO] - Address Bond in Alastria: 0xc7200bE7d15b202B627473311F4c6e17Cb5444eb
+[ERC20 Contract API] [2025-05-15 16:35:00] [INFO] - POST /createBond
+[ERC20 Contract API] [2025-05-15 16:35:00] [INFO] - Start Alastria CreateBond
+[ERC20 Contract API] [2025-05-15 16:35:00] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-15 16:35:00] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-15 16:35:00] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-15 16:35:00] [ERROR] - Error: no matching fragment (operation="fragment", info={ "args": [ "BonoEstrellaGaLicia223", "BESF1333", 1000, 12, "0x251536F1DD55ffCcDe005657944C869b88312bBc", { "_typedSymbol": Symbol(_ethers_typed), "type": "overrides", "value": {  } } ], "key": "createBond" }, code=UNSUPPORTED_OPERATION, version=6.13.2)
+[ERC20 Contract API] [2025-05-15 16:35:09] [INFO] - POST /createBond
+[ERC20 Contract API] [2025-05-15 16:35:09] [INFO] - Start Alastria CreateBond
+[ERC20 Contract API] [2025-05-15 16:35:09] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-15 16:35:09] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-15 16:35:09] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-15 16:35:10] [ERROR] - TypeError: underflow (argument="value", value=1000.12, code=INVALID_ARGUMENT, version=6.13.2)
+[ERC20 Contract API] [2025-05-15 16:35:15] [INFO] - POST /createBond
+[ERC20 Contract API] [2025-05-15 16:35:15] [INFO] - Start Alastria CreateBond
+[ERC20 Contract API] [2025-05-15 16:35:15] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-15 16:35:15] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-15 16:35:15] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-15 16:35:17] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-15 16:35:23] [INFO] - Address Bond in Alastria: 0x16900284E66D9FF3A18CB4e3e1d41dEE695fd6Fc
+[ERC20 Contract API] [2025-05-15 16:39:24] [INFO] - POST /bridge
+[ERC20 Contract API] [2025-05-15 16:39:24] [INFO] - INITIALIZING SERVICES    --     approveERC20
+[ERC20 Contract API] [2025-05-15 16:39:24] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-15 16:39:24] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-15 16:39:24] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-15 16:39:27] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-15 16:39:32] [INFO] - Approve transaction succeeded. Waiting 10 seconds...
+[ERC20 Contract API] [2025-05-15 16:39:42] [INFO] - INITIALIZING SERVICES    --     deposit
+[ERC20 Contract API] [2025-05-15 16:39:45] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-15 16:39:46] [INFO] - INITIALIZING SERVICES    --     createRepresentativeBondToken
+[ERC20 Contract API] [2025-05-15 16:39:49] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-15 16:39:58] [INFO] - account amoy: 0xf1b02e5A4605C206D9AdBB1376dba211a718EB1e
+[ERC20 Contract API] [2025-05-15 16:39:58] [INFO] - INITIALIZING SERVICES    --    Mint in amoy representative tokens
+[ERC20 Contract API] [2025-05-15 16:40:00] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-15 16:46:45] [INFO] - POST /burn
+[ERC20 Contract API] [2025-05-15 16:46:45] [INFO] - INITIALIZING SERVICES  ---      BURN
+[ERC20 Contract API] [2025-05-15 16:46:45] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-15 16:46:45] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-15 16:46:45] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-15 16:46:48] [INFO] - Waiting for confirmations
+[Default] [2025-05-15 16:47:39] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-15 16:47:39] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-15 16:47:39] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-15 16:47:39] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-15 16:47:39] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-15 16:47:39] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-15 16:47:44] [INFO] - POST /burn
+[ERC20 Contract API] [2025-05-15 16:47:44] [INFO] - INITIALIZING SERVICES  ---      BURN
+[ERC20 Contract API] [2025-05-15 16:47:44] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-15 16:47:44] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-15 16:47:44] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-15 16:47:46] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-15 16:47:48] [ERROR] - Error: could not coalesce error (error={ "code": 30, "message": "Request timeout on the free tier, please upgrade your tier to the paid one" }, payload={ "id": 14, "jsonrpc": "2.0", "method": "eth_getTransactionReceipt", "params": [ "0x3988f928229e830dda670b807c6720a20a07e1ec0117456fcb895c6cfb440641" ] }, code=UNKNOWN_ERROR, version=6.13.2)
