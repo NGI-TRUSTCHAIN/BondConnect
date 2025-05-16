@@ -3,13 +3,6 @@ import { useNavigate } from "react-router-dom";
 import InvestorRegistration from "./InvestorRegistration";
 import IssuerRegistration from "./IssuerRegistration";
 
-export interface UserData {
-  _id: string | undefined;
-  userId: string;
-  destinationBlockchain: string;
-  investToken: string;
-  purchasedTokens: number | undefined;
-}
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -24,10 +17,8 @@ const SignUp = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log(userProfile);
-    // setErrorData(false);
-    // console.log(userData);
-    // dispatch(registerUser(userData));
   };
+  
   return (
     <div className="container-fluid mt-3 d-flex justify-content-center align-items-center">
       <div className="card mt-3">

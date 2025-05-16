@@ -70,5 +70,21 @@ export const useApiBridge = {
       contractAddress
     });
   },
+  
+  async burn(
+    originNetworkContract: string,
+    amount: number,
+    network: string,
+    ownerWallet: string,
+    contractAlastriaAddress: string
+  ): Promise<CreateBondResponse> {
+    return await post('/burn', {
+      originNetworkContract,
+      amount,
+      network,
+      ownerWallet,
+      contractAlastriaAddress
+    });
+  },
 
 };

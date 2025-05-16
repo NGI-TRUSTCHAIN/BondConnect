@@ -33,7 +33,7 @@ const FormBondCreationC = () => {
     // redemptionPeriods: "",
     redemptionStartDate: undefined,
     redemptionFinishDate: undefined,
-    blockchainNetwork: "",
+    blockchainNetwork: "ALASTRIA",
     // walletAddress: "",
     tokenState: [],
     creatorCompany: user?._id,
@@ -349,20 +349,13 @@ const FormBondCreationC = () => {
             <h4 className="text-primary">DLT Network Selection</h4>
             <div className="row">
               <div className=" mb-3">
-                <label htmlFor="blockchainNetwork" className="form-label">
-                  DLT Network:
-                </label>
                 <select
                   id="blockchainNetwork"
                   name="blockchainNetwork"
                   className="form-control bg-form"
-                  value={formData.blockchainNetwork}
-                  onChange={handleChange}>
-                  <option value="" disabled>
-                    Select blockchain network
-                  </option>
+                  value="ALASTRIA"
+                  disabled>
                   <option value="ALASTRIA">Alastria</option>
-                  <option value="AMOY">Amoy</option>
                 </select>
               </div>
             </div>

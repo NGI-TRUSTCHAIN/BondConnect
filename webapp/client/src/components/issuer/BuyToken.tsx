@@ -1,11 +1,11 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { readBonds, registerUser } from "../features/bondSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { readBonds, registerPurchase } from "../../features/bondSlice";
 import { useNavigate } from "react-router-dom";
-import { readInvestors, readIssuers } from "../features/userSlice";
-import InvestorRegistration from "./Authentication/InvestorRegistration";
+import { readInvestors, readIssuers } from "../../features/userSlice";
+import InvestorRegistration from "../Authentication/InvestorRegistration";
 
-export interface UserData {
+export interface PurchaseData {
   _id: string | undefined;
   userId: string;
   destinationBlockchain: string;
@@ -13,7 +13,7 @@ export interface UserData {
   purchasedTokens: number | undefined;
 }
 
-const UserRegistration = () => {
+const BuyToken = () => {
   const errorMessage = useAppSelector((state) => state.bond.error);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const UserRegistration = () => {
   const [showPopupUser, setShowPopupUser] = useState(false); // State to toggle popup visibility
   const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility
   const [errorData, setErrorData] = useState(false);
-  const [userData, setUserData] = useState<UserData>({
+  const [purchaseData, setPurchaseData] = useState<PurchaseData>({
     _id: undefined,
     userId: "",
     destinationBlockchain: "",
@@ -34,7 +34,7 @@ const UserRegistration = () => {
 
   const handleData = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setUserData((prevData) => ({
+    setPurchaseData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
@@ -51,7 +51,7 @@ const UserRegistration = () => {
   const handleUser = () => {
 
     for (const user of investors) {
-      if (user.name !== userData.userId) {
+      if (user.name !== purchaseData.userId) {
         setErrorData(true);
         console.log(errorData);
       }
@@ -69,11 +69,11 @@ const UserRegistration = () => {
     e.preventDefault();
     setErrorData(false);
     setShowPopup(true);
-    console.log(userData);
+    console.log(purchaseData);
   };
   const handleConfirmSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await dispatch(registerUser(userData));
+    await dispatch(registerPurchase(purchaseData));
     setShowPopup(false);
     navigate("/issuer-dash");
   };
@@ -106,7 +106,7 @@ const UserRegistration = () => {
             <select
               id="destinationBlockchain"
               name="destinationBlockchain"
-              value={userData.destinationBlockchain}
+              value={purchaseData.destinationBlockchain}
               className="form-control bg-form"
               onChange={handleData}>
               <option value="" disabled>
@@ -133,7 +133,7 @@ const UserRegistration = () => {
               id="investToken"
               name="investToken"
               className="form-control bg-form"
-              value={userData.investToken}
+              value={purchaseData.investToken}
               onChange={handleData}>
               <option value="" disabled>
                 Select token
@@ -142,7 +142,7 @@ const UserRegistration = () => {
                 registeredBonds?.map((bond) => {
                   // Verificar si algún objeto dentro de tokenState tiene blockchain igual a la blockchain seleccionada
                   const isBlockchainMatch = bond.tokenState.some(
-                    (block) => block.blockchain === userData.destinationBlockchain
+                    (block) => block.blockchain === purchaseData.destinationBlockchain
                   );
 
                   return (
@@ -198,16 +198,16 @@ const UserRegistration = () => {
 
               <ul style={{ listStyle: "none", padding: 0 }}>
                 <li>
-                  <strong>User:</strong> <em>{userData?.userId}</em>
+                  <strong>User:</strong> <em>{purchaseData?.userId}</em>
                 </li>
                 <li>
-                  <strong>Token Sent Name:</strong> <em>{userData?.investToken}</em>
+                  <strong>Token Sent Name:</strong> <em>{purchaseData?.investToken}</em>
                 </li>
                 <li>
-                  <strong>Number of Tokens:</strong> <em>{userData?.purchasedTokens}</em>
+                  <strong>Number of Tokens:</strong> <em>{purchaseData?.purchasedTokens}</em>
                 </li>
                 <li>
-                  <strong>Destination Blockchain Network:</strong> <em>{userData?.destinationBlockchain}</em>
+                  <strong>Destination Blockchain Network:</strong> <em>{purchaseData?.destinationBlockchain}</em>
                 </li>
               </ul>
 
@@ -234,4 +234,4 @@ const UserRegistration = () => {
   );
 };
 
-export default UserRegistration;
+export default BuyToken;

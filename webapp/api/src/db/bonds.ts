@@ -52,6 +52,7 @@ export const BondModel = mongoose.model("Bond", BondSchema);
 
 export const getBonds = () => BondModel.find();
 export const getBondById = (id: string) => BondModel.findById(id);
+export const getBondByBondName = (bondName: string) => BondModel.findOne({ bondName: bondName });
 export const createBond = (values: Record<string, any>) =>
   new BondModel(values).save();
 export const deleteBondById = (id: string) =>

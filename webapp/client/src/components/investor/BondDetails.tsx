@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Bond } from "../../Bond";
 import { Investor } from "../Authentication/InvestorRegistration";
-import { UserData } from "../UserRegistration";
+import { PurchaseData } from "../issuer/BuyToken";
 import { useLocation, useNavigate } from "react-router-dom";
-import { registerUser } from "../../features/bondSlice";
+import { registerPurchase } from "../../features/bondSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -24,14 +24,14 @@ const BondDetails = () => {
     (entry: { destinationBlockchain: string; numTokensOffered: number }) => entry.destinationBlockchain === selectedBlockchain
   );
   useEffect(() => {
-    setUserData((prev) => ({
+    setPurchaseData((prev) => ({
       ...prev,
       destinationBlockchain: selectedBlockchain,
       purchasedTokens: tokens,
     }));
   }, [selectedBlockchain, tokens]);
 
-  const [userData, setUserData] = useState<UserData>({
+  const [purchaseData, setPurchaseData] = useState<PurchaseData>({
     _id: undefined,
     userId: user.email,
     destinationBlockchain: bond.blockchainNetwork,
@@ -79,7 +79,7 @@ const BondDetails = () => {
   };
 
   const handleConfirmBuy = async () => {
-    await dispatch(registerUser(userData));
+    await dispatch(registerPurchase(purchaseData));
     setShowPopup(false);
     navigate("/investor-dash");
   };

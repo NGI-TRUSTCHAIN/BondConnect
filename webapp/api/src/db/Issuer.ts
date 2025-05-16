@@ -14,7 +14,7 @@ export interface IIssuer extends Document {
   idCard: string;
   email: string;
   password: string;
-  walleAddress?: string;
+  walletAddress?: string;
   accounts?: any;
   createdAt?: Date;
   updatedAt?: Date;
@@ -30,7 +30,7 @@ const IssuerSchema = new mongoose.Schema({
   idCard: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true, minlength: 6 },
-  walleAddress: { type: String, required: false },
+  walletAddress: { type: String, required: false },
   accounts: { type: Object, required: false },
 }, { timestamps: true });
 

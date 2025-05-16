@@ -45,12 +45,12 @@ const BlockchainTransfer = () => {
   // const transferHistory = useAppSelector((state) => state.bond.transferHistory);
   const error = useAppSelector((state) => state.bond.error);
   const [showPopup, setShowPopup] = useState(false);
-  const blockchains = ["Ethereum", "Alastria", "Binance Smart Chain", "Polygon"];
+  const blockchains = ["ALASTRIA", "AMOY"];
 
   useEffect(() => {
     document.title = "Blockchain Transfer";
     dispatch(readBonds());
-    dispatch(readTransferHistory());
+    // dispatch(readTransferHistory());
     console.log("Dispatched fetchBonds");
   }, [dispatch]);
 
@@ -87,27 +87,16 @@ const BlockchainTransfer = () => {
 
   // Handle the actual form submission or any action when "Create bond" is clicked
   const handleConfirmSubmit = async () => {
-    // console.log("Bond Created:", { token, number, destination, wallet });
 
     const bond = JSON.parse(JSON.stringify(selectedBond));
 
-    bond.tokenState.forEach((block: TokenState) => {
-      if (block.blockchain === transferData.originBlockchain) {
-        block.amount = block.amount - transferData.tokenNumber!;
-      }
-    });
-
-    console.log(bond);
-    const transferBlock: TokenState = bond.tokenState.find(
-      (block: TokenState) => block.blockchain === transferData.destinationBlockchain
-    );
+    const transferBlock: TokenState = bond.tokenState.find((block: TokenState) => block.blockchain === transferData.destinationBlockchain);
 
     if (!transferBlock) {
       bond.tokenState!.push({ blockchain: transferData.destinationBlockchain, amount: transferData.tokenNumber! });
     } else {
       transferBlock.amount += Number(transferData.tokenNumber!);
     }
-
     console.log(bond);
 
     try {
@@ -209,7 +198,7 @@ const BlockchainTransfer = () => {
 
                       return (
                         isBlockchainMatch && (
-                          <option key={bond._id} value={bond.bondName}>
+                          <option key={bond._id} value={bond._id}>
                             {bond.bondName}
                           </option>
                         )
@@ -260,7 +249,7 @@ const BlockchainTransfer = () => {
               </h2>
               <h3 style={{ textAlign: "left" }}>Origin: {transferData.originBlockchain}</h3>
               <h3 style={{ textAlign: "left" }}>Destination: {transferData.destinationBlockchain}</h3>
-              <h3 style={{ textAlign: "left" }}>Token: {transferData.tokenName}</h3>
+              <h3 style={{ textAlign: "left" }}>Token: {selectedBond?.bondName}</h3>
               <h3 style={{ textAlign: "left" }}>Number: {transferData.tokenNumber}</h3>
 
               <div className="popup-actions">

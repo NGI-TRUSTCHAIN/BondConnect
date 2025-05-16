@@ -1,5 +1,8 @@
-import { createTransferData, getTransferData } from "../db/BlockchainTransfer";
 import express from "express";
+import { getBondByBondName } from "../db/bonds";
+import { createTransferData, getTransferData } from "../db/BlockchainTransfer";
+import { getIssuerById } from "../db/Issuer";
+import { useApiBridge } from "../services/api-bridge.service";
 
 export const getTransferHistory = async (
   req: express.Request,
@@ -30,6 +33,21 @@ export const addTransferTicket = async (req: express.Request, res: express.Respo
     }  
     console.log('ok - all data');
 
+    const bond = await getBondByBondName(transferData.tokenName);
+    const issuer = await getIssuerById(bond.creatorCompany);
+    const orgContractAddress = bond.tokenState.find((block: any) => 
+      block.blockchain === transferData.originBlockchain).contractAddress;
+    
+    if (transferData.destinationBlockchain === bond.blockchainNetwork) {
+      // Si la blockchain de destino es la misma que la del bond
+      await useApiBridge.burn(orgContractAddress, transferData.tokenNumber, transferData.destinationBlockchain, 
+        issuer.walletAddress, bond.contractAddress);
+    } else {
+      // Si la blockchain de destino es diferente, ejecutamos el bridge
+      await useApiBridge.bridge(bond.contractAddress, issuer.walletAddress, transferData.tokenNumber,
+        transferData.tokenName, bond.bondSymbol, Math.floor(bond.price));
+    }
+    
     // Create the bond using the createBond method
     const transferTicket = await createTransferData(transferData);
 

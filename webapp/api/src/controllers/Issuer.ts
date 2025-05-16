@@ -58,7 +58,7 @@ export const registerIssuer = async (req: express.Request, res: express.Response
     console.log(foundIssuer)
     const { address, createdAt, accounts} = await createCompany(foundIssuer)
     
-    await updateIssuerById(foundIssuer, { walleAddress: address, accounts: accounts});
+    await updateIssuerById(foundIssuer, { walletAddress: address, accounts: accounts});
 
     console.log("nuevo",newIssuer)
     res.status(201).json(newIssuer);

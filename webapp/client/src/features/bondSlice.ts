@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Bond } from "../Bond";
 import { TransferInfo } from "../components/issuer/BlockchainTransfer";
-import { UserData } from "../components/UserRegistration";
+import { PurchaseData } from "../components/issuer/BuyToken";
 import { SaleReceipt } from "../components/TokenSale";
 import { SettlementReceipt } from "../components/TokenSettlement";
 import { MarketData } from "../components/issuer/RetailMarket";
@@ -9,7 +9,7 @@ import { MarketData } from "../components/issuer/RetailMarket";
 interface BondState {
   bonds: Bond[] | null;
   retailBonds: MarketData[] | null;
-  users: UserData[];
+  users: PurchaseData[];
   transferHistory: TransferInfo[] | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null | undefined;
@@ -269,13 +269,13 @@ export const readUsers = createAsyncThunk("bond/readUsers", async (_, { rejectWi
 
     const data = await response.json();
     console.log("Fetched Investors:", data); // Debugging step
-    return data as UserData[];
+    return data as PurchaseData[];
   } catch (error) {
     return rejectWithValue(error);
   }
 });
 
-export const registerUser = createAsyncThunk("bond/registerUser", async (userData: UserData, { rejectWithValue }) => {
+export const registerPurchase = createAsyncThunk("bond/registerUser", async (userData: PurchaseData, { rejectWithValue }) => {
   console.log("Before sending:", JSON.stringify(userData));
   try {
     const response = await fetch("/api/register-user", {
@@ -452,14 +452,14 @@ const bondSlice = createSlice({
         state.status = "failed";
         state.error = action.payload as string;
       })
-      .addCase(registerUser.pending, (state) => {
+      .addCase(registerPurchase.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(registerUser.fulfilled, (state) => {
+      .addCase(registerPurchase.fulfilled, (state) => {
         state.error = null;
         state.status = "succeeded";
       })
-      .addCase(registerUser.rejected, (state, action) => {
+      .addCase(registerPurchase.rejected, (state, action) => {
         state.status = "failed"; // Aquí capturamos el error que pasamos con rejectWithValue
         state.error = action.payload as string; // action.payload es el valor que pasamos con rejectWithValue
       })

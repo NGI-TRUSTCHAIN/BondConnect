@@ -106,18 +106,15 @@ export const addBond = async (req: express.Request, res: express.Response) => {
     if (!createdBond) return;
   
     try {
-      const wallet = (await getIssuerById(createdBond.creatorCompany)).walleAddress;
+      const wallet = (await getIssuerById(createdBond.creatorCompany)).walletAddress;
       
       const bondPrice = await calculateBondPrice(createdBond);
       console.log(bondPrice);
       // //¡¡¡¡ PENDIENTE !!!!  Pendiente SYMBOL
-      const responseCreateCompanyBond = await createCompanyBond(createdBond.bondName, "TST", bondPrice, wallet);
-      console.log(responseCreateCompanyBond);
+      const responseCreateCompanyBond = await createCompanyBond(createdBond.bondName, createdBond.bondSymbol,
+        bondPrice, wallet);
       const contractAddress = await getBondNetWorkAccount(responseCreateCompanyBond.accounts, createdBond.blockchainNetwork.toUpperCase());
-      console.log(contractAddress);
       const responseMintBond = await mintBond(contractAddress, wallet, createdBond.goalAmount);
-      console.log(responseMintBond);
-      //const responseBalance = balance(contractAddress, wallet, networkName);
 
       // Update the bond with the contract address in tokenState
       await updateBondById(createdBond._id.toString(), { 
