@@ -312,10 +312,10 @@ export const readUsers = createAsyncThunk("bond/readUsers", async (_, { rejectWi
   }
 });
 
-export const registerPurchase = createAsyncThunk("bond/registerUser", async (userData: PurchaseData, { rejectWithValue }) => {
+export const registerPurchase = createAsyncThunk("bond/registerPurchase", async (userData: PurchaseData, { rejectWithValue }) => {
   console.log("Before sending:", JSON.stringify(userData));
   try {
-    const response = await fetch("/api/register-user", {
+    const response = await fetch("/api/register-purchase", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
