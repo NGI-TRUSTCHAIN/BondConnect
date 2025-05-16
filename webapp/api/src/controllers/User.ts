@@ -5,6 +5,9 @@ import { useApiBridge } from "../services/api-bridge.service";
 import { getBondByBondName } from "../db/bonds";
 import { getIssuerById } from "../db/Issuer";
 import { getInvestorByEmail, getInvestorById } from "../db/Investor";
+import { UserInfo, UpcomingPayment, PurchaseBond } from "../models/Payment";
+import { getRetailPurchasedByUserId } from "../db/User";
+
 export const getAllUsers = async (req: express.Request,res: express.Response) => {
   try {
     const users = await getUsers();
@@ -59,5 +62,26 @@ export const purchase = async (req: express.Request, res: express.Response) => {
       error: "User creation failed",
       message: "An unexpected error occurred while creating the bond.",
     });
+  }
+};
+
+export const getRetailBondBuysByUserID = async (req: express.Request, res: express.Response) => {
+  try {
+    const userId = req.params.userId;
+    const bonds = await getRetailPurchasedByUserId(userId);
+
+   const userResponse: UserInfo = { purchaseBond: [], upcomingPayment: [] };
+
+    // Hay q sumar todos los amounts que se hayan hecho del mismo nombre y de la misma network
+    // hablar con petre, falta una id
+
+    // hay q extraer la fecha del bono sin contar el a�o, sacamos el mes y el dia 
+    // si queda una semana se a�adira a una nueva lista 
+
+
+    // 
+    res.status(200).json(userResponse);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener los bonos del usuario" });
   }
 };

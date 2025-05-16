@@ -2,12 +2,21 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Investor } from "../components/Authentication/InvestorRegistration";
 import { Issuer } from "../components/Authentication/IssuerRegistration";
 
+export interface RetailBondBuy {
+  _id: string;
+  userId: string;
+  destinationBlockchain: string;
+  investToken: string;
+  purchasedTokens: number;
+}
+
 interface BondState {
   userLoged: Investor | Issuer | null;
   investors: (Investor | Issuer)[];
   issuers: Issuer[];
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null | undefined;
+  retailBondBuys: RetailBondBuy[];
 }
 
 const initialState: BondState = {
@@ -16,6 +25,7 @@ const initialState: BondState = {
   issuers: [],
   status: "idle",
   error: undefined,
+  retailBondBuys: [],
 };
 
 export const registerInvestor = createAsyncThunk(
@@ -125,6 +135,29 @@ export const readIssuers = createAsyncThunk("user/readIssuers", async (_, { reje
   }
 });
 
+export const getAllBuys = createAsyncThunk("user/getAllBuys", async (userId: string, { rejectWithValue }) => {
+  try {
+    const response = await fetch(`/api/users/${userId}`, { method: "GET" });
+
+    if (!response.ok) {
+      // const error = await response.json();
+      // return rejectWithValue(error.message);
+      try {
+        const error = await response.json();
+        return rejectWithValue(error.message || "Error desconocido");
+      } catch {
+        return rejectWithValue(`Unexpected response: ${response.statusText}`);
+      }
+    }
+
+    const data = await response.json();
+    console.log("Fetched Bonds:", data); // Debugging step
+    return data as Issuer[];
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+});
+
 export const login = createAsyncThunk(
   "user/login",
   async (log: { profile: string; email: string; password: string }, { rejectWithValue }) => {
@@ -151,6 +184,27 @@ export const login = createAsyncThunk(
 
       const data = await response.json();
       return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const getRetailBondBuysByUserID = createAsyncThunk(
+  "user/getRetailBondBuysByUserID",
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/retail-bond-buys/${userId}`, { method: "GET" });
+      if (!response.ok) {
+        try {
+          const error = await response.json();
+          return rejectWithValue(error.message || "Error desconocido");
+        } catch {
+          return rejectWithValue(`Unexpected response: ${response.statusText}`);
+        }
+      }
+      const data = await response.json();
+      return data as RetailBondBuy[];
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -220,6 +274,17 @@ const userSlice = createSlice({
         state.userLoged = action.payload.user;
       })
       .addCase(login.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
+      })
+      .addCase(getRetailBondBuysByUserID.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getRetailBondBuysByUserID.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.retailBondBuys = action.payload;
+      })
+      .addCase(getRetailBondBuysByUserID.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
       });

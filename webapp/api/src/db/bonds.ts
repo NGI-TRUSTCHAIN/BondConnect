@@ -40,7 +40,7 @@ const BondSchema = new mongoose.Schema({
   redemptionFinishDate: {type: Date, required: function () {return this.earlyRedemptionClauses === "yes";}},
   blockchainNetwork: {type: String,enum: ["ALASTRIA", "AMOY"], required: true},
   tokenState: [
-    {blockchain: {type: String, required:true}, amount: {type: Number, required:true}, contractAddress:{type: String}}
+    {blockchain: {type: String, required:true}, amount: {type: Number, required:true}, contractAddress:{type: String}, amountAvaliable: { type: Number, required: false } }
   ],
   creatorCompany: {type: String, required: true},
   contractAddress: {type: String}
@@ -51,6 +51,7 @@ BondSchema.index({ bondName: 1 }, { unique: true });
 export const BondModel = mongoose.model("Bond", BondSchema);
 
 export const getBonds = () => BondModel.find();
+export const getBondsByUserId = (userId: string) => BondModel.find({ creatorCompany: userId });
 export const getBondById = (id: string) => BondModel.findById(id);
 export const getBondByBondName = (bondName: string) => BondModel.findOne({ bondName: bondName });
 export const createBond = (values: Record<string, any>) =>

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Bond } from "../Bond";
+import { Bond, TokenState } from "../Bond";
 import { TransferInfo } from "../components/issuer/BlockchainTransfer";
 import { PurchaseData } from "../components/issuer/BuyToken";
 import { SaleReceipt } from "../components/TokenSale";
@@ -46,6 +46,43 @@ export const readBonds = createAsyncThunk("bond/readBonds", async (_, { rejectWi
     return rejectWithValue(error);
   }
 });
+
+export const readUserBonds = createAsyncThunk("bond/readUserBonds",async (userId: string, { rejectWithValue }) => {
+    try {
+        const response = await fetch(`/api/bonds/${userId}`, { method: "GET" });
+
+      if (!response.ok) {
+        try {
+          const error = await response.json();
+          return rejectWithValue(error.message || "Error desconocido");
+        } catch {
+          return rejectWithValue(`Unexpected response: ${response.statusText}`);
+        }
+      }
+
+      const data = await response.json();
+      data as Bond[];
+      const finalResponse: Bond[] = [];
+
+      (data as Bond[]).forEach(bond => {
+           bond.tokenState.forEach(token => {
+                const newBond: Bond = {
+                    ...bond,
+                    blockchainNetwork: token.blockchain, // sobreescribimos con el valor deseado
+                    numberTokens: token.amountAvaliable,
+                    tokenState: []
+              };
+              finalResponse.push(newBond);
+         });
+      });
+
+      return null;
+
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 
 export const newBond = createAsyncThunk("bond/createBond", async (formData: Bond, { rejectWithValue }) => {
   console.log("Before sending:", JSON.stringify(formData));
