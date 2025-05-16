@@ -1,4 +1,5 @@
 import { ContractTransactionReceipt, ContractTransactionResponse, Overrides, TransactionRequest } from "ethers";
+import { encodeBytes32String } from "ethers";
 import { Request } from "express";
 
 import { loadAllContracts } from "../../bootstrap/contract.bootstrap";
@@ -97,8 +98,13 @@ export async function createAccountMultiple(req: Request): Promise<AppResult> {
     const contracts = await loadAllContracts(config, logger);
 
     const bytecode: string = config.BYTECODE;
+
+
     const salt: string = args[0] || "DEFAULT";  
-    const newArgs: any[] = [salt, bytecode];
+    const encoded = encodeBytes32String(salt);
+    console.log(encoded);
+
+    const newArgs: any[] = [encoded, bytecode];
 
     initContractsService(logger, contracts, config, "ALASTRIA" );
     const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, newArgs, options);

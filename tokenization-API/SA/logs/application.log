@@ -30,3 +30,29 @@
 [ERC20 Contract API] [2025-05-16 10:00:15] [INFO] - CREATING IN amoy
 [ERC20 Contract API] [2025-05-16 10:00:18] [INFO] - Waiting for confirmations
 [ERC20 Contract API] [2025-05-16 10:00:23] [INFO] - account amoy: 0xE6C1256a053119671279fb85c23E948990dF59EB
+[Default] [2025-05-16 16:28:33] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-16 16:28:33] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-16 16:28:33] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-16 16:28:33] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-16 16:28:33] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-16 16:28:33] [INFO] - Express server running on port 4000...
+[ERC20 Contract API] [2025-05-16 16:28:47] [INFO] - POST /createAccount
+[ERC20 Contract API] [2025-05-16 16:28:47] [INFO] - CREATING IN alastria
+[ERC20 Contract API] [2025-05-16 16:28:47] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-16 16:28:47] [INFO] - Loading 1 contracts...
+[ERC20 Contract API] [2025-05-16 16:28:47] [INFO] - Loaded 1 contracts successfully.
+[ERC20 Contract API] [2025-05-16 16:28:50] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-16 16:28:55] [INFO] - account alastri: 0x8c3d8Cc391659Db669366a193958f75eF6Cb4A5E
+[ERC20 Contract API] [2025-05-16 16:28:55] [INFO] - CREATING IN amoy
+[ERC20 Contract API] [2025-05-16 16:28:57] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-16 16:29:02] [INFO] - account amoy: 0x8c3d8Cc391659Db669366a193958f75eF6Cb4A5E
+[ERC20 Contract API] [2025-05-16 16:29:06] [INFO] - POST /createAccount
+[ERC20 Contract API] [2025-05-16 16:29:06] [INFO] - CREATING IN alastria
+[ERC20 Contract API] [2025-05-16 16:29:06] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-16 16:29:06] [INFO] - Loading 1 contracts...
+[ERC20 Contract API] [2025-05-16 16:29:06] [INFO] - Loaded 1 contracts successfully.
+[ERC20 Contract API] [2025-05-16 16:29:09] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-16 16:29:10] [INFO] - account alastri: 0x011baAab8a4960e5E3F8a9dd15bD423b5F57176C
+[ERC20 Contract API] [2025-05-16 16:29:10] [INFO] - CREATING IN amoy
+[ERC20 Contract API] [2025-05-16 16:29:11] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-16 16:29:16] [INFO] - account amoy: 0x011baAab8a4960e5E3F8a9dd15bD423b5F57176C
