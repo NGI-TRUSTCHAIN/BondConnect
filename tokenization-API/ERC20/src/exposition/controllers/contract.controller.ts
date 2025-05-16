@@ -300,7 +300,7 @@ export async function requestTransfer(req: Request): Promise<AppResult> {
     const amount: string = args[2];  // cantidad a enviar
     const network: string = args[3];  // red 
     const contractAddress: string = args[4]; // la direccion del owner q se genera en createAccount
-    const nativePriceToken: string = args[5];  // el contrato q se genera en createBond
+    //const nativePriceToken: string = args[5];  // el contrato q se genera en createBond
 
     const contractName: string = "Account";
     const methodName: string = "transferERC20";   
@@ -368,10 +368,11 @@ export async function burn(req: Request): Promise<AppResult> {
         initContractsService(logger, contracts, config, "ALASTRIA");
         const resultUnlock: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddressVault, methodName, unlockArgs, options);
 
+        const transactionHash = resultUnlock && 'hash' in resultUnlock ? resultUnlock.hash : 'N/A';
         return {
             statusCode: 201,
             body: {
-                message: resultUnlock instanceof ContractTransactionReceipt ? 'Transaction executed' : 'Transacion processed',
+                message: transactionHash,
                 resultUnlock
             }
         }
