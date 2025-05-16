@@ -3,8 +3,7 @@ import { CreateBondResponse } from "models/company.model";
 //Funciones dinamicas para calculos (Dinero anual) Numero anual tokens...
 export const useBusinessService = () => {
     const calculateBondPrice = async (bond: any) => {
-        console.log("Call calculateBondPrice()", bond);
-
+        console.log("Call calculateBondPrice()");
         try {
             if (!bond) return;
             const goalAmount = bond.goalAmount;
@@ -12,13 +11,9 @@ export const useBusinessService = () => {
 
             if (goalAmount && numberTokens) {
                 const bondPrice = goalAmount / numberTokens;
-                console.log('Bond price: ' + bondPrice);
                 if (bondPrice) {
-                    // Convertir el precio del bono a una cadena con coma decimal
-                    const bondPriceFormatted = bondPrice.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(',', '.');
-                    // Convertir de nuevo a número
-                    const bondPriceNumber = parseFloat(bondPriceFormatted);
-                    return bondPriceNumber;
+                    // Redondear hacia abajo y mostrar sin decimales
+                    return Math.floor(bondPrice);
                 }
             }
         } catch (err) {
@@ -29,6 +24,7 @@ export const useBusinessService = () => {
 
 
     const getBondNetWorkAccount = async (accounts: any[], network: string) => {
+        console.log("Call getBondNetWorkAccount()");
         try {
             for (const account of accounts) {
                 if (account.network === network) {
@@ -42,9 +38,38 @@ export const useBusinessService = () => {
         }
     };
 
+    const getPaymenAmount = async (bond: any, numberOfToKens: number, anualInterestRate: number) => {
+        console.log("Call getPaymenAmount()");
+        try {
+            const bondPrice = await calculateBondPrice(bond);
+            if (!bondPrice) return null;
+            const nominalValue = (bondPrice * numberOfToKens);
+            const finalPrice =(nominalValue * (anualInterestRate/100));
+            return finalPrice;
+        } catch (err) {
+            console.error('Error getPaymenAmount() :: ', err);
+            return null;
+        }
+    };
+
+    const extractListItem = async (list: any) => {
+        console.log("Call extractListItem()");
+        try {
+            for (const item of list) { 
+                return item;
+            }
+            return null;
+        } catch (err) {
+            console.error('Error extractListItem() :: ', err);
+            return null;
+        }
+    };
+
     return {
         calculateBondPrice,
-        getBondNetWorkAccount
+        getBondNetWorkAccount,
+        getPaymenAmount,
+        extractListItem
     };
 };
 

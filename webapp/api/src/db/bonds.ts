@@ -28,6 +28,7 @@ BondSchema.index({ bondName: 1 }, { unique: true });
 export const BondModel = mongoose.model("Bond", BondSchema);
 
 export const getBonds = () => BondModel.find();
+export const getBondsByUserId = (userId: string) => BondModel.find({ creatorCompany: userId });
 export const getBondById = (id: string) => BondModel.findById(id);
 export const createBond = (values: Record<string, any>) =>
   new BondModel(values).save();

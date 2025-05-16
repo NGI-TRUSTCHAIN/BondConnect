@@ -1,0 +1,44 @@
+[ERC20 Contract API] [2025-05-13 09:37:15] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-13 09:37:15] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-13 09:37:15] [INFO] - STARTING API EXPOSITION
+[Default] [2025-05-13 09:37:15] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-13 09:37:15] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-13 09:37:15] [INFO] - Express server running on port 4000...
+[ERC20 Contract API] [2025-05-13 09:37:44] [INFO] - POST /createAccount
+[ERC20 Contract API] [2025-05-13 09:37:44] [INFO] - CREATING IN alastria
+[ERC20 Contract API] [2025-05-13 09:37:44] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 09:37:44] [INFO] - Loading 1 contracts...
+[ERC20 Contract API] [2025-05-13 09:37:44] [INFO] - Loaded 1 contracts successfully.
+[ERC20 Contract API] [2025-05-13 09:37:47] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 09:37:52] [INFO] - account alastri: 0x251536F1DD55ffCcDe005657944C869b88312bBc
+[ERC20 Contract API] [2025-05-13 09:37:52] [INFO] - CREATING IN amoy
+[ERC20 Contract API] [2025-05-13 09:37:55] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 09:37:59] [INFO] - account amoy: 0x251536F1DD55ffCcDe005657944C869b88312bBc
+[Default] [2025-05-13 10:30:34] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-13 10:30:34] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-13 10:30:34] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-13 10:30:34] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-13 10:30:34] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-13 10:30:34] [INFO] - Express server running on port 4000...
+[ERC20 Contract API] [2025-05-13 10:30:50] [INFO] - POST /createAccount
+[ERC20 Contract API] [2025-05-13 10:30:50] [INFO] - CREATING IN alastria
+[ERC20 Contract API] [2025-05-13 10:30:50] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-13 10:30:50] [INFO] - Loading 1 contracts...
+[ERC20 Contract API] [2025-05-13 10:30:50] [INFO] - Loaded 1 contracts successfully.
+[ERC20 Contract API] [2025-05-13 10:30:53] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 10:30:59] [INFO] - account alastri: 0x9A2A3ed8A2AeFfCb229C990123a88A6F4dC5b75f
+[ERC20 Contract API] [2025-05-13 10:30:59] [INFO] - CREATING IN amoy
+[ERC20 Contract API] [2025-05-13 10:31:01] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-13 10:31:06] [INFO] - account amoy: 0x9A2A3ed8A2AeFfCb229C990123a88A6F4dC5b75f
+[Default] [2025-05-13 11:00:11] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-13 11:00:11] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-13 11:00:11] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-13 11:00:11] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-13 11:00:11] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-13 11:00:11] [INFO] - Express server running on port 4000...
+[ERC20 Contract API] [2025-05-15 15:37:43] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-15 15:37:43] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-15 15:37:43] [INFO] - STARTING API EXPOSITION
+[Default] [2025-05-15 15:37:43] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-15 15:37:43] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-15 15:37:43] [INFO] - Express server running on port 4000...

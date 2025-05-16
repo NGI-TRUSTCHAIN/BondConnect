@@ -47,6 +47,25 @@ export const readBonds = createAsyncThunk("bond/readBonds", async (_, { rejectWi
   }
 });
 
+export const readUserBonds = createAsyncThunk("bond/readUserBonds",async (userId: string, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/bonds/${userId}`, { method: "GET" });
+      if (!response.ok) {
+        try {
+          const error = await response.json();
+          return rejectWithValue(error.message || "Error desconocido");
+        } catch {
+          return rejectWithValue(`Unexpected response: ${response.statusText}`);
+        }
+      }
+      const data = await response.json();
+      return data as Bond[];
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 export const newBond = createAsyncThunk("bond/createBond", async (formData: Bond, { rejectWithValue }) => {
   console.log("Before sending:", JSON.stringify(formData));
   try {

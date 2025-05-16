@@ -1,5 +1,5 @@
 import { getUsers } from "../db/User";
-import { createNewUser, getAllUsers } from "../controllers/User";
+import { createNewUser, getAllUsers, getRetailBondBuysByUserID } from "../controllers/User";
 import express from "express";
 import { getAllIssuers, registerIssuer } from "../controllers/Issuer";
 import { getAllInvestors, registerInvestor } from "../controllers/Investor";
@@ -13,4 +13,5 @@ export default (router: express.Router) => {
     router.post('/register-investor', registerInvestor)
     router.get('/investors', getAllInvestors)
     router.post('/login', login)
+    router.put('/users/:id', getRetailBondBuysByUserID)
 }

@@ -1,5 +1,5 @@
 import express from "express";
-import { getBonds, getBondById, deleteBondById, createBond, BondModel } from "../db/bonds";
+import { getBonds, getBondById, deleteBondById, createBond, BondModel, getBondsByUserId } from "../db/bonds";
 import { MongoServerError } from "mongodb";
 import { useBlockchainService } from '../services/blockchain.service'
 import { useBusinessService } from '../services/business.service'
@@ -29,6 +29,17 @@ export const getAllBonds = async (req: express.Request, res: express.Response) =
   } catch (error) {
     console.log(error);
     res.status(500).send({ error: "Internal server error", massage: "Internal server error" });
+  }
+};
+
+export const getBondsByUser = async (req: express.Request, res: express.Response) => {
+  try {
+    const userId = req.params.userId;
+    // Busca los bonos donde el campo creatorCompany coincide con el userId
+    const bonds = await getBondsByUserId(userId);
+    res.status(200).json(bonds);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener los bonos del usuario" });
   }
 };
 
@@ -111,9 +122,7 @@ export const addBond = async (req: express.Request, res: express.Response) => {
     if (!bond) return;
   
     const wallet = (await getIssuerById(bond.creatorCompany)).walleAddress;
-    
     const bondPrice = await calculateBondPrice(bond);
-   
     // //¡¡¡¡ PENDIENTE !!!!  Pendiente SYMBOL
     const responseCreateCompanyBond = await createCompanyBond(bond.bondName, "TST", bondPrice, wallet);
     const contractAddress = await getBondNetWorkAccount(responseCreateCompanyBond.accounts, bond.blockchainNetwork.toUpperCase());

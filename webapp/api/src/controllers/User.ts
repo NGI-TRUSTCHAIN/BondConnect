@@ -1,6 +1,7 @@
 import { MongoServerError } from "mongodb";
 import { createUser, getUsers } from "../db/User";
 import express from "express";
+import { getRetailBondBuyerByUserId } from "../db/User";
 
 export const getAllUsers = async (req: express.Request,res: express.Response) => {
   try {
@@ -47,5 +48,15 @@ export const createNewUser = async (req: express.Request, res: express.Response)
       error: "User creation failed",
       message: "An unexpected error occurred while creating the bond.",
     });
+  }
+};
+
+export const getRetailBondBuysByUserID = async (req: express.Request, res: express.Response) => {
+  try {
+    const userId = req.params.userId;
+    const bonds = await getRetailBondBuyerByUserId(userId);
+    res.status(200).json(bonds);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener los bonos del usuario" });
   }
 };
