@@ -1,5 +1,6 @@
 import express from "express";
 import { getBonds, getBondById, deleteBondById, createBond, BondModel, getBondsByUserId } from "../db/bonds";
+import { Bond } from "../models/Bond";
 import { MongoServerError } from "mongodb";
 import { useBlockchainService } from '../services/blockchain.service'
 import { useBusinessService } from '../services/business.service'
@@ -33,10 +34,22 @@ export const getAllBonds = async (req: express.Request, res: express.Response) =
 };
 
 export const getBondsByUser = async (req: express.Request, res: express.Response) => {
-  try {
+    const { balance } = useBlockchainService();
+    try {
     const userId = req.params.userId;
-    // Busca los bonos donde el campo creatorCompany coincide con el userId
-    const bonds = await getBondsByUserId(userId);
+        // Busca los bonos donde el campo creatorCompany coincide con el userId
+    const wallet = (await getIssuerById(userId)).walleAddress;
+    const bonds = await getBondsByUserId(userId); 
+
+    bonds as Bond[];
+
+        for (const bond of bonds) {
+            for (const token of bond.tokenState) {
+                const response = await balance(token.contractAddress, wallet, token.blockchain);
+                token.amountAvaliable = Number(response.message);
+            }
+        }            
+
     res.status(200).json(bonds);
   } catch (error) {
     res.status(500).json({ error: "Error al obtener los bonos del usuario" });

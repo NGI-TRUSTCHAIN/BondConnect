@@ -18,7 +18,7 @@ const BondSchema = new mongoose.Schema({
   redemptionFinishDate: {type: Date, required: function () {return this.earlyRedemptionClauses === "yes";}},
   blockchainNetwork: {type: String,enum: ["Alastria"], required: true},
   tokenState: [
-    {blockchain: {type: String, required:true}, amount: {type: Number, required:true}}
+      { blockchain: { type: String, required: true }, amount: { type: Number, required: true }, amountAvaliable: { type: Number, required: false } }
   ],
   creatorCompany: {type: String, required: true}
 });

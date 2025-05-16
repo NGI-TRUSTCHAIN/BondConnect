@@ -1,7 +1,8 @@
 import { MongoServerError } from "mongodb";
 import { createUser, getUsers } from "../db/User";
 import express from "express";
-import { getRetailBondBuyerByUserId } from "../db/User";
+import { UserInfo, UpcomingPayment, PurchaseBond } from "../models/Payment";
+import { getRetailPurchasedByUserId } from "../db/User";
 
 export const getAllUsers = async (req: express.Request,res: express.Response) => {
   try {
@@ -54,8 +55,19 @@ export const createNewUser = async (req: express.Request, res: express.Response)
 export const getRetailBondBuysByUserID = async (req: express.Request, res: express.Response) => {
   try {
     const userId = req.params.userId;
-    const bonds = await getRetailBondBuyerByUserId(userId);
-    res.status(200).json(bonds);
+    const bonds = await getRetailPurchasedByUserId(userId);
+
+   const userResponse: UserInfo = { purchaseBond: [], upcomingPayment: [] };
+
+    // Hay q sumar todos los amounts que se hayan hecho del mismo nombre y de la misma network
+    // hablar con petre, falta una id
+
+    // hay q extraer la fecha del bono sin contar el año, sacamos el mes y el dia 
+    // si queda una semana se añadira a una nueva lista 
+
+
+    // 
+    res.status(200).json(userResponse);
   } catch (error) {
     res.status(500).json({ error: "Error al obtener los bonos del usuario" });
   }
