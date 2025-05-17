@@ -25,5 +25,9 @@ export interface TokenState{
     amount: number;
     amountAvaliable: number;
 }
-// añadir un timeStamp de cuando se creo 
-// añadir 
+export interface InvestorBonds {
+    userId: string;
+    bondName: string;
+    amount: number;
+    network: string;
+}

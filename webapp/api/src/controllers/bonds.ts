@@ -23,9 +23,11 @@ import { getIssuerById } from '../db/Issuer';
 //   }
 // };
 
+// AÑADIR EN EL FRONT Q SE LA PASE EL ID DEL USUARIO
 export const getAllBonds = async (req: express.Request, res: express.Response) => {
-  try {
-    const bonds = await getBonds();
+    try {
+    const userId = req.params.userId;
+    const bonds = await getBondsByUserId(userId);
     res.status(200).json(bonds);
   } catch (error) {
     console.log(error);

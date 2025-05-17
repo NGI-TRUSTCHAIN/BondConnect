@@ -3,7 +3,7 @@ import bonds from "./bonds";
 import BlockchainTransfer from "./BlockchainTransfer";
 import SaleReceipt from "./SaleReceipt";
 import SettlementReceipt from "./SettlementReceipt";
-import User from "./User";
+import PurchaseUser from "./PurchaseUser";
 
 const router = express.Router();
 
@@ -12,6 +12,6 @@ export default (): express.Router => {
   BlockchainTransfer(router)
   SaleReceipt(router)
   SettlementReceipt(router)
-  User(router)
+  PurchaseUser(router)
   return router;
 };

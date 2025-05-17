@@ -1,28 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-<<<<<<< HEAD
+    "\\testApp\\src",
     "\\webapp",
     "\\webapp\\api",
     "\\webapp\\api\\src",
     "\\webapp\\api\\src\\controllers",
+    "\\webapp\\api\\src\\db",
     "\\webapp\\api\\src\\enviroments",
-=======
-    "\\tokenization-API",
-    "\\tokenization-API\\SA",
-    "\\tokenization-API\\SA\\src",
-    "\\tokenization-API\\SA\\src\\exposition",
-    "\\tokenization-API\\SA\\src\\exposition\\controllers",
->>>>>>> dev
-    "\\webapp\\client",
-    "\\webapp\\client\\src",
-    "\\webapp\\client\\src\\components",
-    "\\webapp\\client\\src\\features"
+    "\\webapp\\api\\src\\router",
+    "\\webapp\\client"
   ],
-<<<<<<< HEAD
-  "SelectedNode": "\\webapp\\api\\src\\models\\Bond.ts",
-=======
-  "SelectedNode": "\\tokenization-API\\SA\\src\\exposition\\controllers\\contract.controller.ts",
->>>>>>> dev
+  "SelectedNode": "\\webapp\\api\\src\\controllers\\PurchaseUser.ts",
   "PreviewInSolutionExplorer": false
 }

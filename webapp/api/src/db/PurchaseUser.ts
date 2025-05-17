@@ -9,8 +9,8 @@ const UserSchema = new mongoose.Schema({
 
 export const UserModel = mongoose.model("User", UserSchema);
 
-export const getUsers = () => UserModel.find();
-export const getUserById = (id: string) => UserModel.findById(id);
-export const createUser = (values: Record<string, any>) => new UserModel(values).save();
-export const deleteUserById = (id: string) => UserModel.findOneAndDelete({ _id: id });
+export const getPurchaseUsers = () => UserModel.find();
+export const getPurchasesById = (id: string) => UserModel.findById(id);
+export const createPurchaseUser = (values: Record<string, any>) => new UserModel(values).save();
+export const deletePurchaseUserById = (id: string) => UserModel.findOneAndDelete({ _id: id });
 export const getRetailPurchasedByUserId = (userId: string) => UserModel.find({ userId });

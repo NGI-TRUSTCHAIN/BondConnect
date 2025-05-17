@@ -3,7 +3,10 @@ import { MongoServerError } from "mongodb";
 import { createInvestor, getInvestors, getInvestorByEmail, updateInvestorById } from "../db/Investor";
 import { useBlockchainService } from '../services/blockchain.service'
 import { update } from "lodash";
-
+import { getIssuerById } from '../db/Issuer'; 
+import { getBonds, getBondById, deleteBondById, createBond, BondModel, getBondsByUserId, updateBondById } from "../db/bonds";
+import { createPaymentInvoice, updatePaymentInvoiceById, getPaymentInvoicesByBonoId } from "../db/PaymentInvoice";
+import { InvestorBonds } from "../models/Bond";
 /**
  * Obtener todos los usuarios
  */
@@ -19,6 +22,45 @@ export const getAllInvestors = async (req: express.Request, res: express.Respons
     });
   }
 };
+
+
+/**
+ * Obtener todos los INVERSORES DE UNA COMPANY 
+ */
+export const getAllInvestorsByIssuer = async (req: express.Request, res: express.Response) => {
+    try {
+        // sacar todos los bonos q tiene creados en una lista
+        // llamar a purchainvoice y sacar todos los usaurio por el id del contrato
+
+        const userId = req.params.userId;
+        // Busca los bonos donde el campo creatorCompany coincide con el userId
+       
+        const bonds = await getBondsByUserId(userId); 
+        const users: InvestorBonds[] = [];
+
+        for (const bond of bonds) {
+            const invoiceList = await getPaymentInvoicesByBonoId(bond.id);
+
+            for (const invoice of invoiceList) {
+                users.push({
+                    userId: invoice.userId,
+                    bondName: bond.bondName,
+                    amount: invoice.amount,
+                    network: invoice.network,
+                });
+            }
+        }
+
+        res.status(200).json(users);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Internal server error",
+            message: "An unexpected error occurred while retrieving users.",
+        });
+    }
+};
+
 
 /**
  * Crear un nuevo usuario

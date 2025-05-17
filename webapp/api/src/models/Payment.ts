@@ -1,5 +1,5 @@
 export interface UserInfo {
-    purchaseBond: PurchaseBond[];
+    tokenList: PurchaseBond[];
     upcomingPayment: UpcomingPayment[];
 }
 export interface UpcomingPayment{
@@ -13,5 +13,3 @@ export interface PurchaseBond {
     network: string; 
     amountAvaliable: number;
 }
-// añadir un timeStamp de cuando se creo 
-// añadir 
