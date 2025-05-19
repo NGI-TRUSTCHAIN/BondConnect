@@ -1,5 +1,5 @@
 import express from "express";
-import { getBonds, getBondById, deleteBondById, createBond, BondModel, getBondsByUserId, updateBondById } from "../db/bonds";
+import { getBonds, getBondById, deleteBondById, createBond, BondModel, getBondsByUserId, updateBondById, IBond } from "../db/bonds";
 import { Bond } from "../models/Bond";
 import { MongoServerError } from "mongodb";
 import { useBlockchainService } from '../services/blockchain.service'
@@ -38,22 +38,33 @@ export const getAllBonds = async (req: express.Request, res: express.Response) =
 export const getBondsByUser = async (req: express.Request, res: express.Response) => {
     const { balance } = useBlockchainService();
     try {
-    const userId = req.params.userId;
+    const { userId, walletAddress} = req.body;
         // Busca los bonos donde el campo creatorCompany coincide con el userId
-    const wallet = (await getIssuerById(userId)).walletAddress;
-    const bonds = await getBondsByUserId(userId); 
+    const issuer = (await getIssuerById(userId));
+    if (!issuer) {
+      res.status(404).json({ error: "Issuer not found" });
+      return; 
+  }
+    const bonds = await getBondsByUserId(userId).lean(); 
 
-    // bonds as Bond[];
+    const finalResponse = [];
+  console.log('BOND', bonds);
+  
+     for (const bond of bonds) {
+         for (const token of bond.tokenState) {
+          const newBond = {
+            ...bond,
+            blockchainNetwork: token.blockchain as "ALASTRIA" | "AMOY", // sobreescribimos con el valor deseado
+            numberTokens: token.amountAvaliable,
+      };
+      finalResponse.push(newBond);
+         }
+     }        
 
-        for (const bond of bonds) {
-            for (const token of bond.tokenState) {
-                const response = await balance(token.contractAddress, wallet, token.blockchain);
-                token.amountAvaliable = Number(response.message);
-            }
-        }            
-
-    res.status(200).json(bonds);
+    console.log('FINAL RESPONSE', finalResponse);
+    res.status(200).json(finalResponse);
   } catch (error) {
+    console.log('ERROR', error);
     res.status(500).json({ error: "Error al obtener los bonos del usuario" });
   }
 };
@@ -140,7 +151,7 @@ export const addBond = async (req: express.Request, res: express.Response) => {
       const responseCreateCompanyBond = await createCompanyBond(createdBond.bondName, createdBond.bondSymbol,
         bondPrice, wallet);
       const contractAddress = await getBondNetWorkAccount(responseCreateCompanyBond.accounts, createdBond.blockchainNetwork.toUpperCase());
-      const responseMintBond = await mintBond(contractAddress, wallet, createdBond.goalAmount);
+      const responseMintBond = await mintBond(contractAddress, wallet, createdBond.numberTokens);
 
       // Update the bond with the contract address in tokenState
       await updateBondById(createdBond._id.toString(), { 

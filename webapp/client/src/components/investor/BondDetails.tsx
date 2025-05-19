@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Bond } from "../../Bond";
+import { Bond, TokenState } from "../../Bond";
 import { Investor } from "../Authentication/InvestorRegistration";
 import { PurchaseData } from "../issuer/BuyToken";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -12,16 +12,17 @@ const BondDetails = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { bond, user, marketData }: { bond: Bond; user: Investor; marketData: any } = location.state;
+  const { bond, user }: { bond: Bond; user: Investor } = location.state;
 
   const error = useAppSelector((state) => state.bond.error);
 
   const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility
   const [tokens, setTokens] = useState<number>(0);
 
-  const [selectedBlockchain, setSelectedBlockchain] = useState<string>(marketData.blockchains[0]?.destinationBlockchain || "");
-  const selectedEntry = marketData.blockchains.find(
-    (entry: { destinationBlockchain: string; numTokensOffered: number }) => entry.destinationBlockchain === selectedBlockchain
+  // Seleccionar blockchain para baber token maximos que puedes comprar
+  const [selectedBlockchain, setSelectedBlockchain] = useState<string>(bond.tokenState[0].blockchain || "");
+  const selectedEntry = bond.tokenState.find(
+    (entry: TokenState) => entry.blockchain === selectedBlockchain
   );
   useEffect(() => {
     setPurchaseData((prev) => ({
@@ -222,9 +223,9 @@ const BondDetails = () => {
                     setSelectedBlockchain(e.target.value);
                     setTokens(0); // Reiniciar tokens al cambiar de blockchain
                   }}>
-                  {marketData.blockchains.map((entry: { destinationBlockchain: string; numTokensOffered: number }) => (
-                    <option key={entry.destinationBlockchain} value={entry.destinationBlockchain}>
-                      {entry.destinationBlockchain}
+                  {bond.tokenState.map((entry: TokenState) => (
+                    <option key={entry.blockchain} value={entry.blockchain}>
+                      {entry.blockchain}
                     </option>
                   ))}
                 </select>
@@ -241,13 +242,13 @@ const BondDetails = () => {
                   className="form-control bg-form"
                   value={tokens}
                   min={0}
-                  max={selectedEntry?.numTokensOffered ?? 0}
-                  placeholder={`${selectedEntry?.numTokensOffered ?? 0}`}
+                  max={selectedEntry?.amount ?? 0}
+                  placeholder={`${selectedEntry?.amount ?? 0}`}
                   disabled={!selectedEntry}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const value = Number(e.target.value);
-                    const max = selectedEntry?.numTokensOffered ?? 0;
-                    setTokens(Math.min(value, max));
+                    const value = Number(e.target.value); // Valor ingresado por el usuario
+                    const max = selectedEntry?.amount ?? 0; // Cantidad maxima de tokens que se puede comprar
+                    setTokens(Math.min(value, max)); // Seleccionar el minimo entre el valor ingresado y la cantidad maxima
                   }}
                 />
               </div>

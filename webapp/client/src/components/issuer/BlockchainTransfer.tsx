@@ -54,10 +54,12 @@ const BlockchainTransfer = () => {
   const error = useAppSelector((state) => state.bond.error);
   const [showPopup, setShowPopup] = useState(false);
   const blockchains = ["ALASTRIA", "AMOY"];
+  const userLoged = useAppSelector((state) => state.user.userLoged);
+  const userId = userLoged?._id;
 
   useEffect(() => {
     document.title = "Blockchain Transfer";
-    dispatch(readBonds());
+    dispatch(readBonds(userId || ""));
     // dispatch(readTransferHistory());
     console.log("Dispatched fetchBonds");
   }, [dispatch]);

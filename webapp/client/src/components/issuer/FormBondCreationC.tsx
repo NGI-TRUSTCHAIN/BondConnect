@@ -24,7 +24,7 @@ const FormBondCreationC = () => {
     bondMaturityDate: undefined,
     bondPurpose: "",
     interestRate: undefined,
-    paymentFreq: "",
+    paymentFreq: "Annualy",
     goalAmount: undefined,
     numberTokens: undefined,
     price: 0,
@@ -251,14 +251,9 @@ const FormBondCreationC = () => {
                   name="paymentFreq"
                   className="form-control bg-form"
                   value={formData.paymentFreq}
-                  onChange={handleChange}>
-                  <option value="" disabled>
-                    Select payment frequency
-                  </option>
-                  <option value="Monthly">Monthly</option>
-                  <option value="Quarterly">Quarterly</option>
-                  <option value="Semi-annualy">Semi-annually</option>
-                  <option value="Annualy">Annually</option>
+                  onChange={handleChange}
+                  disabled>
+                  <option value="Annualy" disabled>Annually</option>
                 </select>
               </div>
               <div className="col-sm-6 mb-3">

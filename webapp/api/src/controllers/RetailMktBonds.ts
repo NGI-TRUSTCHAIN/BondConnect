@@ -1,12 +1,24 @@
 import express from 'express';
 import { getRetailMktBonds, getRetailMktBondById, createRetailMktBond, updateRetailMktBondById, deleteRetailMktBondById } from '../db/RetailMktBonds';
 import { MongoServerError } from 'mongodb';
+import { getBonds } from '../db/bonds';
 
 // Obtener todos los bonds
 export const getAllRetailMktBonds = async (req: express.Request, res: express.Response) => {
   try {
-    const bonds = await getRetailMktBonds();
-    res.status(200).json(bonds);
+    const retailBonds = await getRetailMktBonds().lean();
+    const bonds = await getBonds().lean();
+
+    const finalResponse = []; 
+    // Filtrar los bonds que tengan el mismo investToken que el retailBond
+    for (const retailBond of retailBonds) {
+      const fltBond = bonds.find(bond => bond._id.toString() === retailBond.investToken);
+      // REVISAR para añadir de alguna forma el valor de tokens añadidos al retail de retailBond
+      // para mostralo y poder comprear en  el front Oportunities
+      finalResponse.push({ ...fltBond}); // Agregar el bond filtrado al finalResponse
+    }
+    console.log('FINAL RESPONSE', finalResponse);
+    res.status(200).json(finalResponse);
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: 'Internal server error', message: 'Internal server error' });

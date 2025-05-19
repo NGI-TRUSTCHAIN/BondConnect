@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { readBonds } from "../../features/bondSlice";
+import { readUserBonds } from "../../features/bondSlice";
 import { useNavigate } from "react-router-dom";
 
 const ManageBonds = () => {
@@ -8,8 +8,10 @@ const ManageBonds = () => {
   const navigate = useNavigate();
   const bonds = useAppSelector((state) => state.bond.bonds);
   const userLoged = useAppSelector((state) => state.user.userLoged);
+  const userId = userLoged?._id;
+  const wallet = userLoged?.walletAddress;
   useEffect(() => {
-    dispatch(readBonds());
+    dispatch(readUserBonds({userId: userId || "", walletAddress: wallet || ""}));
   }, [dispatch]);
 
   return (

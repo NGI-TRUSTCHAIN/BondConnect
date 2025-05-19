@@ -24,13 +24,13 @@ const InvestmentWallet: React.FC = () => {
   };
 
   useEffect(() => {
-    dispatch(readBonds());
+    dispatch(readBonds(userId || ""));
     
     const fetchData = async () => {
       try {
         const data = await dispatch(getInvestorWalletData(userId || "")).unwrap();
         setWalletData(data);
-        console.log(data.walletAddress + " DATA");
+        console.log(user?.walletAddress + " DATA");
 
           const dataFaucet = await dispatch(getFaucetBalance(user?.walletAddress!)).unwrap();
           console.log(dataFaucet + " BALANCE");

@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import { addRetailMktBond, readBonds } from "../../features/bondSlice";
+import { addRetailMktBond, readBonds, readUserBonds } from "../../features/bondSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
 
@@ -16,6 +16,9 @@ const RetailMarket = () => {
   const navigate = useNavigate();
   const blockchains = [ "ALASTRIA", "AMOY"];
   const registeredBonds = useAppSelector((state) => state.bond.bonds);
+  const userLoged = useAppSelector((state) => state.user.userLoged);
+  const userId = userLoged?._id;
+
 
   const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility
   const [created, setCreated] = useState(null);
@@ -36,7 +39,7 @@ const RetailMarket = () => {
 
   useEffect(() => {
     document.title = "Register User";
-    dispatch(readBonds());
+    dispatch(readUserBonds({userId: userId || "", walletAddress: userLoged?.walletAddress || ""}));
     if (errorMessage !== null && errorMessage !== undefined) {
       console.log(errorMessage);
     } else {

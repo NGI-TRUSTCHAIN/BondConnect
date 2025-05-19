@@ -24,9 +24,9 @@ const initialState: BondState = {
   error: undefined,
 };
 
-export const readBonds = createAsyncThunk("bond/readBonds", async (_, { rejectWithValue }) => {
+export const readBonds = createAsyncThunk("bond/readBonds", async (userId: string, { rejectWithValue }) => {
   try {
-    const response = await fetch("/api/bonds", { method: "GET" });
+    const response = await fetch(`/api/bonds/${userId}`, { method: "GET" });
 
     if (!response.ok) {
       // const error = await response.json();
@@ -47,9 +47,14 @@ export const readBonds = createAsyncThunk("bond/readBonds", async (_, { rejectWi
   }
 });
 
-export const readUserBonds = createAsyncThunk("bond/readUserBonds",async (userId: string, { rejectWithValue }) => {
-    try {
-        const response = await fetch(`/api/bonds/${userId}`, { method: "GET" });
+export const readUserBonds = createAsyncThunk("bond/readUserBonds",async (requestData: {userId: string, walletAddress: string}, { rejectWithValue }) => {
+    
+  try {
+        const response: Response = await fetch(`/api/bonds-user`, { method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(requestData) });
 
       if (!response.ok) {
         try {
@@ -61,23 +66,7 @@ export const readUserBonds = createAsyncThunk("bond/readUserBonds",async (userId
       }
 
       const data = await response.json();
-      data as Bond[];
-      const finalResponse: Bond[] = [];
-
-      (data as Bond[]).forEach(bond => {
-           bond.tokenState.forEach(token => {
-                const newBond: Bond = {
-                    ...bond,
-                    blockchainNetwork: token.blockchain, // sobreescribimos con el valor deseado
-                    numberTokens: token.amountAvaliable,
-                    tokenState: []
-              };
-              finalResponse.push(newBond);
-         });
-      });
-
-      return null;
-
+      return data as Bond[];
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -387,7 +376,7 @@ export const getRetailMktBonds = createAsyncThunk("retailMktBond/readAllRetailBo
 
     const data = await response.json();
     console.log("Fetched RetailBonds:", data); // Debugging step
-    return data as MarketData[];
+    return data;
   } catch (error) {
     return rejectWithValue(error);
   }
@@ -530,12 +519,17 @@ const bondSlice = createSlice({
       })
       .addCase(getRetailMktBonds.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.retailBonds = action.payload
+        state.bonds = action.payload
         state.error = null;
       })
       .addCase(getRetailMktBonds.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
+      })
+      .addCase(readUserBonds.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.bonds = action.payload
+        state.error = null;
       });
   },
 });

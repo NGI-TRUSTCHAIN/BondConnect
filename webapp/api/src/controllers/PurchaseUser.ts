@@ -135,7 +135,6 @@ export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Req
 
 export const balanceFaucet = async (req: express.Request, res: express.Response) => {
   try {
-    console.log(req.body);
     const data = req.body;
 
    const balance = await useApiBridge.faucetBalance(data.address);
@@ -143,6 +142,8 @@ export const balanceFaucet = async (req: express.Request, res: express.Response)
    let big = BigInt(balance.message);
 
    let amountFinal: number = Number(big);
+
+   console.log(amountFinal);
   
     res.status(200).json(amountFinal / 1000000);
   } catch (error) {

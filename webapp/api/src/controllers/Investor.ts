@@ -39,7 +39,7 @@ export const getAllInvestorsByIssuer = async (req: express.Request, res: express
         const users: InvestorBonds[] = [];
 
         for (const bond of bonds) {
-            const invoiceList = await getPaymentInvoicesByBonoId(bond.id);
+            const invoiceList = await getPaymentInvoicesByBonoId(bond._id.toString());
 
             for (const invoice of invoiceList) {
                 users.push({
