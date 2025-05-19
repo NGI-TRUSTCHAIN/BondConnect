@@ -30,11 +30,12 @@ const InvestmentWallet: React.FC = () => {
       try {
         const data = await dispatch(getInvestorWalletData(userId || "")).unwrap();
         setWalletData(data);
-        
-        if (data.walletAddress) {
-          const dataFaucet = await dispatch(getFaucetBalance(data.walletAddress)).unwrap();
+        console.log(data.walletAddress + " DATA");
+
+          const dataFaucet = await dispatch(getFaucetBalance(user?.walletAddress!)).unwrap();
+          console.log(dataFaucet + " BALANCE");
           setBalanceData(dataFaucet);
-        }
+        
       } catch (error) {
         console.error('Error fetching wallet data:', error);
       }
@@ -63,7 +64,7 @@ const InvestmentWallet: React.FC = () => {
 
       <div>
         <h3 className="section-title mt-4">Account Balance:</h3>
-        <strong>Total Available Balance:</strong> 50.000€
+        <strong>Total Available Balance:</strong> {balanceData}
       </div>
 
       <h3 className="section-title mt-4">Token List:</h3>
