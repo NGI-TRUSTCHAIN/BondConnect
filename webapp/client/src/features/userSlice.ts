@@ -156,6 +156,34 @@ export const getInvestorWalletData = createAsyncThunk("user/getInvestorWalletDat
   }
 });
 
+export const getFaucetBalance = createAsyncThunk("user/getFaucetBalance", async (wallet: string, { rejectWithValue }) => {
+    try {
+      const response = await fetch("/api/users-balance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({address: wallet}),
+      });
+
+      if (!response.ok) {
+        try {
+          const error = await response.json();
+          return rejectWithValue(error.message || "Error desconocido");
+        } catch {
+          return rejectWithValue(`Unexpected response: ${response.statusText}`);
+        }
+      }
+
+      const data = await response.json();
+      console.log("Wallet:", wallet);
+      console.log("Faucet Balance Data:", data); // Debugging step
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+});
+
 export const getAllBuys = createAsyncThunk("user/getAllBuys", async (userId: string, { rejectWithValue }) => {
   try {
     const response = await fetch(`/api/users/${userId}`, { method: "GET" });

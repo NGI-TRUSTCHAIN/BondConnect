@@ -132,3 +132,20 @@ export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Req
     res.status(500).json({ error: "Error al obtener los bonos del usuario" });
   }
 };
+
+export const balanceFaucet = async (req: express.Request, res: express.Response) => {
+  try {
+    console.log(req.body);
+    const data = req.body;
+
+   const balance = await useApiBridge.faucetBalance(data.address);
+
+   let big = BigInt(balance.message);
+
+   let amountFinal: number = Number(big);
+  
+    res.status(200).json(amountFinal / 1000000);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener los bonos del usuario" });
+  }
+};
