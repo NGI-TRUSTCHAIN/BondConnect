@@ -109,7 +109,7 @@ export async function createBond(req: Request): Promise<AppResult> {
 }
 
 export async function balance(req: Request): Promise<AppResult> {
-    const contractName: string = "Bond";
+  
     const methodName: string = "balanceOf";
     const args: any[] = req.body.args || [];
     const options: Overrides = req.body.options || {};
@@ -117,7 +117,17 @@ export async function balance(req: Request): Promise<AppResult> {
     // este es el caller de la function
     const bondAddress: string = args[0];
     const accountAddressOwner: string = args[1];
+
     const network: string = args[2];
+
+    let contractName: string = "";
+
+    if (network === "ALASTRIA") {
+        contractName = "Bond";
+    }
+    if (network === "AMOY") {
+        contractName = "RepresentativeBondToken";
+    }
 
     // SIEMPRE EN ALASTRIA 
     const results: { network: string; address: string | null }[] = [];
@@ -332,7 +342,6 @@ export async function requestTransfer(req: Request): Promise<AppResult> {
 
 }
 
-
 export async function burn(req: Request): Promise<AppResult> {
     // validar en la app de petre la cantidad a desbloqeuar q sea = min al max
    // const contractName: string = "RepresentativeBondToken"; 
@@ -383,9 +392,75 @@ export async function burn(req: Request): Promise<AppResult> {
                 message: "burn error"
             }
         }
-    }
-   
+    }   
 }
+
+export async function faucet(req: Request): Promise<AppResult> {
+    const contractName: string = "StableCoin";
+    const methodName: string = "mint";
+    const args: any[] = req.body.args || [];
+    const options: Overrides = req.body.options || {};
+
+    // este es el caller de la function
+    const toAddress: string = args[0];
+    const amount: number = args[1];
+
+    // SIEMPRE EN ALASTRIA 
+    const results: { network: string; address: string | null }[] = [];
+
+    logger.info(`Faucet `);
+
+    const contracts = await loadAllContracts(config, logger);
+
+    const newArgs: any[] = [toAddress, amount];
+
+    initContractsService(logger, contracts, config, "ALASTRIA");
+
+    const contractAddress = config.CONTRACT.STABLECOIN_ALASTRIA;
+
+    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, newArgs, options);
+
+    return {
+        statusCode: 201,
+        body: {
+            message: resultAlastria,
+            resultAlastria
+        }
+    }
+}
+
+export async function getFaucetBalance(req: Request): Promise<AppResult> {
+    const contractName: string = "StableCoin";
+    const methodName: string = "balanceOf";
+    const args: any[] = req.body.args || [];
+    const options: Overrides = req.body.options || {};
+
+    // este es el caller de la function
+    const toAddress: string = args[0];
+
+    // SIEMPRE EN ALASTRIA 
+    const results: { network: string; address: string | null }[] = [];
+
+    logger.info(`Faucet `);
+
+    const contracts = await loadAllContracts(config, logger);
+
+    const newArgs: any[] = [toAddress];
+
+    initContractsService(logger, contracts, config, "ALASTRIA");
+    const contractAddress = config.CONTRACT.STABLECOIN_ALASTRIA;
+
+    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, newArgs, options);
+    
+    return {
+        statusCode: 201,
+        body: {
+            message: resultAlastria            
+        }
+    }
+}
+
+
 function delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
