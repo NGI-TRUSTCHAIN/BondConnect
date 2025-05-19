@@ -138,7 +138,7 @@ export async function callContractMethod(
         methodName: string,
         args: any[],
         options: Overrides
-    ): Promise<ContractTransactionResponse | ContractTransactionReceipt | null> {
+    ): Promise<ContractTransactionResponse | ContractTransactionReceipt | null > {
         const func: ContractMethod = await getContractMethod(contractName, contractAddress, methodName, args);
         options.gasLimit = "30000000";      
         if (methodName === 'createRepresentativeBondToken') {
