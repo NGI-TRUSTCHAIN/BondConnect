@@ -11,6 +11,7 @@ const InvestmentWallet: React.FC = () => {
   const navigate = useNavigate();
   const bonds = useAppSelector((state) => state.bond.bonds);
   const user = useAppSelector((state) => state.user.userLoged);
+  const userId = user?._id;
   const [record, setRecord] = useState<PaymentRecord[]>([]);
   const [walletData, setWalletData] = useState(null);
   const [balanceData, setBalanceData] = useState(null);
@@ -24,29 +25,29 @@ const InvestmentWallet: React.FC = () => {
 
   useEffect(() => {
     dispatch(readBonds());
-    let wallet: string = ""; 
+    
     const fetchData = async () => {
-      const data = await dispatch(getInvestorWalletData(user?._id || "")).unwrap();
-      setWalletData(data);
-      wallet = data.walletAddress;
+      try {
+        const data = await dispatch(getInvestorWalletData(userId || "")).unwrap();
+        setWalletData(data);
+        
+        if (data.walletAddress) {
+          const dataFaucet = await dispatch(getFaucetBalance(data.walletAddress)).unwrap();
+          setBalanceData(dataFaucet);
+        }
+      } catch (error) {
+        console.error('Error fetching wallet data:', error);
+      }
     };
 
-  fetchData();
-
-   const fetchDataFaucet = async () => {
-      const dataFaucet = await dispatch(getFaucetBalance(wallet || "")).unwrap();
-      setBalanceData(dataFaucet);
-   };
-
-   fetchDataFaucet();
-    
-  }, [bonds, dispatch, user?._id]);
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const rec = generatePaymentRecords(bonds!);
     setRecord(rec);
     console.log(record);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
