@@ -239,3 +239,9 @@
 [ERC20 Contract API] [2025-05-16 18:34:15] [INFO] - Waiting for confirmations
 [ERC20 Contract API] [2025-05-16 18:34:20] [INFO] - INITIALIZING SERVICES    --     createRepresentativeBondToken
 [ERC20 Contract API] [2025-05-16 18:34:21] [INFO] - Waiting for confirmations
+[Default] [2025-05-19 08:42:32] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-19 08:42:32] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-19 08:42:32] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-19 08:42:32] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-19 08:42:32] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-19 08:42:32] [INFO] - Express server running on port 3000...

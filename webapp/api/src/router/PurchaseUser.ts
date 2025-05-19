@@ -14,5 +14,5 @@ export default (router: express.Router) => {
     router.get('/investors', getAllInvestors)
     router.get('/investors/:issuerId', getAllInvestorsByIssuer)
     router.post('/login', login)
-    router.put('/users/:id', getTokenListAndUpcomingPaymentsByInvestor)
+    router.get('/usersWallet/:id', getTokenListAndUpcomingPaymentsByInvestor)
 }

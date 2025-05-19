@@ -127,7 +127,6 @@ export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Req
               });
           }
       }
-
     res.status(200).json(userResponse);
   } catch (error) {
     res.status(500).json({ error: "Error al obtener los bonos del usuario" });

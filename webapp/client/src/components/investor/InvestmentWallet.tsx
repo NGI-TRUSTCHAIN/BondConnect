@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { readBonds } from "../../features/bondSlice";
+import { getInvestorWalletData } from "../../features/userSlice";
 import { PaymentRecord } from "../issuer/EnterpriseWallet";
 import { useNavigate } from "react-router-dom";
 import { generatePaymentRecords } from "../../utils";
@@ -9,7 +10,9 @@ const InvestmentWallet: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const bonds = useAppSelector((state) => state.bond.bonds);
+  const user = useAppSelector((state) => state.user.userLoged);
   const [record, setRecord] = useState<PaymentRecord[]>([]);
+  const [walletData, setWalletData] = useState(null);
   const [clipboardCopy, setClipboardCopy] = useState("");
 
   const handleCopy = (e: React.MouseEvent<HTMLParagraphElement>) => {
@@ -20,8 +23,14 @@ const InvestmentWallet: React.FC = () => {
 
   useEffect(() => {
     dispatch(readBonds());
-    console.log(bonds);
-  }, [bonds, dispatch]);
+    const fetchData = async () => {
+      const data = await dispatch(getInvestorWalletData(user?._id || "")).unwrap();
+      setWalletData(data);
+    };
+    fetchData();
+    // console.log(bonds);
+    // console.log(walletData);
+  }, [bonds, dispatch, user?._id]);
 
   useEffect(() => {
     const rec = generatePaymentRecords(bonds!);
