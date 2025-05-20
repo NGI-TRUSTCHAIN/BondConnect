@@ -31,9 +31,9 @@ const EnterpriseWallet = () => {
   console.log();
 
   // Reads the available bonds
-  // useEffect(() => {
-  //   dispatch(readBonds());
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(readBonds(userId || ""));
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(getTokenListAndUpcomingPaymentsByIssuer(userId || ""));
@@ -105,38 +105,26 @@ const EnterpriseWallet = () => {
 
         <h3 className="section-title mt-4">Tokens in circulation</h3>
 
-        {/* <h4 data-bs-toggle="collapse" data-bs-target="#tokens-collapse" role="button" aria-expanded="false" aria-controls="tokens-collapse">
-                <strong>“Bond 1” Tokens in circulation:</strong> “5.000” 
-            </h4>
-            <div className="collapse" id="tokens-collapse">
-                <ul>
-                    <li><strong>Alastria:</strong> 2000</li>
-                    <li><strong>Ethereum:</strong> 2000</li>
-                    <li><strong>Polygon:</strong> 1000</li>
-                </ul>
-            </div>   */}
-
-        {bonds?.map((bond) => (
-          <Fragment key={bond._id}>
-            <h4
-              data-bs-toggle="collapse"
-              data-bs-target={`#tokens-collapse-${bond._id}`}
-              role="button"
-              aria-expanded="false"
-              aria-controls={`tokens-collapse-${bond._id}`}>
-              <strong>{bond.bondName} Tokens in circulation:</strong> {bond.numberTokens}
-            </h4>
-            <div className="collapse" id={`tokens-collapse-${bond._id}`}>
-              <ul>
-                {bond.tokenState.map((block) => (
-                  <li key={`${bond._id}-${block.blockchain}`}>
-                    <strong>{block.blockchain}:</strong> {block.amount}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Fragment>
-        ))}
+          <table
+          border={1}
+          style={{ borderCollapse: "collapse", width: "100%", textAlign: "center", backgroundColor: "#d9e8fc" }}>
+          <thead style={{ backgroundColor: "#7ba6e9", color: "white" }}>
+            <tr>
+              <th>Bond Name</th>
+              <th>DLT Network</th>
+              <th>Amount of Tokens</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tokenList?.map((token) => (
+              <tr key={token.bondName}>
+                <td>{token.bondName}</td>
+                <td>{token.network}</td>
+                <td>{token.amountAvaliable}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
         <h3 className="section-title mt-4">Upcoming payments</h3>
         <table
@@ -150,18 +138,13 @@ const EnterpriseWallet = () => {
             </tr>
           </thead>
           <tbody>
-            {/* <tr>
-                        <td>Bond 1</td>
-                        <td>01/01/2026</td>
-                        <td>20.000€</td>
-                    </tr> */}
-            {/* {record.slice(0, visibleCount).map((record: PaymentRecord) => (
+            {record.slice(0, visibleCount).map((record: PaymentRecord) => (
               <tr key={record.paymentDate}>
                 <td>{record.bondName}</td>
                 <td>{record.paymentDate}</td>
                 <td>{record.amount} €</td>
               </tr>
-            ))} */}
+            ))}
           </tbody>
         </table>
         {visibleCount < record.length && ( // Muestra el botón si hay más registros

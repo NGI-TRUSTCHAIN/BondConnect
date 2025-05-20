@@ -98,12 +98,12 @@ export const getTokenListAndUpcomingPaymentsByIssuer = async (req: express.Reque
           bondName: bond.bondName,
           network: token.blockchain,
           amountAvaliable: token.amount - Number(balanceResponse.message),
+          price: (token.amount - Number(balanceResponse.message)) * bond.price,
         });
 
 
         const endDate = dayjs(bond.redemptionFinishDate);
         const diffMonths = endDate.month() - today.month();
-        const operation = (token.amount - Number(balanceResponse.message)) * bond.price;
         if (
           diffMonths === 1 &&
           endDate.date() === today.date()
@@ -161,7 +161,7 @@ export const getPendingPayments = async (req: express.Request, res: express.Resp
  
               const investor: Investors = {
                   userId: invoice.userId,
-                  amount: invoice.amount,
+                  amount: invoice.amount * bond.price,
                   paid: invoice.paid
               };
  
@@ -174,13 +174,13 @@ export const getPendingPayments = async (req: express.Request, res: express.Resp
  
               if (existingPayment) {
                   existingPayment.investors.push(investor);
-                  existingPayment.amount += (investor.amount * bond.price); 
+                  existingPayment.amount += (investor.amount); 
               } else {
                   const newPayment: Payment = {
                       bondName: bond.bondName,
                       bondId: bond._id.toString(),
                       network: invoice.network,
-                      amount: invoice.amount,
+                      amount: 0,
                       investors: [investor]
                   };
                   targetList.push(newPayment);

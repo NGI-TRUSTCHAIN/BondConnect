@@ -12,6 +12,7 @@ export interface PurchaseBond {
     bondName: string;   
     network: string; 
     amountAvaliable: number;
+    price: number;
 }
 
 export interface Payment {
