@@ -1,6 +1,6 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { readBonds, registerPurchase } from "../../features/bondSlice";
+import { readBonds, readUserBonds, registerPurchase } from "../../features/bondSlice";
 import { useNavigate } from "react-router-dom";
 import { readInvestors, readIssuers } from "../../features/userSlice";
 import InvestorRegistration from "../Authentication/InvestorRegistration";
@@ -17,9 +17,10 @@ const BuyToken = () => {
   const errorMessage = useAppSelector((state) => state.bond.error);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const blockchains = ["Ethereum", "Alastria", "Binance Smart Chain", "Polygon"];
+  const blockchains = ["ALASTRIA", "AMOY"];
   const registeredBonds = useAppSelector((state) => state.bond.bonds);
   const investors = useAppSelector((state) => state.user.investors);
+  const userLogged = useAppSelector((state) => state.user.userLoged);
 
   const [showPopupUser, setShowPopupUser] = useState(false); // State to toggle popup visibility
   const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility
@@ -43,7 +44,7 @@ const BuyToken = () => {
   useEffect(() => {
     document.title = "Register User";
 
-    dispatch(readBonds());
+    dispatch(readUserBonds({userId: userLogged?._id!, walletAddress: userLogged?.walletAddress!}));
     dispatch(readInvestors());
     dispatch(readIssuers());
   }, [dispatch]);
