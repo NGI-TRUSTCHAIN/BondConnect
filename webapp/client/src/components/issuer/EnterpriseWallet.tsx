@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { readBonds } from "../../features/bondSlice";
 import "../components.css";
 import { useNavigate } from "react-router-dom";
-import { generatePaymentRecords } from "../../utils";
+import { getTokenListAndUpcomingPaymentsByIssuer } from "../../features/bondSlice";
 
 export interface PaymentRecord {
   bondName: string;
@@ -18,23 +18,33 @@ const EnterpriseWallet = () => {
   const [visibleCount, setVisibleCount] = useState(5); // Número inicial de registros visibles
 
   const bonds = useAppSelector((state) => state.bond.bonds);
+  const tokenList = useAppSelector((state) => state.bond.tokenList);
+  const upcomingPayment = useAppSelector((state) => state.bond.upcomingPayment);
+  console.log("tokenList: ",tokenList);
+  console.log("upcomingPayment: ",upcomingPayment);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate()
 
+  const userId = useAppSelector((state) => state.user.userLoged?._id);
+
   // Reads the available bonds
+  // useEffect(() => {
+  //   dispatch(readBonds());
+  // }, [dispatch]);
+
   useEffect(() => {
-    dispatch(readBonds());
+    dispatch(getTokenListAndUpcomingPaymentsByIssuer(userId || ""));
   }, [dispatch]);
 
   // Creates an interface for the object array record to render a table with the payment
   // records
 
-  useEffect(() => {
-    const rec = generatePaymentRecords(bonds!)
-    setRecord(rec)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   const rec = generatePaymentRecords(bonds!)
+  //   setRecord(rec)
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const handleCopy = (e: React.MouseEvent<HTMLParagraphElement>) => {
     setClipboardCopy(e.currentTarget.innerText);
@@ -143,13 +153,13 @@ const EnterpriseWallet = () => {
                         <td>01/01/2026</td>
                         <td>20.000€</td>
                     </tr> */}
-            {record.slice(0, visibleCount).map((record: PaymentRecord) => (
+            {/* {record.slice(0, visibleCount).map((record: PaymentRecord) => (
               <tr key={record.paymentDate}>
                 <td>{record.bondName}</td>
                 <td>{record.paymentDate}</td>
                 <td>{record.amount} €</td>
               </tr>
-            ))}
+            ))} */}
           </tbody>
         </table>
         {visibleCount < record.length && ( // Muestra el botón si hay más registros

@@ -52,10 +52,11 @@ export const getBondsByUser = async (req: express.Request, res: express.Response
   
      for (const bond of bonds) {
          for (const token of bond.tokenState) {
+          // console.log(' token '+ token.contractAddress + " Wallet " + issuer.walletAddress + " Blockchain " + token.blockchain);
           const newBond = {
             ...bond,
             blockchainNetwork: token.blockchain as "ALASTRIA" | "AMOY", // sobreescribimos con el valor deseado
-            numberTokens: token.amountAvaliable,
+            numberTokens: (await balance(token.contractAddress, issuer.walletAddress, token.blockchain)).message,
       };
       finalResponse.push(newBond);
          }

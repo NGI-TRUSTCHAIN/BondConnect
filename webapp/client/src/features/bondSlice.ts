@@ -13,6 +13,8 @@ interface BondState {
   transferHistory: TransferInfo[] | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null | undefined;
+  tokenList: { bondName: string; network: string; amountAvaliable: number; }[] | null;
+  upcomingPayment: any[] | null;
 }
 
 const initialState: BondState = {
@@ -22,6 +24,8 @@ const initialState: BondState = {
   transferHistory: null,
   status: "idle",
   error: undefined,
+  tokenList: null,
+  upcomingPayment: null,
 };
 
 export const readBonds = createAsyncThunk("bond/readBonds", async (userId: string, { rejectWithValue }) => {
@@ -382,6 +386,56 @@ export const getRetailMktBonds = createAsyncThunk("retailMktBond/readAllRetailBo
   }
 });
 
+export const getTokenListAndUpcomingPaymentsByIssuer = createAsyncThunk(
+  "bond/getTokenListAndUpcomingPaymentsByIssuer",
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/bonds-issuer-tokens/${userId}`, { method: "GET" });
+
+      if (!response.ok) {
+        try {
+          const error = await response.json();
+          return rejectWithValue(error.message || "Error desconocido");
+        } catch {
+          return rejectWithValue(`Unexpected response: ${response.statusText}`);
+        }
+      }
+
+      const data = await response.json();
+      console.log("getTokenListAndUpcomingPaymentsByIssuer:", data);
+      return {
+        tokenList: data.tokenList,
+        upcomingPayment: data.upcomingPayment
+      };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const getPendingPayments = createAsyncThunk("bond/getPendingPayments", async (id: string, { rejectWithValue }) => {
+  try {
+    const response = await fetch(`/api/bonds-issuer-pending/${id}`, { method: "GET" });
+
+    if (!response.ok) {
+      // const error = await response.json();
+      // return rejectWithValue(error.message);
+      try {
+        const error = await response.json();
+        return rejectWithValue(error.message || "Error desconocido");
+      } catch {
+        return rejectWithValue(`Unexpected response: ${response.statusText}`);
+      }
+    }
+
+    const data = await response.json();
+    console.log("getPendingPayments:", data); // Debugging step
+    return data as Bond[];
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+});
+
 const bondSlice = createSlice({
   name: "bond",
   initialState,
@@ -530,6 +584,19 @@ const bondSlice = createSlice({
         state.status = "succeeded";
         state.bonds = action.payload
         state.error = null;
+      })
+      .addCase(getTokenListAndUpcomingPaymentsByIssuer.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(getTokenListAndUpcomingPaymentsByIssuer.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.tokenList = action.payload.tokenList;
+        state.upcomingPayment = action.payload.upcomingPayment;
+      })
+      .addCase(getTokenListAndUpcomingPaymentsByIssuer.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
       });
   },
 });

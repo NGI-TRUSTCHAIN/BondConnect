@@ -13,3 +13,16 @@ export interface PurchaseBond {
     network: string; 
     amountAvaliable: number;
 }
+
+export interface Payment {
+    bondName: string;
+    bondId: string;
+    network: string;
+    amount: number;
+    investors: Investors[]
+}
+export interface Investors {
+    userId: string;
+    amount: number;
+    paid: boolean;
+}
