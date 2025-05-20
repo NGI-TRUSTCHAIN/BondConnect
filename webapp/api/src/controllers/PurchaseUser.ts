@@ -102,13 +102,14 @@ export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Req
    const userResponse: UserInfo = { tokenList: [], upcomingPayment: [] };
 
       const today = dayjs();
-
+      //BuscarBono
       for (const invoice of paymentInvoices) {
           // tokenList: todos los registros sin importar 'paid'
           userResponse.tokenList.push({
               bondName: invoice.bonoId,
               network: invoice.network,
               amountAvaliable: invoice.amount,
+              price: 0, // falta el precio
           });
 
           // upcomingPayment: solo si falta un mes exacto y no está pagado
