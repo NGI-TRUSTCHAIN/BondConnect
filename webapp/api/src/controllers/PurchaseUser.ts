@@ -56,7 +56,7 @@ export const purchase = async (req: express.Request, res: express.Response) => {
           await createPaymentInvoice({
               userId: purchaseData.userId,
               bonoId: bond.id,
-              endDate: bond.redemptionFinishDate, // asegúrate de tener esta propiedad
+              endDate: bond.bondMaturityDate, // asegúrate de tener esta propiedad
               network: purchaseData.destinationBlockchain.toUpperCase(),
               amount: purchaseData.purchasedTokens,
               paid: false
