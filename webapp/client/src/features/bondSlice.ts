@@ -13,7 +13,7 @@ interface BondState {
   transferHistory: TransferInfo[] | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null | undefined;
-  tokenList: { bondName: string; network: string; amountAvaliable: number; }[] | null;
+  tokenList: { bondName: string; network: string; amountAvaliable: number; price: number; }[] | null;
   upcomingPayment: any[] | null;
 }
 

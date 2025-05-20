@@ -28,8 +28,24 @@ const EnterpriseWallet = () => {
 
   const userId = useAppSelector((state) => state.user.userLoged?._id);
   const wallet = useAppSelector((state) => state.user.userLoged?.walletAddress);
-  console.log();
 
+  const priceTotal = tokenList?.reduce((acc, token) => {
+    if (!acc[token.network]) {
+      acc[token.network] = [];
+    }
+    acc[token.network].push(token.amountAvaliable || 0);
+    return acc;
+  }, {} as Record<string, number[]>);
+
+  // Calcular suma por red
+  const sumByNetwork = priceTotal ? Object.entries(priceTotal).reduce((acc, [network, values]) => {
+    acc[network] = values.reduce((sum, value) => sum + value, 0);
+    return acc;
+  }, {} as Record<string, number>) : {};
+
+  // Calcular total general
+  const totalSum = Object.values(sumByNetwork).reduce((sum, value) => sum + value, 0);
+  
   // Reads the available bonds
   useEffect(() => {
     dispatch(readBonds(userId || ""));
@@ -38,15 +54,6 @@ const EnterpriseWallet = () => {
   useEffect(() => {
     dispatch(getTokenListAndUpcomingPaymentsByIssuer(userId || ""));
   }, [dispatch]);
-
-  // Creates an interface for the object array record to render a table with the payment
-  // records
-
-  // useEffect(() => {
-  //   const rec = generatePaymentRecords(bonds!)
-  //   setRecord(rec)
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
 
   const handleCopy = (e: React.MouseEvent<HTMLParagraphElement>) => {
     setClipboardCopy(e.currentTarget.innerText);
@@ -87,18 +94,15 @@ const EnterpriseWallet = () => {
           role="button"
           aria-expanded="false"
           aria-controls="balance-collapse">
-          <strong>Total Available Balance:</strong> 50.000€
+          <strong>Total Available Balance:</strong> {totalSum}
         </h4>
         <div className="collapse" id="balance-collapse">
           <ul>
             <li>
-              <strong>Alastria:</strong> 20.000€
+              <strong>Alastria:</strong> {sumByNetwork.ALASTRIA}
             </li>
             <li>
-              <strong>Ethereum:</strong> 20.000€
-            </li>
-            <li>
-              <strong>Polygon:</strong> 10.000€
+              <strong>Amoy:</strong> {sumByNetwork.AMOY}
             </li>
           </ul>
         </div>
@@ -126,7 +130,7 @@ const EnterpriseWallet = () => {
           </tbody>
         </table>
 
-        <h3 className="section-title mt-4">Upcoming payments</h3>
+        {/* <h3 className="section-title mt-4">Upcoming payments</h3>
         <table
           border={1}
           style={{ borderCollapse: "collapse", width: "100%", textAlign: "center", backgroundColor: "#d9e8fc" }}>
@@ -149,7 +153,7 @@ const EnterpriseWallet = () => {
         </table>
         {visibleCount < record.length && ( // Muestra el botón si hay más registros
           <button onClick={handleShowMore}>Show More</button>
-        )}
+        )} */}
       </div>
     </>
   );

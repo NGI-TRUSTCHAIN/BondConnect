@@ -3,11 +3,12 @@ import { createPurchaseUser, getPurchaseUsers, getRetailPurchasedByUserId } from
 import { createPaymentInvoice, updatePaymentInvoiceById, getPaymentInvoicesByUserId } from "../db/PaymentInvoice";
 import express from "express";
 import { useApiBridge } from "../services/api-bridge.service";
-import { getBondByBondName } from "../db/bonds";
+import { getBondByBondName, getBondById } from "../db/bonds";
 import { getIssuerById } from "../db/Issuer";
 import { getInvestorByEmail, getInvestorById } from "../db/Investor";
 import { UserInfo, UpcomingPayment, PurchaseBond } from "../models/Payment";
 import dayjs from "dayjs";
+import { useBlockchainService } from '../services/blockchain.service'
 
 export const getAllPurchaseUsers = async (req: express.Request,res: express.Response) => {
   try {
@@ -96,20 +97,26 @@ export const purchase = async (req: express.Request, res: express.Response) => {
 
 export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Request, res: express.Response) => {
   try {
+   const { balance } = useBlockchainService();
    const userId = req.params.userId;
+   const wallet = (await getIssuerById(userId)).walletAddress;
 
    const paymentInvoices = await getPaymentInvoicesByUserId(userId);
    const userResponse: UserInfo = { tokenList: [], upcomingPayment: [] };
 
       const today = dayjs();
-      //BuscarBono
+      
       for (const invoice of paymentInvoices) {
+          
+          const bond = await getBondById(invoice.bonoId);
+          const balanceResponse = await balance(bond.tokenState[0].contractAddress, wallet, bond.tokenState[0].blockchain);
+          // REVISAR LOGICA CALCULO PRICE
           // tokenList: todos los registros sin importar 'paid'
           userResponse.tokenList.push({
               bondName: invoice.bonoId,
               network: invoice.network,
               amountAvaliable: invoice.amount,
-              price: 0, // falta el precio
+              price: (invoice.amount * Number(balanceResponse.message)) * bond.price,
           });
 
           // upcomingPayment: solo si falta un mes exacto y no está pagado
