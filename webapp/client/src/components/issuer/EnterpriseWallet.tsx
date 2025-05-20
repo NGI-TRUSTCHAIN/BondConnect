@@ -27,6 +27,8 @@ const EnterpriseWallet = () => {
   const navigate = useNavigate()
 
   const userId = useAppSelector((state) => state.user.userLoged?._id);
+  const wallet = useAppSelector((state) => state.user.userLoged?.walletAddress);
+  console.log();
 
   // Reads the available bonds
   // useEffect(() => {
@@ -73,7 +75,7 @@ const EnterpriseWallet = () => {
         <h3 className="section-title">Your Wallet Address:</h3>
         <div className="wallet-address col-12">
           <p id="copyLabel" className="copy-label" onClick={handleCopy}>
-            Wallet address
+            {wallet}
             <img src="/src/clip.png" id="copyButton" className="copy-button" />
           </p>
         </div>
