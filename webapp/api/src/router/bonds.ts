@@ -13,5 +13,5 @@ export default (router: express.Router) => {
     router.post('/addToMarket', addRetailMktBond)
     router.get('/getAllMarketBonds', getAllRetailMktBonds)
     router.get('/bonds-issuer-tokens/:userId', getTokenListAndUpcomingPaymentsByIssuer)
-    router.get('/bonds-issuer-pending/:id', getPendingPayments)
+    router.get('/bonds-issuer-pending/:userId', getPendingPayments)
 }

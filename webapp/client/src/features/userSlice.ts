@@ -17,6 +17,8 @@ interface BondState {
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null | undefined;
   retailBondBuys: RetailBondBuy[];
+  upcomingPayments: any[];
+  pastDuePayments: any[];
 }
 
 const initialState: BondState = {
@@ -26,6 +28,8 @@ const initialState: BondState = {
   status: "idle",
   error: undefined,
   retailBondBuys: [],
+  upcomingPayments: [],
+  pastDuePayments: [],
 };
 
 export const registerInvestor = createAsyncThunk(
@@ -207,6 +211,29 @@ export const getAllBuys = createAsyncThunk("user/getAllBuys", async (userId: str
   }
 });
 
+export const getPayments = createAsyncThunk("user/getPayments", async (userId: string, { rejectWithValue }) => {
+  try {
+      const response = await fetch(`/api/bonds-issuer-pending/${userId}`, { method: "GET" });
+
+    if (!response.ok) {
+      // const error = await response.json();
+      // return rejectWithValue(error.message);
+      try {
+        const error = await response.json();
+        return rejectWithValue(error.message || "Error desconocido");
+      } catch {
+        return rejectWithValue(`Unexpected response: ${response.statusText}`);
+      }
+    }
+
+    const data = await response.json();
+    console.log("Fetched data:", data); // Debugging step
+    return data;
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+});
+
 export const login = createAsyncThunk(
   "user/login",
   async (log: { profile: string; email: string; password: string }, { rejectWithValue }) => {
@@ -336,6 +363,18 @@ const userSlice = createSlice({
       .addCase(getRetailBondBuysByUserID.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
+      })
+      .addCase(getPayments.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getPayments.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
+      })
+      .addCase(getPayments.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.upcomingPayments = action.payload.upcomingPayments;
+        state.pastDuePayments = action.payload.pastDuePayments;
       });
   },
 });

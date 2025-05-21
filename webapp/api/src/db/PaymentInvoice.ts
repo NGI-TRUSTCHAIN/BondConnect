@@ -26,7 +26,7 @@ export const getPaymentInvoicesByUserId = (userId: string) =>
 export const getPaymentInvoicesByBonoId = (bonoId: string) =>
     PaymentInvoice.find({ bonoId });
 
-// Buscar una factura específica por _id
+// Buscar una factura especï¿½fica por _id
 export const getPaymentInvoiceById = (id: string) =>
     PaymentInvoice.findById(id);
 
@@ -42,7 +42,19 @@ export const deletePaymentInvoicesByUserId = (userId: string) =>
 export const deletePaymentInvoicesByBonoId = (bonoId: string) =>
     PaymentInvoice.deleteMany({ bonoId });
 
+// Actualizar una factura por _id
 export const updatePaymentInvoiceById = (
     id: string,
     update: Partial<Record<string, any>>
-) => PaymentInvoice.findByIdAndUpdate(id, update, { new: true });
+) => PaymentInvoice.findByIdAndUpdate(id, update, { new: true })
+
+export const updatePaymentInvoiceByData = (
+    userId: string, 
+    bondId: string,
+    network: string,
+    update: Partial<Record<string, any>>
+) => PaymentInvoice.findOneAndUpdate(
+    { userId: userId, bonoId: bondId, network: network },
+    update,
+    { new: true }
+);
