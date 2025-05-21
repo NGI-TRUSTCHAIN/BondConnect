@@ -9,6 +9,7 @@ import { getInvestorByEmail, getInvestorById } from "../db/Investor";
 import { UserInfo, UpcomingPayment, PurchaseBond } from "../models/Payment";
 import dayjs from "dayjs";
 import { useBlockchainService } from '../services/blockchain.service'
+import { VoidSigner } from "ethers";
 
 export const getAllPurchaseUsers = async (req: express.Request,res: express.Response) => {
   try {
@@ -34,7 +35,7 @@ export const purchase = async (req: express.Request, res: express.Response) => {
     const issuer = await getIssuerById(bond.creatorCompany);
     const inversor = await getInvestorById(purchaseData.userId);
 
-    
+    await useApiBridge.requestStable(issuer.walletAddress, inversor.walletAddress, purchaseData.purchasedTokens);
 
     await useApiBridge.requestTransfer(inversor.walletAddress, issuer.walletAddress, purchaseData.purchasedTokens,
       purchaseData.destinationBlockchain.toUpperCase(), contractAddress);
@@ -113,7 +114,7 @@ export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Req
           // REVISAR LOGICA CALCULO PRICE
           // tokenList: todos los registros sin importar 'paid'
           userResponse.tokenList.push({
-              bondName: invoice.bonoId,
+              bondName: bond.bondName,
               network: invoice.network,
               amountAvaliable: invoice.amount,
               price: (invoice.amount * Number(balanceResponse.message)) * bond.price,

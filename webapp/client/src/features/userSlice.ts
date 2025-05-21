@@ -142,7 +142,7 @@ export const readIssuers = createAsyncThunk("user/readIssuers", async (_, { reje
 export const getInvestorWalletData = createAsyncThunk("user/getInvestorWalletData", async (userId: string, { rejectWithValue }) => {
   try {
     const response = await fetch(`/api/usersWallet/${userId}`, { method: "GET" });
-
+    
     if (!response.ok) {
       try {
         const error = await response.json();

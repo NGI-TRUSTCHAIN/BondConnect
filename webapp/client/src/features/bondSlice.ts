@@ -649,6 +649,19 @@ const bondSlice = createSlice({
       .addCase(getTokenListAndUpcomingPaymentsByIssuer.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
+      })
+      .addCase(getTokenListAndUpcomingPaymentsByInvestor.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(getTokenListAndUpcomingPaymentsByInvestor.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.tokenList = action.payload.tokenList;
+        state.upcomingPayment = action.payload.upcomingPayment;
+      })
+      .addCase(getTokenListAndUpcomingPaymentsByInvestor.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
       });
   },
 });
