@@ -120,7 +120,7 @@ const InvestmentWallet: React.FC = () => {
           <div className="collapse" id={`tokens-collapse-${token.bondName}`}>
             <ul>
               {bond.tokenState.map((block) => (
-                <li key={`${bond._id}-${block.blockchain}`}>
+                <li key={`${token.}-${block.blockchain}`}>
                   <strong>{block.blockchain}:</strong> {block.amount}
                 </li>
               ))}
