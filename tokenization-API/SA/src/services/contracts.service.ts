@@ -129,25 +129,31 @@ export async function callContractMethod(
 }
 
 export async function executeContractMethod(
-  contractName: string,
-  contractAddress: string,
-  methodName: string,
-  args: any[],
-  options: Overrides
+    contractName: string,
+    contractAddress: string,
+    methodName: string,
+    args: any[],
+    options: Overrides
 ): Promise<ContractTransactionResponse | ContractTransactionReceipt | null> {
-  const func: ContractMethod = await getContractMethod(contractName, contractAddress, methodName, args);
-  let executeTransaction: ContractTransactionResponse = await func(...args, options);
-  logger.debug(`Tx response: ${JSON.stringify(executeTransaction)}`);
+    const func: ContractMethod = await getContractMethod(contractName, contractAddress, methodName, args);
 
-  if (executeTransaction.wait) {
-    logger.info('Waiting for confirmations');
-    const receipt: ContractTransactionReceipt | null = await executeTransaction.wait();
-    logger.debug(`Tx receipt: ${JSON.stringify(receipt)}`);
+    const gasEstimate = await func.estimateGas(...args);
 
-    return receipt;
-  } else {
-    return executeTransaction;
-  }
+    options.gasPrice = "60000000000";
+    options.gasLimit = gasEstimate;
+
+    let executeTransaction: ContractTransactionResponse = await func(...args, options);
+    logger.debug(`Tx response: ${JSON.stringify(executeTransaction)}`);
+
+    if (executeTransaction.wait) {
+        logger.info('Waiting for confirmations');
+        const receipt: ContractTransactionReceipt | null = await executeTransaction.wait();
+        logger.debug(`Tx receipt: ${JSON.stringify(receipt)}`);
+
+        return receipt;
+    } else {
+        return executeTransaction;
+    }
 }
 
 export async function initContractsService(_logger: Logger, _contracts: ContractCollection, _config: Config, _originNetwork: string) {
