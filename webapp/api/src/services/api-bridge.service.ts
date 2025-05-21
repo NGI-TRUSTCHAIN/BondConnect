@@ -95,4 +95,16 @@ export const useApiBridge = {
     return await post('/faucet', { accountAddressOwner, amount });
   },
 
+  async requestStable(
+    toAddress: string,
+    fromAddress: string,
+    amount: number
+  ): Promise<CreateBondResponse> {
+    return await post('/requestTransfer', {
+      toAddress,
+      fromAddress,
+      amount
+    });
+  },
+
 };

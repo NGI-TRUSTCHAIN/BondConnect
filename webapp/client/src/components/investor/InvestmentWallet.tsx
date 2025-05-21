@@ -107,17 +107,17 @@ const InvestmentWallet: React.FC = () => {
         </div>
 
       <h3 className="section-title mt-4">Token List:</h3>
-      {bonds?.map((bond) => (
-        <Fragment key={bond._id}>
+      {tokenList?.map((token) => (
+        <Fragment key={token.bondName}>
           <h4
             data-bs-toggle="collapse"
-            data-bs-target={`#tokens-collapse-${bond._id}`}
+            data-bs-target={`#tokens-collapse-${token.bondName}`}
             role="button"
             aria-expanded="false"
-            aria-controls={`tokens-collapse-${bond._id}`}>
-            <strong>{bond.bondName} Tokens in circulation:</strong> {bond.numberTokens}
+            aria-controls={`tokens-collapse-${token.bondName}`}>
+            <strong>{token.bondName} Tokens in circulation:</strong> {token.price}
           </h4>
-          <div className="collapse" id={`tokens-collapse-${bond._id}`}>
+          <div className="collapse" id={`tokens-collapse-${token.bondName}`}>
             <ul>
               {bond.tokenState.map((block) => (
                 <li key={`${bond._id}-${block.blockchain}`}>

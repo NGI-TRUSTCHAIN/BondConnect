@@ -108,11 +108,11 @@ export const getTokenListAndUpcomingPaymentsByIssuer = async (req: express.Reque
           diffMonths === 1 &&
           endDate.date() === today.date()
         ) {
-
+          let paymentAmount  = bond.price * (bond.interestRate / 100);
           userResponse.upcomingPayment.push({
             bondName: bond.bondName,
             paymentDate: bond.redemptionFinishDate.toString(),
-            paymentAmount: (token.amount - Number(balanceResponse.message)) * bond.price, // calcular el precio esta mal asi 
+            paymentAmount: (token.amount - Number(balanceResponse.message)) * paymentAmount,
           });
 
         }
