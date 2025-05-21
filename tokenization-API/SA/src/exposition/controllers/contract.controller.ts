@@ -197,6 +197,7 @@ export async function createIndividualAccountRetry(req: Request): Promise<AppRes
 
     logger.info(`INITIALIZING SERVICES createAccountRetryIndividual in ${network}`);
     const contracts = await loadAllContracts(config, logger);
+
     initContractsService(logger, contracts, config, network);
 
     const result: ContractTransactionResponse | ContractTransactionReceipt | null =
