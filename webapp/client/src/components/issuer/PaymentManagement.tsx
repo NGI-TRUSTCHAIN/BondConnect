@@ -122,6 +122,7 @@ const PaymentManagement = () => {
             <thead style={{ backgroundColor: "#7ba6e9", color: "white" }}>
               <tr>
                 <th>Investor</th>
+                <th>Date</th>
                 <th>Amount of Tokens</th>
                 <th>Amount</th>
                 <th></th>
@@ -135,6 +136,7 @@ const PaymentManagement = () => {
                       <input type="checkbox" onChange={() => handlePayBatch(investor.userId)} style={{textAlign: "start", marginRight: "10px"}}/>
                       {investor.userId}
                     </td>
+                    <td>{payment.paymentDate ? new Date(payment.paymentDate).toLocaleDateString() : ''}</td>
                     <td>{investor.amount}</td>
                     <td>{investor.numberToken}</td>
                     <td>

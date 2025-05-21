@@ -34,7 +34,7 @@ const BondDetails = () => {
 
   const [purchaseData, setPurchaseData] = useState<PurchaseData>({
     _id: undefined,
-    userId: user.email,
+    userId: user._id || '', // Provide empty string as fallback
     destinationBlockchain: bond.blockchainNetwork,
     investToken: bond.bondName,
     purchasedTokens: tokens,
@@ -170,89 +170,98 @@ const BondDetails = () => {
           </ul>
         </div>
 
-        <button className="btn btn-primary ms-3" onClick={handleBuy}>
-          BUY
-        </button>
-      </div>
-      <ToastContainer />
-      {showPopup && (
-        <div className="popup-overlay" onClick={handleClosePopup}>
-          <div className="popup">
-            <h2 className="text-primary mb-4" style={{ textAlign: "left" }}>
-              BUY TOKEN
-            </h2>
+        <div className="d-flex justify-content-between align-items-center w-100">
+          <div style={{ width: "33%" }}></div>
+          <div style={{ width: "33%", textAlign: "center" }}>
+            <button className="btn btn-primary" onClick={handleBuy}>
+              BUY
+            </button>
+          </div>
+          <div style={{ width: "33%", textAlign: "right" }}>
+            <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+              BACK
+            </button>
+          </div>
+        </div>
+        <ToastContainer />
+        {showPopup && (
+          <div className="popup-overlay" onClick={handleClosePopup}>
+            <div className="popup">
+              <h2 className="text-primary mb-4" style={{ textAlign: "left" }}>
+                BUY TOKEN
+              </h2>
 
-            <div className="row d-flex justify-content-center align-items-center">
-              <div className="col-sm-6 mb-3">
-                <label htmlFor="userId" className="form-label">
-                  User ID:
-                </label>
-                <input
-                  type="text"
-                  id="userId"
-                  name="userId"
-                  className="form-control bg-form"
-                  placeholder={`Id`}
-                  value={user.email}
-                  disabled
-                />
-              </div>
-              <div className="col-sm-6 mb-3">
-                <label htmlFor="investToken" className="form-label">
-                  Token Selection:
-                </label>
-                <input
-                  id="investToken"
-                  name="investToken"
-                  className="form-control bg-form"
-                  value={bond.bondName}
-                  disabled
-                />
-              </div>
+              <div className="row d-flex justify-content-center align-items-center">
+                <div className="col-sm-6 mb-3">
+                  <label htmlFor="userId" className="form-label">
+                    User ID:
+                  </label>
+                  <input
+                    type="text"
+                    id="userId"
+                    name="userId"
+                    className="form-control bg-form"
+                    placeholder={`Id`}
+                    value={user.email}
+                    disabled
+                  />
+                </div>
+                <div className="col-sm-6 mb-3">
+                  <label htmlFor="investToken" className="form-label">
+                    Token Selection:
+                  </label>
+                  <input
+                    id="investToken"
+                    name="investToken"
+                    className="form-control bg-form"
+                    value={bond.bondName}
+                    disabled
+                  />
+                </div>
 
-              <div className="col-sm-6 mb-3">
-                <label htmlFor="destinationBlockchain" className="form-label">
-                  Destination Blockchain:
-                </label>
-                <select
-                  id="destinationBlockchain"
-                  name="destinationBlockchain"
-                  className="form-control bg-form"
-                  value={selectedBlockchain}
-                  onChange={(e) => {
-                    setSelectedBlockchain(e.target.value);
-                    setTokens(0); // Reiniciar tokens al cambiar de blockchain
-                  }}>
-                  {bond.tokenState.map((entry: TokenState) => (
-                    <option key={entry.blockchain} value={entry.blockchain}>
-                      {entry.blockchain}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                <div className="col-sm-6 mb-3">
+                  <label htmlFor="destinationBlockchain" className="form-label">
+                    Destination Blockchain:
+                  </label>
+                  <select
+                    id="destinationBlockchain"
+                    name="destinationBlockchain"
+                    className="form-control bg-form"
+                    value={selectedBlockchain}
+                    onChange={(e) => {
+                      setSelectedBlockchain(e.target.value);
+                      setTokens(0); // Reiniciar tokens al cambiar de blockchain
+                    }}>
+                    {bond.tokenState.map((entry: TokenState) => (
+                      <option key={entry.blockchain} value={entry.blockchain}>
+                        {entry.blockchain}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="col-sm-6 mb-3">
-                <label htmlFor="purchasedTokens" className="form-label">
-                  Number of Tokens:
-                </label>
-                <input
-                  type="number"
-                  id="purchasedTokens"
-                  name="purchasedTokens"
-                  className="form-control bg-form"
-                  value={tokens}
-                  min={0}
-                  max={selectedEntry?.amount ?? 0}
-                  placeholder={`${selectedEntry?.amount ?? 0}`}
-                  disabled={!selectedEntry}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const value = Number(e.target.value); // Valor ingresado por el usuario
-                    const max = selectedEntry?.amount ?? 0; // Cantidad maxima de tokens que se puede comprar
-                    setTokens(Math.min(value, max)); // Seleccionar el minimo entre el valor ingresado y la cantidad maxima
-                  }}
-                />
-              </div>
-              {/* <div className="col-sm-6 mb-3">
+                <div className="col-sm-6 mb-3">
+                  <label htmlFor="purchasedTokens" className="form-label">
+                    Number of Tokens:
+                  </label>
+                  <input
+                    type="number"
+                    id="purchasedTokens"
+                    name="purchasedTokens"
+                    className="form-control bg-form"
+                    value={tokens}
+                    min={0}
+                    max={selectedEntry?.amount ?? 0}
+                    placeholder={`${selectedEntry?.amount ?? 0}`}
+                    disabled={!selectedEntry}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const value = Number(e.target.value); // Valor ingresado por el usuario
+                      const max = selectedEntry?.amount ?? 0; // Cantidad maxima de tokens que se puede comprar
+                      setTokens(Math.min(value, max)); // Seleccionar el minimo entre el valor ingresado y la cantidad maxima
+                    }}
+                  />
+                </div>
+                {/* <div className="col-sm-6 mb-3">
                 <label htmlFor="destinationBlockchain" className="form-label">
                   Destination Blockchain:
                 </label>
@@ -278,18 +287,19 @@ const BondDetails = () => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTokens(Number(e.target.value))}
                 />
               </div> */}
-            </div>
-            <div className="popup-actions mt-5" style={{ textAlign: "center" }}>
-              <button className="btn btn-primary" onClick={handleConfirmBuy}>
-                CONFIRM
-              </button>
-              <button className="btn btn-secondary" onClick={() => setShowPopup(false)}>
-                Close
-              </button>
+              </div>
+              <div className="popup-actions mt-5" style={{ textAlign: "center" }}>
+                <button className="btn btn-primary" onClick={handleConfirmBuy}>
+                  CONFIRM
+                </button>
+                <button className="btn btn-secondary" onClick={() => setShowPopup(false)}>
+                  Close
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

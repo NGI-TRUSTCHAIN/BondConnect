@@ -33,8 +33,10 @@ export const purchase = async (req: express.Request, res: express.Response) => {
     const contractAddress = bond.tokenState.find((block: any) => 
       block.blockchain.toUpperCase() === purchaseData.destinationBlockchain.toUpperCase()).contractAddress;
     const issuer = await getIssuerById(bond.creatorCompany);
-    const inversor = await getInvestorByEmail(purchaseData.userId);
+    const inversor = await getInvestorById(purchaseData.userId);
+
     await useApiBridge.requestStable(issuer.walletAddress, inversor.walletAddress, purchaseData.purchasedTokens);
+
     await useApiBridge.requestTransfer(inversor.walletAddress, issuer.walletAddress, purchaseData.purchasedTokens,
       purchaseData.destinationBlockchain.toUpperCase(), contractAddress);
 
@@ -99,7 +101,7 @@ export const purchase = async (req: express.Request, res: express.Response) => {
 export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Request, res: express.Response) => {
   try {
    const { balance } = useBlockchainService();
-   const userId = req.params.userId;
+   const userId = req.params.userId; 
    const wallet = (await getInvestorById(userId)).walletAddress;
    const paymentInvoices = await getPaymentInvoicesByUserId(userId);
    const userResponse: UserInfo = { tokenList: [], upcomingPayment: [] };
