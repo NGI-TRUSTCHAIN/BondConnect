@@ -139,8 +139,9 @@ export async function executeContractMethod(
 
     const gasEstimate = await func.estimateGas(...args);
 
-    options.gasPrice = "60000000000";
+    options.gasPrice = "90000000000";
     options.gasLimit = gasEstimate;
+    console.log("GAS", gasEstimate)
 
     let executeTransaction: ContractTransactionResponse = await func(...args, options);
     logger.debug(`Tx response: ${JSON.stringify(executeTransaction)}`);
