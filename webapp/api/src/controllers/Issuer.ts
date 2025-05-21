@@ -189,7 +189,7 @@ export const getPendingPayments = async (req: express.Request, res: express.Resp
                       network: invoice.network,
                       numberToken: invoice.amount,
                       amount: investor.amount,
-                      paymentDate: dayjs(bond.bondStartDate).add(1, 'year').format('YYYY-MM-DD'),
+                      paymentDate: invoice.endDate,
                       investors: [investor]
                   };
                   console.log('newPayment', newPayment);

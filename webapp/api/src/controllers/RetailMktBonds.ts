@@ -17,7 +17,6 @@ export const getAllRetailMktBonds = async (req: express.Request, res: express.Re
       // para mostralo y poder comprear en  el front Oportunities
       finalResponse.push({ ...fltBond}); // Agregar el bond filtrado al finalResponse
     }
-    console.log('FINAL RESPONSE', finalResponse);
     res.status(200).json(finalResponse);
   } catch (error) {
     console.error(error);
