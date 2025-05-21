@@ -19,11 +19,14 @@ export interface Payment {
     bondName: string;
     bondId: string;
     network: string;
+    numberToken: number;
     amount: number;
+    paymentDate: string;
     investors: Investors[]
 }
 export interface Investors {
     userId: string;
+    numberToken: number;
     amount: number;
     paid: boolean;
 }

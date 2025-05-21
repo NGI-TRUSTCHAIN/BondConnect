@@ -4,7 +4,7 @@ import { MongoServerError } from 'mongodb';
 import { useBlockchainService } from '../services/blockchain.service'
 import { UserInfo, UpcomingPayment, PurchaseBond } from "../models/Payment";
 import { getBonds, getBondById, deleteBondById, createBond, BondModel, getBondsByUserId, updateBondById } from "../db/bonds";
-import { createPaymentInvoice, updatePaymentInvoiceById, getPaymentInvoicesByBonoId } from "../db/PaymentInvoice";
+import { createPaymentInvoice, updatePaymentInvoiceById, getPaymentInvoicesByBonoId, updatePaymentInvoiceByData } from "../db/PaymentInvoice";
 import { InvestorBonds } from "../models/Bond";
 import { Payment, Investors} from "../models/Payment";
 import { getIssuerById} from '../db/Issuer';
@@ -134,8 +134,9 @@ export const getPendingPayments = async (req: express.Request, res: express.Resp
     try {
         const userId = req.params.userId;
         const wallet = (await getIssuerById(userId)).walletAddress;
+        console.log(wallet);
         const bonds = await getBondsByUserId(userId);
- 
+        console.log(bonds);
         const today = dayjs();
  
         let finalResponse : Payment[] = []
@@ -161,33 +162,44 @@ export const getPendingPayments = async (req: express.Request, res: express.Resp
  
               const investor: Investors = {
                   userId: invoice.userId,
+                  numberToken: invoice.amount,
                   amount: invoice.amount * bond.price,
                   paid: invoice.paid
               };
+              console.log('investor', investor);
  
-              const targetList = isPastDue ? pastDuePayments : isUpcoming ? upcomingPayments : null;
+              const targetList = isPastDue ? pastDuePayments  : upcomingPayments ;
+              console.log('targetList', targetList);
               if (!targetList) continue;
+              console.log('targetList', targetList);
  
               let existingPayment = targetList.find(
                   p => p.bondName === bond.bondName && p.network === invoice.network
               );
+              console.log('existingPayment', existingPayment);
  
               if (existingPayment) {
                   existingPayment.investors.push(investor);
+                  existingPayment.numberToken += invoice.amount;
                   existingPayment.amount += (investor.amount); 
               } else {
                   const newPayment: Payment = {
                       bondName: bond.bondName,
                       bondId: bond._id.toString(),
                       network: invoice.network,
-                      amount: 0,
+                      numberToken: invoice.amount,
+                      amount: investor.amount,
+                      paymentDate: dayjs(bond.bondStartDate).add(1, 'year').format('YYYY-MM-DD'),
                       investors: [investor]
                   };
+                  console.log('newPayment', newPayment);
                   targetList.push(newPayment);
               }
           }
         }
  
+        console.log('upcomingPayments', upcomingPayments);
+        console.log('pastDuePayments', pastDuePayments);
         res.status(200).json({
             upcomingPayments,
             pastDuePayments
@@ -196,3 +208,10 @@ export const getPendingPayments = async (req: express.Request, res: express.Resp
         res.status(500).json({ error: "Error al obtener los bonos del usuario" });
     }
 };
+
+export const updatePayment = async (req: express.Request, res: express.Response) => {
+  const { userId, bondId, network } = req.params;
+  const paid  = true;
+  const payment = await updatePaymentInvoiceByData(userId, bondId, network, { paid });
+  res.status(200).json(payment);
+}

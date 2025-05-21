@@ -52,7 +52,6 @@ export const readBonds = createAsyncThunk("bond/readBonds", async (userId: strin
 });
 
 export const readUserBonds = createAsyncThunk("bond/readUserBonds",async (requestData: {userId: string, walletAddress: string}, { rejectWithValue }) => {
-    
   try {
         const response: Response = await fetch(`/api/bonds-user`, { method: "POST",
           headers: {
@@ -281,6 +280,32 @@ export const createSettlementReceipt = createAsyncThunk(
     }
   }
 );
+
+export const updatePayment = createAsyncThunk("bond/updatePayment", async (formData: {userId: string, bondId: string, network: string}, { rejectWithValue }) => {
+  console.log("Before sending:", JSON.stringify(formData));
+  try {
+    const response = await fetch(`/api/update-payment/${formData.userId}/${formData.bondId}/${formData.network}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      try {
+        const error = await response.json();
+        return rejectWithValue(error.message || "Error desconocido");
+      } catch {
+        return rejectWithValue(`Unexpected response: ${response.statusText}`);
+      }
+    } 
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+});
 
 export const readUsers = createAsyncThunk("bond/readUsers", async (_, { rejectWithValue }) => {
   try {

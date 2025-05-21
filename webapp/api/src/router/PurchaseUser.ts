@@ -1,7 +1,7 @@
 import { getPurchaseUsers } from "../db/PurchaseUser";
 import { purchase, getAllPurchaseUsers, getTokenListAndUpcomingPaymentsByInvestor, balanceFaucet } from "../controllers/PurchaseUser";
 import express from "express";
-import { getAllIssuers, registerIssuer } from "../controllers/Issuer";
+import { getAllIssuers, registerIssuer, updatePayment } from "../controllers/Issuer";
 import { getAllInvestors, registerInvestor, getAllInvestorsByIssuer } from "../controllers/Investor";
 import { login } from "../controllers/auth";
 
@@ -16,4 +16,5 @@ export default (router: express.Router) => {
     router.post('/login', login)
     router.get('/usersWallet/:id', getTokenListAndUpcomingPaymentsByInvestor)
     router.post('/users-balance', balanceFaucet)
+    router.put('/update-payment/:userId/:bondId/:network', updatePayment)
 }

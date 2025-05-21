@@ -1,79 +1,57 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { readBonds } from "../../features/bondSlice";
+import { readBonds, updatePayment } from "../../features/bondSlice";
 import { Bond } from "../../Bond";
 import { PaymentRecord } from "./EnterpriseWallet";
 import { useNavigate } from "react-router-dom";
+import { getPayments } from "../../features/userSlice";
+
 
 const PaymentManagement = () => {
   const [record, setRecord] = useState<PaymentRecord[]>([]);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const registeredBonds = useAppSelector((state) => state.bond.bonds);
+  const user = useAppSelector((state) => state.user.userLoged);
+  const upcomingPayments = useAppSelector((state) => state.user.upcomingPayments);
+  const pastDuePayments = useAppSelector((state) => state.user.pastDuePayments);
   const [selectedBond, setSelectedBond] = useState<Bond | null>(null);
-
+  const payBatch: string[] = [];
   const handleBond = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedBond(registeredBonds?.find((bond) => bond.bondName === e.target.value) || null);
   };
 
   useEffect(() => {
-    document.title = "Blockchain Transfer";
-    dispatch(readBonds());
+    const fetchData = async () => {
+      document.title = "Blockchain Transfer";
+      await dispatch(readBonds(user?._id!));
+      await dispatch(getPayments(user?._id!));
+    };
+    fetchData();
   }, [dispatch]);
 
   useEffect(() => {
-    const records: PaymentRecord[] = [];
+    console.log(upcomingPayments);
+    console.log(pastDuePayments);
+  }, [upcomingPayments, pastDuePayments]);
 
-    if (selectedBond) {
-      let currentDate = new Date(selectedBond!.bondStartDate!);
-      const closingDate = new Date(selectedBond!.bondMaturityDate!);
-
-      // Incrementos en función de la frecuencia
-      const frequencyIncrement: Record<string, number> = {
-        Monthly: 1,
-        Quarterly: 3,
-        "Semi-annualy": 6,
-        Annualy: 12,
-      };
-
-      function addMonthsToFirstDay(date: Date, months: number): Date {
-        const newDate = new Date(date);
-        // newDate.setDate(1); // Ajustar siempre al primer día del mes
-        newDate.setMonth(newDate.getMonth() + months);
-        // newDate.setDate(newDate.getDate() + (32*months))
-        newDate.setDate(1); // Ajustar siempre al primer día del mes
-        return newDate;
-      }
-
-      // currentDate.setMonth(
-      //     currentDate.getMonth() + frequencyIncrement[bond.paymentFreq]
-      // );
-      currentDate = addMonthsToFirstDay(currentDate, frequencyIncrement[selectedBond!.paymentFreq]);
-      while (currentDate <= closingDate) {
-        records.push({
-          bondName: selectedBond!.bondName,
-          paymentDate: currentDate.toISOString().split("T")[0], // Fecha en formato "YYYY-MM-DD"
-          amount: 100,
-        });
-
-        // Incrementar la fecha según la frecuencia
-        // currentDate.setMonth(
-        //     currentDate.getMonth() + frequencyIncrement[bond.paymentFreq]
-        // );
-        currentDate = addMonthsToFirstDay(currentDate, frequencyIncrement[selectedBond!.paymentFreq]);
-      }
-      records.push({
-        bondName: selectedBond!.bondName,
-        paymentDate: new Date(selectedBond!.bondMaturityDate!).toISOString().split("T")[0], // Fecha en formato "YYYY-MM-DD"
-        amount: 100,
-      });
-
-      console.log(records);
-      setRecord(records);
+  function handlePayBatch(value: string): void {
+    if (payBatch.includes(value)) {
+      const filteredBatch = payBatch.filter((item) => item !== value);
+      payBatch.length = 0;
+      payBatch.push(...filteredBatch);
     } else {
-      console.log("No record");
+      payBatch.push(value);
     }
-  }, [selectedBond]);
+    console.log(payBatch);
+  }
+
+  async function handlePay(userId: any, bondId: any, network: any): Promise<void> {
+    console.log("Llamar funcion Update para cambiar estado del pago de ", userId, " en el bono ", bondId);
+    await dispatch(updatePayment({ userId, bondId, network }));
+    // Refresh payment data after update
+    await dispatch(getPayments(user?._id!));
+  }
 
   return (
     <div className="card mt-4">
@@ -88,7 +66,7 @@ const PaymentManagement = () => {
       </div>
       <h2 className="mb-3">PAYMENT MANAGEMENT</h2>
 
-      <h2 className="section-title mt-4" style={{ alignSelf: "start" }}>
+      {/* <h2 className="section-title mt-4" style={{ alignSelf: "start" }}>
         Overview of Balance
       </h2>
       <p
@@ -105,7 +83,7 @@ const PaymentManagement = () => {
           <li>Ethereum: “20.000€”</li>
           <li>Polygon: “10.000€”</li>
         </ul>
-      </div>
+      </div> */}
 
       <h2 className="section-title mt-4" style={{ alignSelf: "start" }}>
         Token Selection:
@@ -131,25 +109,48 @@ const PaymentManagement = () => {
       </h4>
       <p className="text-danger">**Only if there are pending payments</p>
       <p>
-        <span
-          data-bs-toggle="collapse"
-          data-bs-target="#pending-payments-collapse"
-          role="button"
-          aria-expanded="false"
-          aria-controls="pending-payments-collapse">
-          <strong style={{ marginRight: "15px" }}>
-            {!record || record.length === 0 ? "" : record[0].paymentDate}:
-          </strong>
-          20.000€
-        </span>
-        <button className="btn-pay-now" style={{ marginLeft: "30px" }}>
-          Pay Now
-        </button>
+        Total amount to pay: {upcomingPayments.find((payment) => payment.bondName === selectedBond?.bondName)?.amount}
+        <button className="btn-pay-now" style={{ marginLeft: "30px" }}>Pay Now</button>
       </p>
-      {/* <li><input type="checkbox"/> Alastria: “10.000€”</li>
-                    <li><input type="checkbox"/> Ethereum: “5.000€”</li>
-                    <li><input type="checkbox"/> Polygon: “5.000€”</li> */}
-      <div className="collapse" id="pending-payments-collapse">
+      {(() => {
+        const payment = upcomingPayments.find((payment) => payment.bondName === selectedBond?.bondName);
+        console.log('payment', payment);
+        if (!payment) return null;
+
+        return (
+          <table border={1} style={{ borderCollapse: "collapse", width: "100%", textAlign: "center", backgroundColor: "#d9e8fc" }}>
+            <thead style={{ backgroundColor: "#7ba6e9", color: "white" }}>
+              <tr>
+                <th>Investor</th>
+                <th>Amount of Tokens</th>
+                <th>Amount</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {payment.investors.map((investor: any) => (
+                !payment.paid && (
+                  <tr key={investor.userId}>
+                    <td>
+                      <input type="checkbox" onChange={() => handlePayBatch(investor.userId)} style={{textAlign: "start", marginRight: "10px"}}/>
+                      {investor.userId}
+                    </td>
+                    <td>{investor.amount}</td>
+                    <td>{investor.numberToken}</td>
+                    <td>
+                      <button className="btn-pay-now" onClick={() => handlePay(investor.userId, selectedBond?._id, payment.network)}>
+                        Pay
+                      </button>
+                    </td>
+                  </tr>
+                )
+              ))}
+            </tbody>
+          </table>
+        );
+      })()}
+
+      {/* <div className="collapse" id="pending-payments-collapse">
         <ul style={{ listStyleType: "none" }}>
           {selectedBond?.tokenState.map((block) => (
             <li key={block.blockchain}>
@@ -158,21 +159,23 @@ const PaymentManagement = () => {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
 
       <h2 className="section-title mt-4">Next Payments:</h2>
-      <table>
-        <thead>
+      <table border={1} style={{ borderCollapse: "collapse", width: "100%", textAlign: "center", backgroundColor: "#d9e8fc" }}>
+        <thead style={{ backgroundColor: "#7ba6e9", color: "white" }}>
           <tr>
+            <th>Investor</th>
             <th>Date</th>
             <th>Amount</th>
           </tr>
         </thead>
         <tbody>
-          {record.map((payment) => (
+          {pastDuePayments.find((payment) => payment.bondName === selectedBond?.bondName)?.map((payment: any) => (
             <tr key={payment.paymentDate}>
+              <td>{payment.investors.userId}</td>
               <td>{payment.paymentDate}</td>
-              <td>20.000€</td>
+              <td>{payment.amount}</td>
             </tr>
           ))}
         </tbody>
