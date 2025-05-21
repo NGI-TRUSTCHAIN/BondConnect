@@ -14,7 +14,7 @@ export async function createAccount(saltHex: string): Promise<CreateAccountRespo
   const response = await fetch(`${baseUrl}/createAccount`, {
     method: "POST",
     headers,
-    body: JSON.stringify({ salt: saltHex }),
+    body: JSON.stringify({ args: [saltHex] }),
   });
 
   if (!response.ok) {
@@ -31,7 +31,7 @@ export async function createAccountSimple(salt: string, network: string): Promis
   const response = await fetch(url, {
     method: "POST",
     headers: headers,
-    body: JSON.stringify({ salt, network }),
+    body: JSON.stringify({ args: [salt, network] }),
   });
 
   if (!response.ok) {
