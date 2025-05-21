@@ -9,6 +9,7 @@ import { getInvestorByEmail, getInvestorById } from "../db/Investor";
 import { UserInfo, UpcomingPayment, PurchaseBond } from "../models/Payment";
 import dayjs from "dayjs";
 import { useBlockchainService } from '../services/blockchain.service'
+import { VoidSigner } from "ethers";
 
 export const getAllPurchaseUsers = async (req: express.Request,res: express.Response) => {
   try {
@@ -111,7 +112,7 @@ export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Req
           // REVISAR LOGICA CALCULO PRICE
           // tokenList: todos los registros sin importar 'paid'
           userResponse.tokenList.push({
-              bondName: invoice.bonoId,
+              bondName: bond.bondName,
               network: invoice.network,
               amountAvaliable: invoice.amount,
               price: (invoice.amount * Number(balanceResponse.message)) * bond.price,

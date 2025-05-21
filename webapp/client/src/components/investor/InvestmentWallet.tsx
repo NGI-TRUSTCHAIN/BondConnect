@@ -14,7 +14,7 @@ const InvestmentWallet: React.FC = () => {
   const user = useAppSelector((state) => state.user.userLoged);
   const userId = user?._id;
   const [record, setRecord] = useState<PaymentRecord[]>([]);
-  const [walletData, setWalletData] = useState(null);
+  // const [walletData, setWalletData] = useState(null);
   const [balanceData, setBalanceData] = useState(null);
   const [clipboardCopy, setClipboardCopy] = useState("");
   const wallet = user?.walletAddress;
@@ -57,9 +57,10 @@ const InvestmentWallet: React.FC = () => {
     
     const fetchData = async () => {
       try {
-        const data = await dispatch(getInvestorWalletData(userId || "")).unwrap();
-        setWalletData(data);
-        console.log(user?.walletAddress + " DATA");
+        console.log(userId + " USER ID");
+        // const data = await dispatch(getInvestorWalletData(userId || "")).unwrap();
+        // setWalletData(data);
+        console.log(user?.walletAddress + " WALLET DATA");
 
           const dataFaucet = await dispatch(getFaucetBalance(user?.walletAddress!)).unwrap();
           console.log(dataFaucet + " BALANCE");
@@ -93,7 +94,7 @@ const InvestmentWallet: React.FC = () => {
 
       <div>
         <h3 className="section-title mt-4">Account Balance:</h3>
-        <strong>Total Available Balance:</strong> {totalSum}
+        <strong>Total Available Balance:</strong> {balanceData}
       </div>
       <div className="collapse" id="balance-collapse">
           <ul>
@@ -108,25 +109,9 @@ const InvestmentWallet: React.FC = () => {
 
       <h3 className="section-title mt-4">Token List:</h3>
       {tokenList?.map((token) => (
-        <Fragment key={token.bondName}>
-          <h4
-            data-bs-toggle="collapse"
-            data-bs-target={`#tokens-collapse-${token.bondName}`}
-            role="button"
-            aria-expanded="false"
-            aria-controls={`tokens-collapse-${token.bondName}`}>
-            <strong>{token.bondName} Tokens in circulation:</strong> {token.price}
-          </h4>
-          <div className="collapse" id={`tokens-collapse-${token.bondName}`}>
-            <ul>
-              {bond.tokenState.map((block) => (
-                <li key={`${token.}-${block.blockchain}`}>
-                  <strong>{block.blockchain}:</strong> {block.amount}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Fragment>
+        <div key={token.bondName} className="mb-2">
+          <strong>"{token.bondName}" Tokens in circulation:</strong> {token.price}
+        </div>
       ))}
 
       <h3 className="section-title mt-4">Upcoming payments</h3>
