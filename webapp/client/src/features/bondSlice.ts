@@ -442,7 +442,7 @@ export const getTokenListAndUpcomingPaymentsByInvestor = createAsyncThunk(
   "bond/getTokenListAndUpcomingPaymentsByInvestor",
   async (userId: string, { rejectWithValue }) => {
     try {
-      const response = await fetch(`/api/bonds-inversor-tokens/${userId}`, { method: "GET" });
+      const response = await fetch(`/api/bonds-investor-tokens/${userId}`, { method: "GET" });
 
       if (!response.ok) {
         try {

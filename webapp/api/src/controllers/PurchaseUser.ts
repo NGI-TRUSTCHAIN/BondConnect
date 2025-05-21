@@ -97,18 +97,15 @@ export const purchase = async (req: express.Request, res: express.Response) => {
 
 export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Request, res: express.Response) => {
   try {
-   console.log("getTokenListAndUpcomingPaymentsByInvestor ::: ENTRAAAAAA");
    const { balance } = useBlockchainService();
    const userId = req.params.userId;
-   const wallet = (await getIssuerById(userId)).walletAddress;
-
+   const wallet = (await getInvestorById(userId)).walletAddress;
    const paymentInvoices = await getPaymentInvoicesByUserId(userId);
    const userResponse: UserInfo = { tokenList: [], upcomingPayment: [] };
 
       const today = dayjs();
       
       for (const invoice of paymentInvoices) {
-          
           const bond = await getBondById(invoice.bonoId);
           const balanceResponse = await balance(bond.tokenState[0].contractAddress, wallet, bond.tokenState[0].blockchain);
           // REVISAR LOGICA CALCULO PRICE
