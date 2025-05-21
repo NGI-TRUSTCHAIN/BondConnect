@@ -2,17 +2,16 @@
   "ExpandedNodes": [
     "",
     "\\tokenization-API",
-    "\\tokenization-API\\ERC20",
     "\\tokenization-API\\ERC20\\src",
-    "\\tokenization-API\\ERC20\\src\\bootstrap",
-    "\\tokenization-API\\ERC20\\src\\exposition",
-    "\\tokenization-API\\ERC20\\src\\exposition\\api",
-    "\\tokenization-API\\ERC20\\src\\exposition\\controllers",
+    "\\tokenization-API\\SA",
+    "\\tokenization-API\\SA\\src",
+    "\\tokenization-API\\SA\\src\\exposition",
+    "\\tokenization-API\\SA\\src\\exposition\\controllers",
+    "\\webapp",
     "\\webapp\\api",
     "\\webapp\\api\\src",
-    "\\webapp\\api\\src\\router",
-    "\\webapp\\client"
+    "\\webapp\\api\\src\\db"
   ],
-  "SelectedNode": "\\tokenization-API\\ERC20\\src\\bootstrap\\config.bootstrap.ts",
+  "SelectedNode": "\\tokenization-API\\SA\\src\\exposition\\controllers\\contract.controller.ts",
   "PreviewInSolutionExplorer": false
 }
