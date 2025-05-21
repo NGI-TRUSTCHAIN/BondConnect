@@ -460,6 +460,49 @@ export async function getFaucetBalance(req: Request): Promise<AppResult> {
     }
 }
 
+export async function requestStable(req: Request): Promise<AppResult> {
+
+    const args: any[] = req.body.args || [];
+    const options: Overrides = req.body.options || {};
+    const contractAddressVault: string = config.CONTRACT.ADDRESS_VAULT;
+
+    const toAddress: string = args[0];  //a quien mandamos el token
+    const fromAddress: string = args[1];// quien manda el token 
+    const amount: string = args[2];  // cantidad a enviar
+
+    const network: string = "ALASTRIA"; // red 
+    const contractAddress: string =  config.CONTRACT.STABLECOIN_ALASTRIA; 
+    
+
+    const contractName: string = "Account";
+    const methodName: string = "transferERC20";
+
+    const burnArgs: any[] = [contractAddress, toAddress, amount];
+
+    logger.info(`INITIALIZING SERVICES  ---      Transfer`);
+    const contracts = await loadAllContracts(config, logger);
+    initContractsService(logger, contracts, config, network);
+
+    const resultBurn: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, fromAddress, methodName, burnArgs, options);
+    if (resultBurn && "status" in resultBurn && resultBurn.status === 1) {
+
+        const transactionHash = resultBurn && 'hash' in resultBurn ? resultBurn.hash : 'N/A';
+        return {
+            statusCode: 201,
+            body: {
+                message: transactionHash
+            }
+        }
+    } else {
+        return {
+            statusCode: 500,
+            body: {
+                message: "burn error"
+            }
+        }
+    }
+
+}
 
 function delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
