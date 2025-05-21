@@ -14,6 +14,6 @@ export default (router: express.Router) => {
     router.get('/investors', getAllInvestors)
     router.get('/investors/:issuerId', getAllInvestorsByIssuer)
     router.post('/login', login)
-    router.get('/usersWallet/:id', getTokenListAndUpcomingPaymentsByInvestor)
+    router.get('/bonds-investor-tokens/:userId', getTokenListAndUpcomingPaymentsByInvestor)
     router.post('/users-balance', balanceFaucet)
 }

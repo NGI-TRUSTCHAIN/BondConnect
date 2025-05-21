@@ -97,6 +97,7 @@ export const purchase = async (req: express.Request, res: express.Response) => {
 
 export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Request, res: express.Response) => {
   try {
+   console.log("getTokenListAndUpcomingPaymentsByInvestor ::: ENTRAAAAAA");
    const { balance } = useBlockchainService();
    const userId = req.params.userId;
    const wallet = (await getIssuerById(userId)).walletAddress;

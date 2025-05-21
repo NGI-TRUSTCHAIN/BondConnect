@@ -5,6 +5,7 @@ import { getInvestorWalletData, getFaucetBalance } from "../../features/userSlic
 import { PaymentRecord } from "../issuer/EnterpriseWallet";
 import { data, useNavigate } from "react-router-dom";
 import { generatePaymentRecords } from "../../utils";
+import { getTokenListAndUpcomingPaymentsByInvestor } from "../../features/bondSlice";
 
 const InvestmentWallet: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -16,12 +17,40 @@ const InvestmentWallet: React.FC = () => {
   const [walletData, setWalletData] = useState(null);
   const [balanceData, setBalanceData] = useState(null);
   const [clipboardCopy, setClipboardCopy] = useState("");
+  const wallet = user?.walletAddress;
+  const tokenList = useAppSelector((state) => state.bond.tokenList);
+  const upcomingPayment = useAppSelector((state) => state.bond.upcomingPayment);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+  const priceTotal = tokenList?.reduce((acc, token) => {
+    if (!acc[token.network]) {
+      acc[token.network] = [];
+    }
+    acc[token.network].push(token.amountAvaliable || 0);
+    return acc;
+  }, {} as Record<string, number[]>);
+
+  // Calcular suma por red
+  const sumByNetwork = priceTotal ? Object.entries(priceTotal).reduce((acc, [network, values]) => {
+    acc[network] = values.reduce((sum, value) => sum + value, 0);
+    return acc;
+  }, {} as Record<string, number>) : {};
+
+  // Calcular total general
+  const totalSum = Object.values(sumByNetwork).reduce((sum, value) => sum + value, 0);
 
   const handleCopy = (e: React.MouseEvent<HTMLParagraphElement>) => {
     setClipboardCopy(e.currentTarget.innerText);
     console.log(clipboardCopy);
     navigator.clipboard.writeText(clipboardCopy);
   };
+
+  useEffect(() => {
+    dispatch(getTokenListAndUpcomingPaymentsByInvestor(userId || ""))
+      .then(() => {
+        setIsDataLoaded(true);
+      });
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(readBonds(userId || ""));
@@ -57,15 +86,25 @@ const InvestmentWallet: React.FC = () => {
       <h3 className="section-title">Your Wallet Address:</h3>
       <div className="wallet-address col-12">
         <p id="copyLabel" className="copy-label" onClick={handleCopy}>
-          Wallet address
+          {wallet}
           <img src="/src/clip.png" id="copyButton" className="copy-button" />
         </p>
       </div>
 
       <div>
         <h3 className="section-title mt-4">Account Balance:</h3>
-        <strong>Total Available Balance:</strong> {balanceData}
+        <strong>Total Available Balance:</strong> {totalSum}
       </div>
+      <div className="collapse" id="balance-collapse">
+          <ul>
+            <li>
+              <strong>Alastria:</strong> {sumByNetwork.ALASTRIA}
+            </li>
+            <li>
+              <strong>Amoy:</strong> {sumByNetwork.AMOY}
+            </li>
+          </ul>
+        </div>
 
       <h3 className="section-title mt-4">Token List:</h3>
       {bonds?.map((bond) => (

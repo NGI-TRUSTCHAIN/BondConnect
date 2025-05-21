@@ -413,6 +413,33 @@ export const getTokenListAndUpcomingPaymentsByIssuer = createAsyncThunk(
   }
 );
 
+export const getTokenListAndUpcomingPaymentsByInvestor = createAsyncThunk(
+  "bond/getTokenListAndUpcomingPaymentsByInvestor",
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/bonds-inversor-tokens/${userId}`, { method: "GET" });
+
+      if (!response.ok) {
+        try {
+          const error = await response.json();
+          return rejectWithValue(error.message || "Error desconocido");
+        } catch {
+          return rejectWithValue(`Unexpected response: ${response.statusText}`);
+        }
+      }
+
+      const data = await response.json();
+      console.log("getTokenListAndUpcomingPaymentsByInvestor:", data);
+      return {
+        tokenList: data.tokenList,
+        upcomingPayment: data.upcomingPayment
+      };
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 export const getPendingPayments = createAsyncThunk("bond/getPendingPayments", async (id: string, { rejectWithValue }) => {
   try {
     const response = await fetch(`/api/bonds-issuer-pending/${id}`, { method: "GET" });

@@ -16,6 +16,7 @@ const EnterpriseWallet = () => {
   const [clipboardCopy, setClipboardCopy] = useState("");
   const [record, setRecord] = useState<PaymentRecord[]>([]);
   const [visibleCount, setVisibleCount] = useState(5); // Número inicial de registros visibles
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const bonds = useAppSelector((state) => state.bond.bonds);
   const tokenList = useAppSelector((state) => state.bond.tokenList);
@@ -52,7 +53,10 @@ const EnterpriseWallet = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(getTokenListAndUpcomingPaymentsByIssuer(userId || ""));
+    dispatch(getTokenListAndUpcomingPaymentsByIssuer(userId || ""))
+      .then(() => {
+        setIsDataLoaded(true);
+      });
   }, [dispatch]);
 
   const handleCopy = (e: React.MouseEvent<HTMLParagraphElement>) => {
@@ -109,26 +113,34 @@ const EnterpriseWallet = () => {
 
         <h3 className="section-title mt-4">Tokens in circulation</h3>
 
-          <table
-          border={1}
-          style={{ borderCollapse: "collapse", width: "100%", textAlign: "center", backgroundColor: "#d9e8fc" }}>
-          <thead style={{ backgroundColor: "#7ba6e9", color: "white" }}>
-            <tr>
-              <th>Bond Name</th>
-              <th>DLT Network</th>
-              <th>Amount of Tokens</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tokenList?.map((token) => (
-              <tr key={token.bondName}>
-                <td>{token.bondName}</td>
-                <td>{token.network}</td>
-                <td>{token.amountAvaliable}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {isDataLoaded && (
+          <>
+            {tokenList && tokenList.length > 0 ? (
+              <table
+                border={1}
+                style={{ borderCollapse: "collapse", width: "100%", textAlign: "center", backgroundColor: "#d9e8fc" }}>
+                <thead style={{ backgroundColor: "#7ba6e9", color: "white" }}>
+                  <tr>
+                    <th>Bond Name</th>
+                    <th>DLT Network</th>
+                    <th>Amount of Tokens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tokenList.map((token) => (
+                    <tr key={token.bondName}>
+                      <td>{token.bondName}</td>
+                      <td>{token.network}</td>
+                      <td>{token.amountAvaliable}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No hay tokens disponibles en circulación.</p>
+            )}
+          </>
+        )}
 
         {/* <h3 className="section-title mt-4">Upcoming payments</h3>
         <table
