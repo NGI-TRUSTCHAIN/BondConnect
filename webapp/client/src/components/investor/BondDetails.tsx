@@ -4,8 +4,10 @@ import { Investor } from "../Authentication/InvestorRegistration";
 import { PurchaseData } from "../issuer/BuyToken";
 import { useLocation, useNavigate } from "react-router-dom";
 import { registerPurchase } from "../../features/bondSlice";
+import { getOneIssuer } from "../../features/userSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { toast, ToastContainer } from "react-toastify";
+import { Issuer } from "../Authentication/IssuerRegistration";
 
 const BondDetails = () => {
   const location = useLocation();
@@ -13,6 +15,8 @@ const BondDetails = () => {
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { bond, user }: { bond: Bond; user: Investor } = location.state;
+
+  const [issuer, setIssuer] = useState<Issuer | null>(null);
 
   const error = useAppSelector((state) => state.bond.error);
 
@@ -45,6 +49,17 @@ const BondDetails = () => {
     console.log("Bond:", bond);
     console.log("User:", user);
   }, [bond, user]);
+
+  useEffect(() => {
+    const getIssuerData = async () => {
+      const issuer = await dispatch(getOneIssuer(bond.creatorCompany || '')).unwrap();
+      console.log("Issuer:", issuer);
+      if (issuer) {
+        setIssuer(issuer);
+      }
+    };
+    getIssuerData();
+  }, [bond]);
 
   // useEffect(() => {
   //   setUserData((prevUserData) => ({
@@ -98,13 +113,13 @@ const BondDetails = () => {
           </h4>
           <ul>
             <li>
-              <strong>Company Name:</strong> <em>SME Name</em>
+              <strong>Company Name:</strong> <em>{issuer?.entityLegalName}</em>
             </li>
             <li>
-              <strong>Tax ID Number:</strong> <em>B12345678</em>
+              <strong>Tax ID Number:</strong> <em>{issuer?.taxIdNumber}</em>
             </li>
             <li>
-              <strong>Website:</strong> <em>https://companyname.es</em>
+              <strong>Website:</strong> <em>{issuer?.website}</em>
             </li>
           </ul>
         </div>

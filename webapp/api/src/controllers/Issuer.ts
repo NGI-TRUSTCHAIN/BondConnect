@@ -26,6 +26,19 @@ export const getAllIssuers = async (req: express.Request, res: express.Response)
   }
 };
 
+export const getOneIssuer = async (req: express.Request, res: express.Response) => {
+  try {
+    const users = await getIssuerById(req.params.id); // Obtiene todos los usuarios de la base de datos
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Internal server error",
+      message: "An unexpected error occurred while retrieving users.",
+    });
+  }
+};
+
 /**
  * Crear un nuevo usuario
  */
