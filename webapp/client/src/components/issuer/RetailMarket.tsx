@@ -88,11 +88,17 @@ const RetailMarket = () => {
                 Select token
               </option>
               {!errorMessage &&
-                registeredBonds?.map((bond) => (
-                  <option key={bond._id} value={bond._id}>
-                    {bond.bondName}
-                  </option>
-                ))}
+                registeredBonds?.map((bond) => {
+                  // Check if bond has tokens in the selected blockchain
+                  const hasTokenInBlockchain = bond.blockchainNetwork === marketData.destinationBlockchain.toUpperCase();
+
+                  // Only render option if bond has tokens in selected blockchain
+                  return hasTokenInBlockchain && (
+                    <option key={bond._id} value={bond._id}>
+                      {bond.bondName}
+                    </option>
+                  );
+                })}
             </select>
           </div>
           <div className="col-sm-6 mb-3">

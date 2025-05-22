@@ -13,9 +13,16 @@ export const getAllRetailMktBonds = async (req: express.Request, res: express.Re
     // Filtrar los bonds que tengan el mismo investToken que el retailBond
     for (const retailBond of retailBonds) {
       const fltBond = bonds.find(bond => bond._id.toString() === retailBond.investToken);
-      // REVISAR para añadir de alguna forma el valor de tokens añadidos al retail de retailBond
-      // para mostralo y poder comprear en  el front Oportunities
-      finalResponse.push({ ...fltBond}); // Agregar el bond filtrado al finalResponse
+      if (fltBond) {
+        const bondWithNetwork = {
+          ...fltBond,
+          blockchainNetwork: retailBond.destinationBlockchain as "ALASTRIA" | "AMOY",
+          numberTokens: retailBond.numTokensOffered
+        };
+        // REVISAR para añadir de alguna forma el valor de tokens añadidos al retail de retailBond
+        // para mostralo y poder comprear en  el front Oportunities
+        finalResponse.push(bondWithNetwork); // Agregar el bond filtrado al finalResponse
+      }
     }
     res.status(200).json(finalResponse);
   } catch (error) {

@@ -20,17 +20,17 @@ const BondDetails = () => {
   const [tokens, setTokens] = useState<number>(0);
 
   // Seleccionar blockchain para baber token maximos que puedes comprar
-  const [selectedBlockchain, setSelectedBlockchain] = useState<string>(bond.tokenState[0].blockchain || "");
-  const selectedEntry = bond.tokenState.find(
-    (entry: TokenState) => entry.blockchain === selectedBlockchain
-  );
+  // const [selectedBlockchain, setSelectedBlockchain] = useState<string>(bond.tokenState[0].blockchain || "");
+  // const selectedEntry = bond.tokenState.find(
+  //   (entry: TokenState) => entry.blockchain === selectedBlockchain
+  // );
   useEffect(() => {
     setPurchaseData((prev) => ({
       ...prev,
-      destinationBlockchain: selectedBlockchain,
+      destinationBlockchain: bond.blockchainNetwork,
       purchasedTokens: tokens,
     }));
-  }, [selectedBlockchain, tokens]);
+  }, [bond.blockchainNetwork, tokens]);
 
   const [purchaseData, setPurchaseData] = useState<PurchaseData>({
     _id: undefined,
@@ -159,7 +159,7 @@ const BondDetails = () => {
           </h4>
           <ul>
             <li>
-              <strong>Number of Tokens:</strong> <em>{bond.numberTokens}</em>
+              <strong>Number of Tokens:</strong> <em>{bond.tokenState.find(entry => entry.blockchain === bond.blockchainNetwork)?.amount}</em>
             </li>
             <li>
               <strong>Nominal Value:</strong> <em>100€</em>
@@ -219,7 +219,7 @@ const BondDetails = () => {
                   />
                 </div>
 
-                <div className="col-sm-6 mb-3">
+                {/* <div className="col-sm-6 mb-3">
                   <label htmlFor="destinationBlockchain" className="form-label">
                     Destination Blockchain:
                   </label>
@@ -260,8 +260,8 @@ const BondDetails = () => {
                       setTokens(Math.min(value, max)); // Seleccionar el minimo entre el valor ingresado y la cantidad maxima
                     }}
                   />
-                </div>
-                {/* <div className="col-sm-6 mb-3">
+                </div> */}
+                <div className="col-sm-6 mb-3">
                 <label htmlFor="destinationBlockchain" className="form-label">
                   Destination Blockchain:
                 </label>
@@ -283,10 +283,15 @@ const BondDetails = () => {
                   name="purchasedTokens"
                   className="form-control bg-form"
                   value={tokens}
-                  placeholder={`15`}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTokens(Number(e.target.value))}
+                  placeholder={`${bond.tokenState.find(entry => entry.blockchain === bond.blockchainNetwork)?.amount} available`}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const value = Number(e.target.value);
+                    const maxTokens = bond.tokenState.find(entry => entry.blockchain === bond.blockchainNetwork)?.amount ?? 0;
+                    setTokens(Math.min(value, maxTokens));
+                  }}
+                  max={bond.tokenState.find(entry => entry.blockchain === bond.blockchainNetwork)?.amount}
                 />
-              </div> */}
+              </div>
               </div>
               <div className="popup-actions mt-5" style={{ textAlign: "center" }}>
                 <button className="btn btn-primary" onClick={handleConfirmBuy}>

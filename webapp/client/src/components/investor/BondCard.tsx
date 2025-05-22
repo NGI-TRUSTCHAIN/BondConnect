@@ -9,7 +9,7 @@ const BondCard: React.FC<{ bond: Bond, user: Investor }> = ({ bond, user }) => {
     <div className="bond-card" style={{width: 'fit-content'}}>
       <div className="card-body pt-0">
         <p className="card-title" style={{ color: "#007bff", marginBottom: "1rem" }}>
-          {bond.bondName}
+          {bond.bondName} - {bond.blockchainNetwork}
         </p>
         <ul className="text-start p-0">
           <li className="card-text" style={{ whiteSpace: "nowrap" }}>
