@@ -177,7 +177,7 @@ const BondDetails = () => {
               <strong>Number of Tokens:</strong> <em>{bond.tokenState.find(entry => entry.blockchain === bond.blockchainNetwork)?.amount}</em>
             </li>
             <li>
-              <strong>Nominal Value:</strong> <em>100€</em>
+              <strong>Nominal Value:</strong> <em>{bond.price} €</em>
             </li>
             <li>
               <strong>DLT of Issuance:</strong> <em>{bond.blockchainNetwork}</em>

@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import { addRetailMktBond, readBonds, readUserBonds } from "../../features/bondSlice";
+import { addRetailMktBond, readUserBonds } from "../../features/bondSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
 
@@ -110,8 +110,15 @@ const RetailMarket = () => {
               id="numTokensOffered"
               name="numTokensOffered"
               className="form-control bg-form"
-              placeholder={`15`}
-              onChange={handleData}
+              value={marketData.numTokensOffered}
+              placeholder={`${registeredBonds?.find(bond => bond._id === marketData.investToken)?.tokenState.find(entry => entry.blockchain === marketData.destinationBlockchain.toUpperCase())?.amount ?? 0} available`}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                const maxTokens = registeredBonds?.find(bond => bond._id === marketData.investToken)?.tokenState.find(entry => entry.blockchain === marketData.destinationBlockchain.toUpperCase())?.amount ?? 0;
+                e.target.value = Math.min(value, maxTokens).toString();
+                handleData(e);
+              }}
+              max={registeredBonds?.find(bond => bond._id === marketData.investToken)?.tokenState.find(entry => entry.blockchain === marketData.destinationBlockchain.toUpperCase())?.amount}
             />
           </div>
           <div className="col-sm-6 mb-3">

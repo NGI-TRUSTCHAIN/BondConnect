@@ -209,6 +209,7 @@ const FormBondCreationC = () => {
                 />
               </div>
               <div className="col-sm-6 mb-3">
+                // Tiene que ser minimo un año despues de bondStartDate
                 <label htmlFor="bondMaturityDate" className="form-label">
                   Maturity Date:
                 </label>
@@ -218,6 +219,7 @@ const FormBondCreationC = () => {
                   name="bondMaturityDate"
                   className="form-control bg-form"
                   value={formData.bondMaturityDate ? formData.bondMaturityDate.toISOString().split("T")[0] : ""}
+                  min={formData.bondStartDate ? new Date(formData.bondStartDate.getTime() + 365*24*60*60*1000).toISOString().split("T")[0] : ""}
                   onChange={handleChange}
                 />
               </div>
