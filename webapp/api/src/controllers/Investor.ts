@@ -116,11 +116,11 @@ export const registerInvestor = async (req: express.Request, res: express.Respon
     const { address, createdAt, accounts} = await createCompany(foundInvestor)
         
     // ¡¡¡ IMPORTANTE !!! Revisar con petre
-    await updateInvestorById(foundInvestor, { walletAddress: address, accounts: accounts});
+    const updatedInvestor = await updateInvestorById(foundInvestor, { walletAddress: address, accounts: accounts});
 
 
-    console.log(newInvestor);
-    res.status(201).json(newInvestor);
+    console.log(updatedInvestor);
+    res.status(201).json(updatedInvestor);
   } catch (error) {
     console.error(error);
     res.status(500).json({
