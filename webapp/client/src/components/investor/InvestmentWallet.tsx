@@ -91,10 +91,17 @@ const InvestmentWallet: React.FC = () => {
           <img src="/src/clip.png" id="copyButton" className="copy-button" />
         </p>
       </div>
-
-      <div>
-        <h3 className="section-title mt-4">Account Balance:</h3>
-        <strong>Total Available Balance:</strong> {balanceData}
+      {!isDataLoaded ? (
+        <div className="d-flex justify-content-center" style={{ width: '100%', margin: '0 0 400px 0' }}>
+          <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}>
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      ) : (
+      <>
+        <div>
+          <h3 className="section-title mt-4">Account Balance:</h3>
+          <strong>Total Available Balance:</strong> {balanceData}
       </div>
       <div className="collapse" id="balance-collapse">
           <ul>
@@ -115,10 +122,11 @@ const InvestmentWallet: React.FC = () => {
       ))}
 
       <h3 className="section-title mt-4">Upcoming payments</h3>
-      <table
-        border={1}
-        style={{ borderCollapse: "collapse", width: "100%", textAlign: "center", backgroundColor: "#d9e8fc" }}>
-        <thead style={{ backgroundColor: "#7ba6e9", color: "white" }}>
+      {upcomingPayment && upcomingPayment.length > 0 ? (
+        <table
+          border={1}
+          style={{ borderCollapse: "collapse", width: "100%", textAlign: "center", backgroundColor: "#d9e8fc" }}>
+          <thead style={{ backgroundColor: "#7ba6e9", color: "white" }}>
           <tr>
             <th>Bond Name</th>
             <th>Payment Date</th>
@@ -126,15 +134,18 @@ const InvestmentWallet: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {record?.map((bond, index) => (
+          {upcomingPayment?.map((bond, index) => (
             <tr key={index}>
               <td>{bond.bondName}</td>
               <td>{bond.paymentDate}</td>
-              <td>{bond.amount}</td>
+              <td>{bond.paymentAmount}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      ) : (
+        <p>No upcoming payments available</p>
+      )}
       <div className="position-absolute top-0 end-0 m-3" style={{ display: "flex", justifyContent: "end" }}>
         <button
           type="button"
@@ -144,6 +155,8 @@ const InvestmentWallet: React.FC = () => {
           Cancel
         </button>
       </div>
+      </>
+      )}
     </div>
   );
 };
