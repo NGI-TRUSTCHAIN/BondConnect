@@ -4,6 +4,7 @@ import { readBonds } from "../../features/bondSlice";
 import "../components.css";
 import { useNavigate } from "react-router-dom";
 import { getTokenListAndUpcomingPaymentsByIssuer } from "../../features/bondSlice";
+import { getFaucetBalance } from "../../features/userSlice";
 
 export interface PaymentRecord {
   bondName: string;
@@ -23,6 +24,7 @@ const EnterpriseWallet = () => {
   const upcomingPayment = useAppSelector((state) => state.bond.upcomingPayment);
   console.log("tokenList: ",tokenList);
   console.log("upcomingPayment: ",upcomingPayment);
+  const [balanceData, setBalanceData] = useState(null);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate()
@@ -59,6 +61,28 @@ const EnterpriseWallet = () => {
       });
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(readBonds(userId || ""));
+    
+    const fetchData = async () => {
+      try {
+        console.log(userId + " USER ID");
+        // const data = await dispatch(getInvestorWalletData(userId || "")).unwrap();
+        // setWalletData(data);
+        console.log(wallet + " WALLET DATA");
+
+          const dataFaucet = await dispatch(getFaucetBalance(wallet!)).unwrap();
+          console.log(dataFaucet + " BALANCE");
+          setBalanceData(dataFaucet);
+        
+      } catch (error) {
+        console.error('Error fetching wallet data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const handleCopy = (e: React.MouseEvent<HTMLParagraphElement>) => {
     setClipboardCopy(e.currentTarget.innerText);
     console.log(clipboardCopy);
@@ -90,7 +114,16 @@ const EnterpriseWallet = () => {
             <img src="/src/clip.png" id="copyButton" className="copy-button" />
           </p>
         </div>
-
+        {!isDataLoaded ? (
+          <div className="d-flex justify-content-center" style={{ width: '100%', margin: '0 0 400px 0' }}>
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : (
+        <>
+        <h3 className="section-title mt-4">Total stable coins: {balanceData}</h3>
+      
         <h3 className="section-title mt-4">Overview of Balance</h3>
         <h4
           data-bs-toggle="collapse"
@@ -113,8 +146,6 @@ const EnterpriseWallet = () => {
 
         <h3 className="section-title mt-4">Tokens in circulation</h3>
 
-        {isDataLoaded && (
-          <>
             {tokenList && tokenList.length > 0 ? (
               <table
                 border={1}
@@ -137,7 +168,7 @@ const EnterpriseWallet = () => {
                 </tbody>
               </table>
             ) : (
-              <p>No hay tokens disponibles en circulación.</p>
+              <p>There are no tokens available in circulation.</p>
             )}
           </>
         )}
