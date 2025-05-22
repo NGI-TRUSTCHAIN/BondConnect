@@ -117,7 +117,7 @@ const InvestmentWallet: React.FC = () => {
       <h3 className="section-title mt-4">Token List:</h3>
       {tokenList?.map((token) => (
         <div key={token.bondName} className="mb-2">
-          <strong>"{token.bondName}" Tokens in circulation:</strong> {token.price}
+          <strong>"{token.bondName}" Token holdings:</strong> {token.amountAvaliable}
         </div>
       ))}
 

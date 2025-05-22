@@ -139,6 +139,29 @@ export const readIssuers = createAsyncThunk("user/readIssuers", async (_, { reje
   }
 });
 
+export const getOneIssuer = createAsyncThunk("user/getOneIssuer", async (id: string, { rejectWithValue }) => {
+  try {
+    const response = await fetch(`/api/issuers/${id}`, { method: "GET" });
+
+    if (!response.ok) {
+      // const error = await response.json();
+      // return rejectWithValue(error.message);
+      try {
+        const error = await response.json();
+        return rejectWithValue(error.message || "Error desconocido");
+      } catch {
+        return rejectWithValue(`Unexpected response: ${response.statusText}`);
+      }
+    }
+
+    const data = await response.json();
+    console.log("Fetched Bonds:", data); // Debugging step
+    return data as Issuer;
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+});
+
 export const getInvestorWalletData = createAsyncThunk("user/getInvestorWalletData", async (userId: string, { rejectWithValue }) => {
   try {
     const response = await fetch(`/api/usersWallet/${userId}`, { method: "GET" });

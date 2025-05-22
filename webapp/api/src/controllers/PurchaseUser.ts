@@ -34,11 +34,10 @@ export const purchase = async (req: express.Request, res: express.Response) => {
       block.blockchain.toUpperCase() === purchaseData.destinationBlockchain.toUpperCase()).contractAddress;
     const issuer = await getIssuerById(bond.creatorCompany);
     const inversor = await getInvestorById(purchaseData.userId);
-
-    await useApiBridge.requestStable(issuer.walletAddress, inversor.walletAddress, purchaseData.purchasedTokens);
-
-    await useApiBridge.requestTransfer(inversor.walletAddress, issuer.walletAddress, purchaseData.purchasedTokens,
+    //const responseStable = await useApiBridge.requestStable(issuer.walletAddress, inversor.walletAddress, purchaseData.purchasedTokens);
+    const responseTransfer = await useApiBridge.requestTransfer(inversor.walletAddress, issuer.walletAddress, purchaseData.purchasedTokens,
       purchaseData.destinationBlockchain.toUpperCase(), contractAddress);
+    console.log("Response Transfer:", responseTransfer);
 
     // UPDATE CREATE INVOICE PAYMENT
     // Recuperar la lista de paymenteInvoice
@@ -125,14 +124,15 @@ export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Req
           const diffMonths = endDate.month() - today.month();
 
           if (
-              !invoice.paid &&
-              diffMonths === 1 &&
-              endDate.date() === today.date()
+              !invoice.paid 
+              // &&
+              // diffMonths === 1 &&
+              // endDate.date() === today.date()
           ) {
               let paymentAmount  = invoice.amount * bond.price * (bond.interestRate / 100);
               userResponse.upcomingPayment.push({
-                  bondName: invoice.bonoId,
-                  paymentDate: invoice.endDate,
+                  bondName: bond.bondName,
+                  paymentDate: dayjs(invoice.endDate).format('D/MM/YYYY'),
                   paymentAmount: paymentAmount, 
               });
           }
