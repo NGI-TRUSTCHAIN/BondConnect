@@ -100,12 +100,10 @@ export const useApiBridge = {
     fromAddress: string,
     amount: number
   ): Promise<CreateBondResponse> {
-    return await post('/requestTransfer', {
-      args: [
-        toAddress,
-        fromAddress,
-        amount
-      ]
+    return await post('/requestStable', {
+      toAddress,
+      fromAddress,
+      amount
     });
   },
 

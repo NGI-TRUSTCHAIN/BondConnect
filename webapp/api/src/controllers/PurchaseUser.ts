@@ -34,7 +34,7 @@ export const purchase = async (req: express.Request, res: express.Response) => {
       block.blockchain.toUpperCase() === purchaseData.destinationBlockchain.toUpperCase()).contractAddress;
     const issuer = await getIssuerById(bond.creatorCompany);
     const inversor = await getInvestorById(purchaseData.userId);
-    //const responseStable = await useApiBridge.requestStable(issuer.walletAddress, inversor.walletAddress, purchaseData.purchasedTokens);
+    const responseStable = await useApiBridge.requestStable(issuer.walletAddress, inversor.walletAddress, purchaseData.purchasedTokens);
     const responseTransfer = await useApiBridge.requestTransfer(inversor.walletAddress, issuer.walletAddress, purchaseData.purchasedTokens,
       purchaseData.destinationBlockchain.toUpperCase(), contractAddress);
     console.log("Response Transfer:", responseTransfer);
