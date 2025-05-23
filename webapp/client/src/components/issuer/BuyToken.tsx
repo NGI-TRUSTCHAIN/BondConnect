@@ -55,6 +55,8 @@ const BuyToken = () => {
       if (user.name !== purchaseData.userId) {
         setErrorData(true);
         console.log(errorData);
+      } else {
+        setErrorData(false);
       }
     }
   };
