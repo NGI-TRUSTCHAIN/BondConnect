@@ -132,34 +132,35 @@ export async function callContractMethod(
     }
 
 
-    export async function executeContractMethod(
-        contractName: string,
-        contractAddress: string,
-        methodName: string,
-        args: any[],
-        options: Overrides
-    ): Promise<ContractTransactionResponse | ContractTransactionReceipt | null > {
-        const func: ContractMethod = await getContractMethod(contractName, contractAddress, methodName, args);
-        options.gasLimit = "30000000";      
-        if (methodName === 'createRepresentativeBondToken') {
-           options.gasPrice = "30000000000";
-        }
-        if (methodName === 'transferERC20') {
-            options.gasPrice = "30000000000";
-        }
-        let executeTransaction: ContractTransactionResponse = await func(...args, options);
-        logger.debug(`Tx response: ${JSON.stringify(executeTransaction)}`);
 
-        if (executeTransaction.wait) {
-            logger.info('Waiting for confirmations');
-            const receipt: ContractTransactionReceipt | null = await executeTransaction.wait();
-            logger.debug(`Tx receipt: ${JSON.stringify(receipt)}`);
+export async function executeContractMethod(
+    contractName: string,
+    contractAddress: string,
+    methodName: string,
+    args: any[],
+    options: Overrides
+): Promise<ContractTransactionResponse | ContractTransactionReceipt | null> {
+    const func: ContractMethod = await getContractMethod(contractName, contractAddress, methodName, args);
 
-            return receipt;
-        } else {
-            return executeTransaction;
-        }
+    const gasEstimate = await func.estimateGas(...args);
+
+    options.gasPrice = "60000000000";
+    options.gasLimit = gasEstimate;
+
+    let executeTransaction: ContractTransactionResponse = await func(...args, options);
+    logger.debug(`Tx response: ${JSON.stringify(executeTransaction)}`);
+
+    if (executeTransaction.wait) {
+        logger.info('Waiting for confirmations');
+        const receipt: ContractTransactionReceipt | null = await executeTransaction.wait();
+        logger.debug(`Tx receipt: ${JSON.stringify(receipt)}`);
+
+        return receipt;
+    } else {
+        return executeTransaction;
     }
+}
+
 
     export async function initContractsService(_logger: Logger, _contracts: ContractCollection, _config: Config, _originNetwork: string) {
         logger = _logger;

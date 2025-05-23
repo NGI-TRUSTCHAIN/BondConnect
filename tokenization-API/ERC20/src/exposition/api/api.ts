@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import cors from 'cors';
-import { callContractMethodController, executeContractMethodController, mintBond, bridge, burn, createBond, requestTransfer, balance, getFaucetBalance, faucet } from "../controllers/contract.controller";
+import { callContractMethodController, executeContractMethodController, mintBond, bridge, burn, createBond, requestTransfer, balance, getFaucetBalance, faucet, requestStable } from "../controllers/contract.controller";
 import handleControllerCall from "../controllers";
 
 import Logger from "../../helpers/logger.helper";
@@ -97,7 +97,9 @@ function manageMethodPost(method: string): (req: Request, res: Response, logger:
             return faucet;
         case "faucetBalance":
             return getFaucetBalance;
-            
+        case "requestStable":
+            return requestStable;
+              
         default:
             return executeContractMethodController;
     }
