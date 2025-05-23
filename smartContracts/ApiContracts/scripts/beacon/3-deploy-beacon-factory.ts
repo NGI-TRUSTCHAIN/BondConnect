@@ -5,7 +5,7 @@ import beaconAddress from "../../upgradeeable-beacon-address.json";
 //? TERCER PASO: DESPLEGAR EL FACTORY CON EL BEACON- SOLO SE DESPLIEGA UNA VEZ Y SERÁ USADO PARA DESPLEGAR LOS BONDS
 async function main() {
   const Factory = await ethers.getContractFactory("SecurityBondFactory");
-  const factory = await Factory.deploy(beaconAddress);
+  const factory = await Factory.deploy(beaconAddress.address);
   await factory.waitForDeployment();
   const address = await factory.getAddress();
 
