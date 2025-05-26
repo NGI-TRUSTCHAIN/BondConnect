@@ -180,17 +180,13 @@ export const getPendingPayments = async (req: express.Request, res: express.Resp
           amount: invoice.amount * bond.price,
           paid: invoice.paid
         };
-        console.log('investor', investor);
 
         const targetList = isPastDue ? pastDuePayments : upcomingPayments;
-        console.log('targetList', targetList);
         if (!targetList) continue;
-        console.log('targetList', targetList);
 
         let existingPayment = targetList.find(
           p => p.bondName === bond.bondName && p.network === invoice.network
         );
-        console.log('existingPayment', existingPayment);
 
         if (existingPayment) {
           existingPayment.investors.push(investor);
@@ -206,7 +202,6 @@ export const getPendingPayments = async (req: express.Request, res: express.Resp
             paymentDate: invoice.endDate,
             investors: [investor]
           };
-          console.log('newPayment', newPayment);
           targetList.push(newPayment);
         }
       }
@@ -235,10 +230,11 @@ export const updatePayment = async (req: express.Request, res: express.Response)
   const issuer = await getIssuerById(bond.creatorCompany);
   const inversor = await getInvestorById(userId);
   const amount = invoice.amount * (bond.price * (bond.interestRate / 100)); // dinero que transferir entre cuentas
+  console.log('amount', amount);
 
   try {
     // Pagar al inversor por el bono. REVISAR: solo he inertido las wallet
-    const responseTransfer = await useApiBridge.requestTransfer(issuer.walletAddress, inversor.walletAddress, amount,
+    const responseTransfer = await useApiBridge.requestTransfer(issuer.walletAddress, inversor.walletAddress, Math.floor(amount),
       network.toUpperCase(), contractAddress);
     console.log("Response Transfer:", responseTransfer);
   } catch (error) {

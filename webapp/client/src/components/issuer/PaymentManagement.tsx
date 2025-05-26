@@ -46,11 +46,17 @@ const PaymentManagement = () => {
     console.log(payBatch);
   }
 
-  async function handlePay(userId: any, bondId: any, network: any): Promise<void> {
-    console.log("Llamar funcion Update para cambiar estado del pago de ", userId, " en el bono ", bondId);
-    await dispatch(updatePayment({ userId, bondId, network }));
-    // Refresh payment data after update
-    await dispatch(getPayments(user?._id!));
+  async function handlePay(payments: Array<{userId: string, bondId: string, network: string}>): Promise<void> {
+    for (const payment of payments) {
+      console.log("Llamar funcion Update para cambiar estado del pago de ", payment.userId, " en el bono ", payment.bondId);
+      await dispatch(updatePayment({ 
+        userId: payment.userId,
+        bondId: payment.bondId, 
+        network: payment.network 
+      }));
+      // Refresh payment data after each update
+      await dispatch(getPayments(user?._id!));
+    }
   }
 
   return (
@@ -140,7 +146,7 @@ const PaymentManagement = () => {
                     <td>{investor.amount}</td>
                     <td>{investor.numberToken}</td>
                     <td>
-                      <button className="btn-pay-now" onClick={() => handlePay(investor.userId, selectedBond?._id, payment.network)}>
+                      <button className="btn-pay-now" onClick={() => handlePay([{userId: investor.userId, bondId: selectedBond?._id!, network: payment.network}])}>
                         Pay
                       </button>
                     </td>
