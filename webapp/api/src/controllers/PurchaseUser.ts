@@ -36,122 +36,187 @@ export const purchase = async (req: express.Request, res: express.Response) => {
       });
       return;
     }
-    console.log('ok - all data');
-    // IMPORTANTE LLAMAR a requestTransfer
+
     const bond = await getBondByBondName(purchaseData.investToken);
+    if (!bond) {
+      res.status(404).json({
+        error: "Bond not found",
+        message: "The specified bond does not exist.",
+      });
+      return;
+    }
 
     const contractAddress = bond.tokenState.find((block: any) =>
-      block.blockchain.toUpperCase() === purchaseData.destinationBlockchain.toUpperCase()).contractAddress;
-    const issuer = await getIssuerById(bond.creatorCompany);
-    const inversor = await getInvestorById(purchaseData.userId);
-    //const responseStable = await useApiBridge.requestStable(issuer.walletAddress, inversor.walletAddress, purchaseData.purchasedTokens);
-    const responseTransfer = await useApiBridge.requestTransfer(inversor.walletAddress, issuer.walletAddress, purchaseData.purchasedTokens,
-      purchaseData.destinationBlockchain.toUpperCase(), contractAddress);
-    console.log("Response Transfer:", responseTransfer);
+      block.blockchain.toUpperCase() === purchaseData.destinationBlockchain.toUpperCase())?.contractAddress;
 
-    // UPDATE CREATE INVOICE PAYMENT
-    // Recuperar la lista de paymenteInvoice
-    const invoiceList = await getPaymentInvoicesByUserId(purchaseData.userId);
+    if (!contractAddress) {
+      res.status(400).json({
+        error: "Invalid blockchain",
+        message: "The specified blockchain is not supported for this bond.",
+      });
+      return;
+    }
+
+    const issuer = await getIssuerById(bond.creatorCompany);
+    if (!issuer) {
+      res.status(404).json({
+        error: "Issuer not found",
+        message: "The bond issuer does not exist.",
+      });
+      return;
+    }
+
+    const inversor = await getInvestorById(purchaseData.userId);
+    if (!inversor) {
+      res.status(404).json({
+        error: "Investor not found",
+        message: "The specified investor does not exist.",
+      });
+      return;
+    }
+
+    let trxStable;
+    let trxTransfer;
+
+    try {
+      trxStable = await useApiBridge.requestStable(issuer.walletAddress, inversor.walletAddress, purchaseData.purchasedTokens);
+    } catch (error) {
+      console.error('Error in requestStable:', error);
+      res.status(400).json({
+        error: "Error in requestStable",
+        message: error instanceof Error ? error.message : "Unknow error in requestStable",
+        details: error
+      });
+      return;
+    }
+
+    try {
+      trxTransfer = await useApiBridge.requestTransfer(inversor.walletAddress, issuer.walletAddress, purchaseData.purchasedTokens,
+        purchaseData.destinationBlockchain.toUpperCase(), contractAddress);
+    } catch (error) {
+      console.error('Error in requestTransfer:', error);
+      res.status(400).json({
+        error: "Error in requestTransfer",
+        message: error instanceof Error ? error.message : "Unknow error in requestTransfer",
+        details: error
+      });
+      return;
+    }
+
+    try {
+      // UPDATE CREATE INVOICE PAYMENT
+      // Recuperar la lista de paymenteInvoice
+      const invoiceList = await getPaymentInvoicesByUserId(purchaseData.userId);
 
       const existingInvoice = invoiceList.find(
         invoice =>
-            invoice.bonoId === bond.id &&
-            invoice.network === purchaseData.destinationBlockchain.toUpperCase()
-    );
+          invoice.bonoId === bond.id &&
+          invoice.network === purchaseData.destinationBlockchain.toUpperCase()
+      );
 
-    if (existingInvoice) {
-      // Actualizar amount
-      await updatePaymentInvoiceById(existingInvoice.id, {
-        amount: existingInvoice.amount + purchaseData.purchasedTokens,
+      if (existingInvoice) {
+        // Actualizar amount
+        await updatePaymentInvoiceById(existingInvoice.id, {
+          amount: existingInvoice.amount + purchaseData.purchasedTokens,
+        });
+      } else {
+        // Crear nuevo registro
+        await createPaymentInvoice({
+          userId: purchaseData.userId,
+          bonoId: bond.id,
+          endDate: bond.bondMaturityDate,
+          network: purchaseData.destinationBlockchain.toUpperCase(),
+          trxStable: trxStable.message,
+          trxTransfer: trxTransfer.message,
+          amount: purchaseData.purchasedTokens,
+          paid: false
+        });
+      }
+
+      // Update RetailMktBond token amount
+      const retailBonds = await getRetailMktBonds();
+      const matchingRetailBond = retailBonds.find(bond =>
+        bond.investToken === purchaseData.investToken &&
+        bond.destinationBlockchain.toUpperCase() === purchaseData.destinationBlockchain.toUpperCase()
+      );
+
+      if (matchingRetailBond) {
+        await updateRetailMktBondById(matchingRetailBond._id.toString(), {
+          numTokensOffered: Number(matchingRetailBond.numTokensOffered) - Number(purchaseData.purchasedTokens)
+        });
+      }
+
+      const purchase = await createPurchaseUser(purchaseData);
+      res.status(201).json({
+        purchase,
+        transactions: {
+          stable: trxStable.message,
+          transfer: trxTransfer.message
+        }
       });
-    } else {
-      // Crear nuevo registro
-      await createPaymentInvoice({
-        userId: purchaseData.userId,
-        bonoId: bond.id,
-        endDate: bond.bondMaturityDate, // asegúrate de tener esta propiedad
-        network: purchaseData.destinationBlockchain.toUpperCase(),
-        amount: purchaseData.purchasedTokens,
-        paid: false
-      });
-    }
+      console.log("purchase", purchase);
+      console.log("trxStable", trxStable);
+      console.log("trxTransfer", trxTransfer);
+      return;
 
-    // Update RetailMktBond token amount
-    const retailBonds = await getRetailMktBonds();
-    const matchingRetailBond = retailBonds.find(bond => 
-      bond.investToken === purchaseData.investToken && 
-      bond.destinationBlockchain.toUpperCase() === purchaseData.destinationBlockchain.toUpperCase()
-    );
-
-    if (matchingRetailBond) {
-      await updateRetailMktBondById(matchingRetailBond._id.toString(), {
-        numTokensOffered: Number(matchingRetailBond.numTokensOffered) - Number(purchaseData.purchasedTokens)
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        error: "User creation failed",
+        message: "An unexpected error occurred while creating the bond.",
       });
       return;
-    }  
-    console.log('ok - all data');
-    
-    const purchase = await createPurchaseUser(purchaseData)
-    // .catch((error: MongoServerError) => {
-    //   if (error.code === 11000) {
-    //     res.status(400).json({
-    //       error: "User already exists",
-    //       message: "User already exists.",
-    //     });
-    //     return;
-    //   }
-    // });
-
-    res.status(201).json(purchase);
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({
       error: "User creation failed",
       message: "An unexpected error occurred while creating the bond.",
     });
+    return;
   }
 };
 
 export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Request, res: express.Response) => {
   try {
-   const { balance } = useBlockchainService();
-   const userId = req.params.userId; 
-   const wallet = (await getInvestorById(userId)).walletAddress;
-   const paymentInvoices = await getPaymentInvoicesByUserId(userId);
-   const userResponse: UserInfo = { tokenList: [], upcomingPayment: [] };
+    const { balance } = useBlockchainService();
+    const userId = req.params.userId;
+    const wallet = (await getInvestorById(userId)).walletAddress;
+    const paymentInvoices = await getPaymentInvoicesByUserId(userId);
+    const userResponse: UserInfo = { tokenList: [], upcomingPayment: [] };
 
-      const today = dayjs();
-      
-      for (const invoice of paymentInvoices) {
-          const bond = await getBondById(invoice.bonoId);
-          const balanceResponse = await balance(bond.tokenState[0].contractAddress, wallet, bond.tokenState[0].blockchain);
-          // REVISAR LOGICA CALCULO PRICE
-          // tokenList: todos los registros sin importar 'paid'
-          userResponse.tokenList.push({
-              bondName: bond.bondName,
-              network: invoice.network,
-              amountAvaliable: invoice.amount,
-              price: (invoice.amount * Number(balanceResponse.message)) * bond.price,
-          });
+    const today = dayjs();
 
-          // upcomingPayment: solo si falta un mes exacto y no está pagado
-          const endDate = dayjs(invoice.endDate);
-          const diffMonths = endDate.month() - today.month();
+    for (const invoice of paymentInvoices) {
+      const bond = await getBondById(invoice.bonoId);
+      const balanceResponse = await balance(bond.tokenState[0].contractAddress, wallet, bond.tokenState[0].blockchain);
+      // REVISAR LOGICA CALCULO PRICE
+      // tokenList: todos los registros sin importar 'paid'
+      userResponse.tokenList.push({
+        bondName: bond.bondName,
+        network: invoice.network,
+        amountAvaliable: invoice.amount,
+        price: (invoice.amount * Number(balanceResponse.message)) * bond.price,
+      });
 
-          if (
-              !invoice.paid 
-              // &&
-              // diffMonths === 1 &&
-              // endDate.date() === today.date()
-          ) {
-              let paymentAmount  = invoice.amount * bond.price * (bond.interestRate / 100);
-              userResponse.upcomingPayment.push({
-                  bondName: bond.bondName,
-                  paymentDate: dayjs(invoice.endDate).format('D/MM/YYYY'),
-                  paymentAmount: paymentAmount, 
-              });
-          }
+      // upcomingPayment: solo si falta un mes exacto y no está pagado
+      const endDate = dayjs(invoice.endDate);
+      const diffMonths = endDate.month() - today.month();
+
+      if (
+        !invoice.paid
+        // &&
+        // diffMonths === 1 &&
+        // endDate.date() === today.date()
+      ) {
+        let paymentAmount = invoice.amount * bond.price * (bond.interestRate / 100);
+        userResponse.upcomingPayment.push({
+          bondName: bond.bondName,
+          paymentDate: dayjs(invoice.endDate).format('D/MM/YYYY'),
+          paymentAmount: paymentAmount,
+        });
       }
+    }
     res.status(200).json(userResponse);
   } catch (error) {
     res.status(500).json({ error: "Error al obtener los bonos del usuario" });
@@ -162,14 +227,14 @@ export const balanceFaucet = async (req: express.Request, res: express.Response)
   try {
     const data = req.body;
 
-   const balance = await useApiBridge.faucetBalance(data.address);
+    const balance = await useApiBridge.faucetBalance(data.address);
 
-   let big = BigInt(balance.message);
+    let big = BigInt(balance.message);
 
-   let amountFinal: number = Number(big);
+    let amountFinal: number = Number(big);
 
-   console.log(amountFinal);
-  
+    console.log(amountFinal);
+
     res.status(200).json(amountFinal / 1000000);
   } catch (error) {
     res.status(500).json({ error: "Error al obtener los bonos del usuario" });
