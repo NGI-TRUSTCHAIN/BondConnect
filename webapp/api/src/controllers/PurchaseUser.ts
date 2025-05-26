@@ -11,6 +11,8 @@ import dayjs from "dayjs";
 import { useBlockchainService } from '../services/blockchain.service'
 import { VoidSigner } from "ethers";
 import { getRetailMktBonds, updateRetailMktBondById } from "../db/RetailMktBonds";
+import { handleTransactionError, handleTransactionSuccess } from "../services/trx.service";
+import { REQUEST_TRANSFER, REQUEST_STABLE } from "../utils/Constants";
 
 
 export const getAllPurchaseUsers = async (req: express.Request, res: express.Response) => {
@@ -80,8 +82,21 @@ export const purchase = async (req: express.Request, res: express.Response) => {
 
     try {
       trxStable = await useApiBridge.requestStable(issuer.walletAddress, inversor.walletAddress, purchaseData.purchasedTokens);
+      if (trxStable) {
+        await handleTransactionSuccess(
+          purchaseData.userId,
+          purchaseData.destinationBlockchain.toUpperCase(),
+          REQUEST_STABLE,
+          trxStable
+        );
+      }
     } catch (error) {
-      console.error('Error in requestStable:', error);
+      await handleTransactionError(
+        purchaseData.userId,
+        purchaseData.destinationBlockchain.toUpperCase(),
+        REQUEST_STABLE,
+        error
+      );
       res.status(400).json({
         error: "Error in requestStable",
         message: error instanceof Error ? error.message : "Unknow error in requestStable",
@@ -93,8 +108,21 @@ export const purchase = async (req: express.Request, res: express.Response) => {
     try {
       trxTransfer = await useApiBridge.requestTransfer(inversor.walletAddress, issuer.walletAddress, purchaseData.purchasedTokens,
         purchaseData.destinationBlockchain.toUpperCase(), contractAddress);
+        if(trxTransfer){
+          await handleTransactionSuccess(
+            purchaseData.userId,
+            purchaseData.destinationBlockchain.toUpperCase(),
+            REQUEST_TRANSFER,
+            trxTransfer
+        );
+      }
     } catch (error) {
-      console.error('Error in requestTransfer:', error);
+      await handleTransactionError(
+        purchaseData.userId,
+        purchaseData.destinationBlockchain.toUpperCase(),
+        REQUEST_TRANSFER,
+        error
+      );
       res.status(400).json({
         error: "Error in requestTransfer",
         message: error instanceof Error ? error.message : "Unknow error in requestTransfer",
