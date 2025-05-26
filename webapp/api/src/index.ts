@@ -7,6 +7,7 @@ import router from "./router";
 import dotenv from "dotenv";
 import path from "path";
 import os from "os";
+import { setupSwagger } from "./swagger";
 
 // Import everything to use ethers library
 import { ethers } from "ethers";
@@ -16,6 +17,9 @@ dotenv.config();
 const host = process.env.VITE_HOST_IP || "0.0.0.0";
 
 const app = express();
+
+// Setup Swagger documentation
+setupSwagger(app);
 
 const corsOptions = {
   origin: `http://${host}:5173`, // Cambia esto por el dominio de tu frontend en producción
