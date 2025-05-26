@@ -7,6 +7,9 @@ import { useBusinessService } from '../services/business.service'
 import { getBscBalance } from '../services/api-business.service'
 import { getIssuerById } from '../db/Issuer'; 
 // import { authentication, random } from "../helpers";
+import { CREATE_BOND, MINT_BOND } from "../utils/Constants";
+import { handleTransactionSuccess, handleTransactionError } from "../services/trx.service";
+
 
 // export const getBond = async (
 //   req: express.Request,
@@ -144,15 +147,57 @@ export const addBond = async (req: express.Request, res: express.Response) => {
     if (!createdBond) return;
   
     try {
-      const wallet = (await getIssuerById(createdBond.creatorCompany)).walletAddress;
+      const issuer = (await getIssuerById(createdBond.creatorCompany));
+      if (!issuer) {
+        res.status(404).json({ error: "Issuer not found" });
+        return; 
+      }
+
+      const wallet = issuer.walletAddress;
       
       const bondPrice = await calculateBondPrice(createdBond);
       console.log(bondPrice);
-      // //¡¡¡¡ PENDIENTE !!!!  Pendiente SYMBOL
-      const responseCreateCompanyBond = await createCompanyBond(createdBond.bondName, createdBond.bondSymbol,
-        bondPrice, wallet);
+      
+      let responseCreateCompanyBond;
+
+      try {
+        responseCreateCompanyBond = await createCompanyBond(createdBond.bondName, createdBond.bondSymbol,
+          bondPrice, wallet);
+        await handleTransactionSuccess(
+          issuer.id,
+          createdBond.blockchainNetwork.toUpperCase(),
+          CREATE_BOND,
+          responseCreateCompanyBond.accounts[0]
+        );
+      } catch (error) {
+        await handleTransactionError(
+          issuer.id,
+          createdBond.blockchainNetwork.toUpperCase(),
+          CREATE_BOND,
+          error
+        );
+      }   
+      
       const contractAddress = await getBondNetWorkAccount(responseCreateCompanyBond.accounts, createdBond.blockchainNetwork.toUpperCase());
-      const responseMintBond = await mintBond(contractAddress, wallet, createdBond.numberTokens);
+      
+      let responseMintBond;
+      try {
+        responseMintBond = await mintBond(contractAddress, wallet, createdBond.numberTokens);
+      await handleTransactionSuccess(
+        createdBond.creatorCompany,
+        createdBond.blockchainNetwork.toUpperCase(),
+        MINT_BOND,
+        responseMintBond 
+      );
+      } catch (error) {
+        await handleTransactionError(
+          issuer.id,
+          createdBond.blockchainNetwork.toUpperCase(),
+          MINT_BOND,
+          error
+        );
+      }
+
 
       // Update the bond with the contract address in tokenState
       await updateBondById(createdBond._id.toString(), { 
