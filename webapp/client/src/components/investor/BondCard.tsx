@@ -19,11 +19,16 @@ const BondCard: React.FC<{ bond: Bond, user: Investor }> = ({ bond, user }) => {
             <strong>Anual interst rate:</strong> {bond.interestRate} %
           </li>
           <li className="card-text" style={{ whiteSpace: "nowrap" }}>
+            <strong>Price:</strong> {bond.price?.toFixed(2)} €
+          </li>
+          <li className="card-text" style={{ whiteSpace: "nowrap" }}>
             <strong>Start date:</strong> {new Date(bond.bondStartDate!).toLocaleDateString("es-ES")}
           </li>
         </ul>
 
-        <button className="btn btn-primary-sm" onClick={() => navigate(`/bond-details/${bond._id}`,  { state: { bond, user } })}>See More</button>
+        <button className="btn btn-primary-sm" onClick={() => navigate(`/bond-details/${bond._id}`,  { state: { bond, user } })} style={{ backgroundColor: "#007bff", color: "white" }}>
+          See More
+        </button>
       </div>
     </div>
   );

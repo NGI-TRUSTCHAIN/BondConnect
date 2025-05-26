@@ -60,6 +60,27 @@ export const addRetailMktBond = async (req: express.Request, res: express.Respon
       return;
     }
 
+    // Check if bond with same investToken and blockchain exists
+    const existingBonds = await getRetailMktBonds();
+    const existingBond = existingBonds.find(bond => 
+      bond.investToken === investToken && 
+      bond.destinationBlockchain === destinationBlockchain
+    );
+
+    if (existingBond) {
+      // Convert to numbers before adding
+      const existingAmount = Number(existingBond.numTokensOffered);
+      const newAmount = Number(numTokensOffered);
+      
+      // Update existing bond by adding amounts
+      const updatedBond = await updateRetailMktBondById(existingBond._id.toString(), {
+        numTokensOffered: existingAmount + newAmount
+      });
+      res.status(200).json(updatedBond);
+      return;
+    }
+
+    // Create new bond if no match found
     const bond = await createRetailMktBond(req.body).catch((error: MongoServerError) => {
       if (error.code === 11000) {
         res.status(400).json({
@@ -74,7 +95,7 @@ export const addRetailMktBond = async (req: express.Request, res: express.Respon
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      error: 'Bond creation failed',
+      error: 'Bond creation failed', 
       message: 'An unexpected error occurred while creating the bond.',
     });
   }

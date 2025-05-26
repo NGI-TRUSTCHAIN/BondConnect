@@ -10,14 +10,16 @@ import { UserInfo, UpcomingPayment, PurchaseBond } from "../models/Payment";
 import dayjs from "dayjs";
 import { useBlockchainService } from '../services/blockchain.service'
 import { VoidSigner } from "ethers";
+import { getRetailMktBonds, updateRetailMktBondById } from "../db/RetailMktBonds";
 
-export const getAllPurchaseUsers = async (req: express.Request,res: express.Response) => {
+
+export const getAllPurchaseUsers = async (req: express.Request, res: express.Response) => {
   try {
     const users = await getPurchaseUsers();
     res.status(200).json(users);
   } catch (error) {
     console.log(error);
-    res.status(500).send({error:"Internal server error", massage:"Internal server error"});
+    res.status(500).send({ error: "Internal server error", massage: "Internal server error" });
   }
 };
 
@@ -25,12 +27,20 @@ export const purchase = async (req: express.Request, res: express.Response) => {
   try {
     console.log(req.body);
     const purchaseData = req.body
-    
+
     // Validate required fields
+    if (!purchaseData.userId || !purchaseData.destinationBlockchain || !purchaseData.investToken || !purchaseData.purchasedTokens) {
+      res.status(400).json({
+        error: "Missing required fields",
+        message: "All required fields must be provided.",
+      });
+      return;
+    }
+    console.log('ok - all data');
     // IMPORTANTE LLAMAR a requestTransfer
     const bond = await getBondByBondName(purchaseData.investToken);
 
-    const contractAddress = bond.tokenState.find((block: any) => 
+    const contractAddress = bond.tokenState.find((block: any) =>
       block.blockchain.toUpperCase() === purchaseData.destinationBlockchain.toUpperCase()).contractAddress;
     const issuer = await getIssuerById(bond.creatorCompany);
     const inversor = await getInvestorById(purchaseData.userId);
@@ -49,33 +59,38 @@ export const purchase = async (req: express.Request, res: express.Response) => {
             invoice.network === purchaseData.destinationBlockchain.toUpperCase()
     );
 
-      if (existingInvoice) {
-          // Actualizar amount
-          await updatePaymentInvoiceById(existingInvoice.id, {
-              amount: existingInvoice.amount + purchaseData.purchasedTokens,
-          });
-      } else {
-          // Crear nuevo registro
-          await createPaymentInvoice({
-              userId: purchaseData.userId,
-              bonoId: bond.id,
-              endDate: bond.bondMaturityDate, // asegúrate de tener esta propiedad
-              network: purchaseData.destinationBlockchain.toUpperCase(),
-              amount: purchaseData.purchasedTokens,
-              paid: false
-          });
-      }
+    if (existingInvoice) {
+      // Actualizar amount
+      await updatePaymentInvoiceById(existingInvoice.id, {
+        amount: existingInvoice.amount + purchaseData.purchasedTokens,
+      });
+    } else {
+      // Crear nuevo registro
+      await createPaymentInvoice({
+        userId: purchaseData.userId,
+        bonoId: bond.id,
+        endDate: bond.bondMaturityDate, // asegúrate de tener esta propiedad
+        network: purchaseData.destinationBlockchain.toUpperCase(),
+        amount: purchaseData.purchasedTokens,
+        paid: false
+      });
+    }
 
-      // Validate required fields
-    if (!purchaseData.userId || !purchaseData.destinationBlockchain || !purchaseData.investToken || !purchaseData.purchasedTokens) {
-      res.status(400).json({
-        error: "Missing required fields",
-        message: "All required fields must be provided.",
+    // Update RetailMktBond token amount
+    const retailBonds = await getRetailMktBonds();
+    const matchingRetailBond = retailBonds.find(bond => 
+      bond.investToken === purchaseData.investToken && 
+      bond.destinationBlockchain.toUpperCase() === purchaseData.destinationBlockchain.toUpperCase()
+    );
+
+    if (matchingRetailBond) {
+      await updateRetailMktBondById(matchingRetailBond._id.toString(), {
+        numTokensOffered: Number(matchingRetailBond.numTokensOffered) - Number(purchaseData.purchasedTokens)
       });
       return;
     }  
     console.log('ok - all data');
-
+    
     const purchase = await createPurchaseUser(purchaseData)
     // .catch((error: MongoServerError) => {
     //   if (error.code === 11000) {
