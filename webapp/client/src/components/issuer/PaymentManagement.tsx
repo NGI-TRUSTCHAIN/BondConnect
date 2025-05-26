@@ -35,7 +35,7 @@ const PaymentManagement = () => {
     console.log(pastDuePayments);
   }, [upcomingPayments, pastDuePayments]);
 
-  function handlePayBatch(value: string): void {
+  function handleAddToPay(value: string): void {
     if (payBatch.includes(value)) {
       const filteredBatch = payBatch.filter((item) => item !== value);
       payBatch.length = 0;
@@ -133,7 +133,7 @@ const PaymentManagement = () => {
                 !payment.paid && (
                   <tr key={investor.userId}>
                     <td>
-                      <input type="checkbox" onChange={() => handlePayBatch(investor.userId)} style={{textAlign: "start", marginRight: "10px"}}/>
+                      <input type="checkbox" onChange={() => handleAddToPay(investor.userId)} style={{textAlign: "start", marginRight: "10px"}}/>
                       {investor.userId}
                     </td>
                     <td>{payment.paymentDate ? new Date(payment.paymentDate).toLocaleDateString() : ''}</td>

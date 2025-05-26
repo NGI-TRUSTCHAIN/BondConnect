@@ -58,3 +58,11 @@ export const updatePaymentInvoiceByData = (
     update,
     { new: true }
 );
+
+export const getPaymentInvoiceByData = (
+    userId: string,
+    bondId: string, 
+    network: string
+) => PaymentInvoice.findOne(
+    { userId: userId, bonoId: bondId, network: network }
+);

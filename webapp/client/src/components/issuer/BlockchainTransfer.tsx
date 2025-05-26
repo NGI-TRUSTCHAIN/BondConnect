@@ -56,6 +56,7 @@ const BlockchainTransfer = () => {
   const blockchains = ["ALASTRIA", "AMOY"];
   const userLoged = useAppSelector((state) => state.user.userLoged);
   const userId = userLoged?._id;
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     document.title = "Blockchain Transfer";
@@ -97,7 +98,7 @@ const BlockchainTransfer = () => {
 
   // Handle the actual form submission or any action when "Create bond" is clicked
   const handleConfirmSubmit = async () => {
-
+    setIsLoading(true);
     const bond = JSON.parse(JSON.stringify(selectedBond));
 
     const transferBlock: TokenState = bond.tokenState.find((block: TokenState) => block.blockchain === transferData.destinationBlockchain);
@@ -114,13 +115,21 @@ const BlockchainTransfer = () => {
       await dispatch(createTransferHistoric(transferData)).unwrap();
       toast.success("Success");
     } catch (error) {
-      toast.error(`Failed to create bond. Please try again.\n ${error}`);
+      toast.error(`Failed to transfer tokens. Please try again.\n ${error}`);
+      // Refresh bonds list even after error to ensure data consistency
+      await dispatch(readBonds(userId || ""));
+      // Reset form values
+      setTransferData({
+        _id: undefined,
+        tokenName: '',
+        originBlockchain: '',
+        destinationBlockchain: '',
+        tokenNumber: undefined,
+      });
     } finally {
+      setIsLoading(false);
       setShowPopup(false); // Close the popup
-      // navigate('/')
     }
-    // Handle bond creation logic (e.g., API call)
-    setShowPopup(false); // Close the pop-up after the action is confirmed
   };
 
   return (
@@ -263,10 +272,17 @@ const BlockchainTransfer = () => {
               <h3 style={{ textAlign: "left" }}>Number: {transferData.tokenNumber}</h3>
 
               <div className="popup-actions">
-                <button className="btn btn-primary" onClick={handleConfirmSubmit}>
-                  Confirm trasaction
+                <button className="btn btn-primary" onClick={handleConfirmSubmit} disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Processing...
+                    </>
+                  ) : (
+                    'Confirm transaction'
+                  )}
                 </button>
-                <button className="btn btn-secondary" onClick={handleClosePopup}>
+                <button className="btn btn-secondary" onClick={handleClosePopup} disabled={isLoading}>
                   Edit
                 </button>
               </div>
