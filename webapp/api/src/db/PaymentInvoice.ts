@@ -5,7 +5,6 @@ const InvoiceSchema = new mongoose.Schema({
   bonoId: { type: String, required: true },
   endDate: { type: String, required: true },
   network: { type: String, required: true },
-  req: { type: String, required: true },
   trxStable: { type: String, required: true },
   trxTransfer: { type: String, required: true },
   amount: { type: Number, required: true },

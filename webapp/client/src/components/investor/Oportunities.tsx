@@ -39,6 +39,7 @@ const Oportunities = () => {
                 </div>
               ))} */}
               {bonds?.map((bond) => {
+                if (bond.numberTokens === 0) return null;
                 return (
                   <div key={bond._id} className="col-md-6">
                     <BondCard bond={bond} user={user!}  />

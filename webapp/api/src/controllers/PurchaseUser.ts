@@ -135,9 +135,9 @@ export const purchase = async (req: express.Request, res: express.Response) => {
 
       // Update RetailMktBond token amount
       const retailBonds = await getRetailMktBonds();
-      const matchingRetailBond = retailBonds.find(bond =>
-        bond.investToken === purchaseData.investToken &&
-        bond.destinationBlockchain.toUpperCase() === purchaseData.destinationBlockchain.toUpperCase()
+      const matchingRetailBond = retailBonds.find(rtlBond =>
+        rtlBond.investToken === bond._id.toString() &&
+        rtlBond.destinationBlockchain.toUpperCase() === purchaseData.destinationBlockchain.toUpperCase()
       );
 
       if (matchingRetailBond) {

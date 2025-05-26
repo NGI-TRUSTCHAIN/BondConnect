@@ -360,10 +360,10 @@ const BondDetails = () => {
                     placeholder={`${bond.tokenState.find(entry => entry.blockchain === bond.blockchainNetwork)?.amount} available`}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const value = Number(e.target.value);
-                      const maxTokens = bond.tokenState.find(entry => entry.blockchain === bond.blockchainNetwork)?.amount ?? 0;
+                      const maxTokens = bond.numberTokens || 0;
                       setTokens(Math.min(value, maxTokens));
                     }}
-                    max={bond.tokenState.find(entry => entry.blockchain === bond.blockchainNetwork)?.amount}
+                    max={bond.numberTokens || 0}
                   />
                 </div>
               </div>
