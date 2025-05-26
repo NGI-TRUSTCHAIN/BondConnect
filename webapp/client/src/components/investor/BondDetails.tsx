@@ -20,7 +20,12 @@ const BondDetails = () => {
 
   const error = useAppSelector((state) => state.bond.error);
 
-  const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility
+  const [showPopup, setShowPopup] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [purchaseDetails, setPurchaseDetails] = useState<any>(null);
+  const [transactionDetails, setTransactionDetails] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [requestResult, setRequestResult] = useState<any>(null);
   const [tokens, setTokens] = useState<number>(0);
 
   // Seleccionar blockchain para baber token maximos que puedes comprar
@@ -95,13 +100,54 @@ const BondDetails = () => {
   };
 
   const handleConfirmBuy = async () => {
-    await dispatch(registerPurchase(purchaseData));
-    setShowPopup(false);
+    setIsLoading(true);
+    try {
+      const result = await dispatch(registerPurchase(purchaseData));
+      console.log('Resultado de result', result);
+      setRequestResult(result);
+      if (result.meta.requestStatus === 'rejected') {
+        setShowPopup(false);
+        setShowSuccessModal(true);
+        setTransactionDetails(result.payload);
+      } else if (result.payload) {
+        console.log('Resultado de registerPurchase:', result.payload);
+        setPurchaseDetails(result.payload.purchase);
+        setTransactionDetails(result.payload.transactions);
+        setShowPopup(false);
+        setShowSuccessModal(true);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
     navigate("/investor-dash");
   };
 
   return (
     <div className="container" style={{ width: "70vh" }}>
+      <style>
+        {`
+          .spinner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            border-radius: 8px;
+          }
+          .popup {
+            position: relative;
+          }
+        `}
+      </style>
       <div className="card mt-3 p-4">
         <h2 className="text-primary mb-4 text-start" style={{ marginLeft: "5rem" }}>
           {bond.bondName}
@@ -202,6 +248,13 @@ const BondDetails = () => {
         {showPopup && (
           <div className="popup-overlay" onClick={handleClosePopup}>
             <div className="popup">
+              {isLoading && (
+                <div className="spinner-overlay">
+                  <div className="spinner-border text-light" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              )}
               <h2 className="text-primary mb-4" style={{ textAlign: "left" }}>
                 BUY TOKEN
               </h2>
@@ -314,6 +367,45 @@ const BondDetails = () => {
                 </button>
                 <button className="btn btn-secondary" onClick={() => setShowPopup(false)}>
                   Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {showSuccessModal && (
+          <div className="popup-overlay">
+            <div className="popup" style={{ width: '600px' }}>
+              <h2 className="text-success mb-4" style={{ textAlign: "center" }}>
+                {requestResult?.meta?.requestStatus === 'rejected' ? 'Purchase Error!' : 'Successful Purchase!'}
+              </h2>
+              <div className="purchase-details mb-4">
+                {requestResult?.meta?.requestStatus === 'rejected' ? (
+                  <div className="alert alert-danger" role="alert">
+                    {JSON.stringify(transactionDetails, null, 2)}
+                  </div>
+                ) : (
+                  <>
+                    <h4 className="text-primary mb-3">Transaction Details:</h4>
+                    <ul className="list-unstyled">
+                      <li className="mb-3">
+                        <strong>Stable:</strong> 
+                        <div className="text-break" style={{ wordBreak: 'break-all' }}>
+                          {transactionDetails?.stable}
+                        </div>
+                      </li>
+                      <li className="mb-3">
+                        <strong>Transfer:</strong>
+                        <div className="text-break" style={{ wordBreak: 'break-all' }}>
+                          {transactionDetails?.transfer}
+                        </div>
+                      </li>
+                    </ul>
+                  </>
+                )}
+              </div>
+              <div className="popup-actions mt-5" style={{ textAlign: "center" }}>
+                <button className="btn btn-success" onClick={handleCloseSuccessModal}>
+                  Continue
                 </button>
               </div>
             </div>
