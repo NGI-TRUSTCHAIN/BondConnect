@@ -155,6 +155,7 @@ const EnterpriseWallet = () => {
                     <th>Bond Name</th>
                     <th>DLT Network</th>
                     <th>Amount of Tokens</th>
+                    <th>Amount in €</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -163,6 +164,7 @@ const EnterpriseWallet = () => {
                       <td>{token.bondName}</td>
                       <td>{token.network}</td>
                       <td>{token.amountAvaliable}</td>
+                      <td>{token.price.toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

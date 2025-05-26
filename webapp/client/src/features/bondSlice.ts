@@ -8,7 +8,7 @@ import { MarketData } from "../components/issuer/RetailMarket";
 
 interface BondState {
   bonds: Bond[] | null;
-  retailBonds: MarketData[] | null;
+  retailBonds: any[] | null;
   users: PurchaseData[];
   transferHistory: TransferInfo[] | null;
   status: "idle" | "loading" | "succeeded" | "failed";
@@ -625,7 +625,7 @@ const bondSlice = createSlice({
       })
       .addCase(getRetailMktBonds.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.bonds = action.payload
+        state.retailBonds = action.payload
         state.error = null;
       })
       .addCase(getRetailMktBonds.rejected, (state, action) => {
