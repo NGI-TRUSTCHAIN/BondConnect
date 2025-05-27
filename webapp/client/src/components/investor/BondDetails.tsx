@@ -351,20 +351,24 @@ const BondDetails = () => {
                   <label htmlFor="purchasedTokens" className="form-label">
                     Number of Tokens:
                   </label>
-                  <input
-                    type="number"
-                    id="purchasedTokens"
-                    name="purchasedTokens"
-                    className="form-control bg-form"
-                    value={tokens}
-                    placeholder={`${bond.tokenState.find(entry => entry.blockchain === bond.blockchainNetwork)?.amount} available`}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      const value = Number(e.target.value);
-                      const maxTokens = bond.numberTokens || 0;
-                      setTokens(Math.min(value, maxTokens));
-                    }}
-                    max={bond.numberTokens || 0}
-                  />
+                  <div className="input-group">
+                    <input
+                      type="number"
+                      id="purchasedTokens"
+                      name="purchasedTokens"
+                      className="form-control bg-form"
+                      value={tokens}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const value = Number(e.target.value);
+                        const maxTokens = bond.numberTokens || 0;
+                        setTokens(Math.min(value, maxTokens));
+                      }}
+                      max={bond.numberTokens || 0}
+                    />
+                    <span className="input-group-text bg-light">
+                      / {bond.numberTokens || 0}
+                    </span>
+                  </div>
                 </div>
               </div>
               <div className="popup-actions mt-5" style={{ textAlign: "center" }}>

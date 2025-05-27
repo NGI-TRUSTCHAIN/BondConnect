@@ -80,7 +80,6 @@ export const readInvestors = createAsyncThunk("user/readInvestors", async (_, { 
     }
 
     const data = await response.json();
-    console.log("Fetched Bonds:", data); // Debugging step
     return data as (Investor | Issuer)[];
   } catch (error) {
     return rejectWithValue(error);

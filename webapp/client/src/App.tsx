@@ -17,6 +17,7 @@ import ManageBonds from "./components/issuer/ManageBonds";
 import BuyToken from "./components/issuer/BuyToken";
 import RetailMarket from "./components/issuer/RetailMarket";
 import InvestmentWallet from "./components/investor/InvestmentWallet";
+import Admin from "./admin/Admin";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
       <Route path="/investor-dash" element={<Oportunities />} />
       <Route path="/investor-wallet" element={<InvestmentWallet />} />
       <Route path="/bond-details/:id" element={<BondDetails />} />
+      <Route path="/admin-dash" element={<Admin />} />
     </Routes>
   );
 }

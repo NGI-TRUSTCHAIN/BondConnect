@@ -8,7 +8,7 @@ const Oportunities = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   // const bonds = useAppSelector((state) => state.bond.bonds);
-  const bonds = useAppSelector((state) => state.bond.bonds);
+  const bonds = useAppSelector((state) => state.bond.retailBonds);
   const user = useAppSelector((state) => state.user.userLoged);
 
 

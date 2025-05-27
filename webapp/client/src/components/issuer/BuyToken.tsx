@@ -1,8 +1,8 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { readBonds, readUserBonds, registerPurchase } from "../../features/bondSlice";
+import { getRetailMktBonds, readUserBonds, registerPurchase } from "../../features/bondSlice";
 import { useNavigate } from "react-router-dom";
-import { readInvestors, readIssuers } from "../../features/userSlice";
+import { readInvestors } from "../../features/userSlice";
 import InvestorRegistration from "../Authentication/InvestorRegistration";
 
 export interface PurchaseData {
@@ -19,6 +19,7 @@ const BuyToken = () => {
   const navigate = useNavigate();
   const blockchains = ["ALASTRIA", "AMOY"];
   const registeredBonds = useAppSelector((state) => state.bond.bonds);
+  const retailMktBonds = useAppSelector((state) => state.bond.retailBonds);
   const investors = useAppSelector((state) => state.user.investors);
   const userLogged = useAppSelector((state) => state.user.userLoged);
 
@@ -37,22 +38,28 @@ const BuyToken = () => {
     const { name, value } = e.target;
     setPurchaseData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: name === "userId" ? investors.find(investor => investor.walletAddress === value)?._id : value,
+      // Reset investToken when blockchain changes
+      ...(name === "destinationBlockchain" ? { investToken: "" } : {})
     }));
   };
 
   useEffect(() => {
     document.title = "Register User";
-
     dispatch(readUserBonds({userId: userLogged?._id!, walletAddress: userLogged?.walletAddress!}));
+    dispatch(getRetailMktBonds());
     dispatch(readInvestors());
-    dispatch(readIssuers());
   }, [dispatch]);
 
-  const handleUser = () => {
+  useEffect(() => {
+    console.log(registeredBonds);
+  }, [registeredBonds]);
 
+  const handleUser = () => {
     for (const user of investors) {
-      if (user.name !== purchaseData.userId) {
+      console.log('user._id', user._id);
+      console.log('purchaseData.userId', purchaseData.userId);
+      if (user._id!== purchaseData.userId) {
         setErrorData(true);
         console.log(errorData);
       } else {
@@ -102,7 +109,7 @@ const BuyToken = () => {
               onBlur={handleUser}
             />
           </div>
-          <div className="col-sm-6 mb-3">
+          <div className="col-sm-6 mb-3"> 
             <label htmlFor="destinationBlockchain" className="form-label">
               Destination Blockchain:
             </label>
@@ -142,12 +149,10 @@ const BuyToken = () => {
                 Select token
               </option>
               {!errorMessage &&
-                registeredBonds?.map((bond) => {
+                retailMktBonds?.map((bond) => {
                   // Verificar si algún objeto dentro de tokenState tiene blockchain igual a la blockchain seleccionada
-                  const isBlockchainMatch = bond.tokenState.some(
-                    (block) => block.blockchain === purchaseData.destinationBlockchain
-                  );
-
+                  const isBlockchainMatch = bond.blockchainNetwork === purchaseData.destinationBlockchain && bond.creatorCompany === userLogged?._id
+                  
                   return (
                     isBlockchainMatch && (
                       <option key={bond._id} value={bond.bondName}>
@@ -162,14 +167,25 @@ const BuyToken = () => {
             <label htmlFor="purchasedTokens" className="form-label">
               Number of Tokens:
             </label>
-            <input
-              type="number"
-              id="purchasedTokens"
-              name="purchasedTokens"
-              className="form-control bg-form"
-              placeholder={`15`}
-              onChange={handleData}
-            />
+            <div className="input-group">
+              <input
+                type="number"
+                id="purchasedTokens"
+                name="purchasedTokens"
+                className="form-control bg-form"
+                onChange={handleData}
+                max={retailMktBonds?.find(bond => 
+                  bond.bondName === purchaseData.investToken && 
+                  bond.blockchainNetwork === purchaseData.destinationBlockchain
+                )?.numberTokens}
+              />
+              <span className="input-group-text bg-light">
+                / {retailMktBonds?.find(bond => 
+                    bond.bondName === purchaseData.investToken &&
+                    bond.blockchainNetwork === purchaseData.destinationBlockchain
+                  )?.numberTokens}
+              </span>
+            </div>
           </div>
           <div className="container-md row m-3" style={{ display: "flex", justifyContent: "center", gap: "20px" }}>
             <button
