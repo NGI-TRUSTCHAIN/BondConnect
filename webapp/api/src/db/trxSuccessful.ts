@@ -25,3 +25,4 @@ export const TrxSuccessfulModel = mongoose.model<ITrxSuccessful>("TrxSuccessful"
 
 export const createTrxSuccessful = (values: Record<string, any>) => new TrxSuccessfulModel(values).save();
 export const getTrxSuccessfulByUserId = (userId: string) => TrxSuccessfulModel.find({ userId: userId });
+export const getAllTrxSuccessfulls = () => TrxSuccessfulModel.find();

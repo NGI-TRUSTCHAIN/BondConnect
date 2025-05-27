@@ -24,4 +24,5 @@ export const TrxErrorModel = mongoose.model<ITrxError>('TrxError', TrxErrorSchem
 
 export const createTrxError = (values: Record<string, any>) => new TrxErrorModel(values).save();
 export const getTrxErrorByUserId = (userId: string) => TrxErrorModel.find({ userId: userId });
+export const getAllTrxErrors = () => TrxErrorModel.find();
 
