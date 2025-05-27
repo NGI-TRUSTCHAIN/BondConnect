@@ -4,7 +4,7 @@ import { MongoServerError } from 'mongodb';
 import { useBlockchainService } from '../services/blockchain.service'
 import { UserInfo } from "../models/Payment";
 import { getBondById, getBondsByUserId } from "../db/bonds";
-import { getPaymentInvoicesByBonoId, updatePaymentInvoiceByData, getPaymentInvoiceByData } from "../db/PaymentInvoice";
+import { getPaymentInvoicesByBonoId, updatePaymentInvoiceByData, getPaymentInvoiceByData, getPaymentInvoicesByUserId } from "../db/PaymentInvoice";
 import { Payment, Investors } from "../models/Payment";
 import { getIssuerById } from '../db/Issuer';
 import dayjs from "dayjs";
@@ -95,42 +95,51 @@ export const registerIssuer = async (req: express.Request, res: express.Response
 /**
  * recuper el token en ciruclacion y los siguientes pagos a hacer  
  */
+
 export const getTokenListAndUpcomingPaymentsByIssuer = async (req: express.Request, res: express.Response) => {
   const { balance } = useBlockchainService();
 
   try {
     const userId = req.params.userId;
     const wallet = (await getIssuerById(userId)).walletAddress;
-    const bonds = await getBondsByUserId(userId);
+     const bonds = await getBondsByUserId(userId);
+     const invoices = await getPaymentInvoicesByUserId(userId);
     const userResponse: UserInfo = { tokenList: [], upcomingPayment: [] };
     const today = dayjs();
 
     for (const bond of bonds) {
       for (const token of bond.tokenState) {
         const balanceResponse = await balance(token.contractAddress, wallet, token.blockchain);
+        const amountAvailable = token.amount - Number(balanceResponse.message);
+
         userResponse.tokenList.push({
           bondName: bond.bondName,
           network: token.blockchain,
           amountAvaliable: token.amount - Number(balanceResponse.message),
-          price: (token.amount - Number(balanceResponse.message)) * bond.price,
+            price: amountAvailable * bond.price,
         });
 
 
-        const endDate = dayjs(bond.redemptionFinishDate);
-        const diffMonths = endDate.month() - today.month();
-        if (
-          diffMonths === 1 &&
-          endDate.date() === today.date()
-        ) {
-          let paymentAmount = bond.price * (bond.interestRate / 100);
-          userResponse.upcomingPayment.push({
-            bondName: bond.bondName,
-            paymentDate: bond.redemptionFinishDate.toString(),
-            paymentAmount: (token.amount - Number(balanceResponse.message)) * paymentAmount,
-          });
+            const relatedInvoice = invoices.find(inv =>
+                inv.bonoId === bond.id &&
+                inv.network === token.blockchain.toUpperCase()
+            );
 
+            if (relatedInvoice) {
+                for (const payment of relatedInvoice.payments) {
+                    const paymentDate = dayjs(payment.timeStamp);
+
+                    if (!payment.paid && paymentDate.year() === today.year()) {
+                        const paymentAmount = bond.price * (bond.interestRate / 100);
+                        userResponse.upcomingPayment.push({
+                            bondName: bond.bondName,
+                            paymentDate: paymentDate.format("D/MM/YYYY"),
+                            paymentAmount: amountAvailable * paymentAmount,
+                        });
+                    }
+                }
+            }
         }
-      }
     }
     console.log("userResponse: ", userResponse)
     res.status(200).json(userResponse);

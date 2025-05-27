@@ -134,32 +134,54 @@ export const purchase = async (req: express.Request, res: express.Response) => {
     try {
       // UPDATE CREATE INVOICE PAYMENT
       // Recuperar la lista de paymenteInvoice
-      const invoiceList = await getPaymentInvoicesByUserId(purchaseData.userId);
 
-      const existingInvoice = invoiceList.find(
-        invoice =>
-          invoice.bonoId === bond.id &&
-          invoice.network === purchaseData.destinationBlockchain.toUpperCase()
-      );
+        const invoiceList = await getPaymentInvoicesByUserId(purchaseData.userId);
 
-      if (existingInvoice) {
-        // Actualizar amount
-        await updatePaymentInvoiceById(existingInvoice.id, {
-          amount: existingInvoice.amount + purchaseData.purchasedTokens,
-        });
-      } else {
-        // Crear nuevo registro
-        await createPaymentInvoice({
-          userId: purchaseData.userId,
-          bonoId: bond.id,
-          endDate: bond.bondMaturityDate,
-          network: purchaseData.destinationBlockchain.toUpperCase(),
-          trxStable: trxStable.message,
-          trxTransfer: trxTransfer.message,
-          amount: purchaseData.purchasedTokens,
-          paid: false
-        });
-      }
+        const existingInvoice = invoiceList.find(
+            invoice =>
+                invoice.bonoId === bond.id &&
+                invoice.network === purchaseData.destinationBlockchain.toUpperCase()
+        );
+
+        const logEntry = {
+            timeStamp: new Date(),
+            trxStable: trxStable.message,
+            trxTransfer: trxTransfer.message,
+        };
+
+        if (existingInvoice) {
+            // ✅ Actualizar amount y añadir nuevo log
+            await updatePaymentInvoiceById(existingInvoice.id, {
+                amount: existingInvoice.amount + purchaseData.purchasedTokens,
+                $push: { logs: logEntry },
+            });
+        } else {
+            // ✅ Crear la factura con pagos futuros y log inicial
+
+            const startYear = dayjs(bond.bondStartDate).year();
+            const endYear = dayjs(bond.bondMaturityDate).year();
+            const baseMaturity = dayjs(bond.bondMaturityDate);
+
+            const payments = [];
+            for (let year = startYear + 1; year <= endYear; year++) {
+                const paymentDate = baseMaturity.year(year).toDate();
+                payments.push({
+                    timeStamp: paymentDate,
+                    paid: false,
+                    trxPaid: "",
+                });
+            }
+
+            await createPaymentInvoice({
+                userId: purchaseData.userId,
+                bonoId: bond.id,
+                endDate: bond.bondMaturityDate,
+                network: purchaseData.destinationBlockchain.toUpperCase(),
+                amount: purchaseData.purchasedTokens,
+                payments,
+                logs: [logEntry],
+            });
+        }
 
       // Update RetailMktBond token amount
       const retailBonds = await getRetailMktBonds();
@@ -204,7 +226,7 @@ export const purchase = async (req: express.Request, res: express.Response) => {
     return;
   }
 };
-
+a
 export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Request, res: express.Response) => {
   try {
     const { balance } = useBlockchainService();
@@ -215,36 +237,36 @@ export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Req
 
     const today = dayjs();
 
-    for (const invoice of paymentInvoices) {
-      const bond = await getBondById(invoice.bonoId);
-      const balanceResponse = await balance(bond.tokenState[0].contractAddress, wallet, bond.tokenState[0].blockchain);
-      // REVISAR LOGICA CALCULO PRICE
-      // tokenList: todos los registros sin importar 'paid'
-      userResponse.tokenList.push({
-        bondName: bond.bondName,
-        network: invoice.network,
-        amountAvaliable: invoice.amount,
-        price: (invoice.amount * Number(balanceResponse.message)) * bond.price,
-      });
+    // recorremos los paymentInvoices. 
 
-      // upcomingPayment: solo si falta un mes exacto y no está pagado
-      const endDate = dayjs(invoice.endDate);
-      const diffMonths = endDate.month() - today.month();
+      for (const invoice of paymentInvoices) {
+          const bond = await getBondById(invoice.bonoId);
+          const balanceResponse = await balance(bond.tokenState[0].contractAddress, wallet, bond.tokenState[0].blockchain);
+    
+          // tokenList: todos los registros sin importar 'paid'
+          userResponse.tokenList.push({
+              bondName: bond.bondName,
+              network: invoice.network,
+              amountAvaliable: invoice.amount,
+              price: (invoice.amount * Number(balanceResponse.message)) * bond.price,
+          });
 
-      if (
-        !invoice.paid
-        // &&
-        // diffMonths === 1 &&
-        // endDate.date() === today.date()
-      ) {
-        let paymentAmount = invoice.amount * bond.price * (bond.interestRate / 100);
-        userResponse.upcomingPayment.push({
-          bondName: bond.bondName,
-          paymentDate: dayjs(invoice.endDate).format('D/MM/YYYY'),
-          paymentAmount: paymentAmount,
-        });
+          // upcomingPayment: pagos no pagados y cuya fecha sea en el año actual
+          for (const payment of invoice.payments) {
+              const paymentDate = dayjs(payment.timeStamp);
+              if (
+                  !payment.paid &&
+                  paymentDate.year() === today.year()
+              ) {
+                  const paymentAmount = invoice.amount * bond.price * (bond.interestRate / 100);
+                  userResponse.upcomingPayment.push({
+                      bondName: bond.bondName,
+                      paymentDate: paymentDate.format("D/MM/YYYY"),
+                      paymentAmount,
+                  });
+              }
+          }
       }
-    }
     res.status(200).json(userResponse);
   } catch (error) {
     res.status(500).json({ error: "Error al obtener los bonos del usuario" });
