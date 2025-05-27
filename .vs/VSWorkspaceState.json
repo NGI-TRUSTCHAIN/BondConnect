@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\tokenization-API",
+    "\\tokenization-API\\SA",
+    "\\tokenization-API\\SA\\src"
   ],
   "PreviewInSolutionExplorer": false
 }

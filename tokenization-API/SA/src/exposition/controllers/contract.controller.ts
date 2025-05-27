@@ -90,8 +90,7 @@ export async function createAccountMultiple(req: Request): Promise<AppResult> {
     const results: {
         network: string;
         address: string | null;
-        transactionHash: string | null;
-        timestamp: string | null;
+        transactionHash: string | null;        
     }[] = [];
 
     logger.info(`CREATING IN alastria`);
@@ -102,7 +101,6 @@ export async function createAccountMultiple(req: Request): Promise<AppResult> {
 
     const salt: string = args[0] || "DEFAULT";  
     const encoded = encodeBytes32String(salt);
-    console.log(encoded);
 
     const newArgs: any[] = [encoded, bytecode];
 
@@ -119,8 +117,7 @@ export async function createAccountMultiple(req: Request): Promise<AppResult> {
     results.push({
         network: "ALASTRIA",
         address,
-        transactionHash,
-        timestamp,
+        transactionHash        
     });
 
     try {
@@ -145,8 +142,7 @@ export async function createAccountMultiple(req: Request): Promise<AppResult> {
         results.push({
             network: "AMOY",
             address: addressAmoy,
-            transactionHash: transactionHashAmoy,
-            timestamp: timestampAmoy,
+            transactionHash: transactionHashAmoy            
         });
 
         return {
@@ -185,14 +181,15 @@ export async function createIndividualAccountRetry(req: Request): Promise<AppRes
     //const salt: string = "";   
     const network: string = args[1] || "DEFAULT";   
     const options: Overrides = req.body.options || {};
-    
-    const newArgs: any[] = [salt, bytecode];
+       
+    const encoded = encodeBytes32String(salt);
+
+    const newArgs: any[] = [encoded, bytecode];
 
     const results: {
         network: string;
         address: string | null;
-        transactionHash: string | null;
-        timestamp: string | null;
+        transactionHash: string | null;        
     }[] = [];
 
     logger.info(`INITIALIZING SERVICES createAccountRetryIndividual in ${network}`);
@@ -204,8 +201,7 @@ export async function createIndividualAccountRetry(req: Request): Promise<AppRes
         await executeContractMethod(contractName, contractAddress, methodName, newArgs, options);
 
     let address = null;
-    let transactionHash = null;
-    let timestamp = null;
+    let transactionHash = null;  
 
     if (result && "logs" in result && result.logs.length > 0) {
         address = result.logs[0].address;
@@ -219,8 +215,7 @@ export async function createIndividualAccountRetry(req: Request): Promise<AppRes
     results.push({
         network,
         address,
-        transactionHash,
-        timestamp,
+        transactionHash        
     });
 
     return {
