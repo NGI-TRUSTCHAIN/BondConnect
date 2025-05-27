@@ -226,7 +226,7 @@ export const purchase = async (req: express.Request, res: express.Response) => {
     return;
   }
 };
-a
+
 export const getTokenListAndUpcomingPaymentsByInvestor = async (req: express.Request, res: express.Response) => {
   try {
     const { balance } = useBlockchainService();

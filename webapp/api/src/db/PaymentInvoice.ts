@@ -9,9 +9,9 @@ const InvoiceSchema = new mongoose.Schema({
     amount: { type: Number, required: true },
     payments: [
         {    
-            timeStamp: { type: Date, required: true },
+            timeStamp: { type: Date, required: false },
             paid: { type: Boolean, required: true },
-            trxPaid: { type: String, required: true }
+            trxPaid: { type: String, required: false }
         },
     ],
     logs: [

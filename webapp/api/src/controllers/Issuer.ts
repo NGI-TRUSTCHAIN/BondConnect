@@ -102,8 +102,8 @@ export const getTokenListAndUpcomingPaymentsByIssuer = async (req: express.Reque
   try {
     const userId = req.params.userId;
     const wallet = (await getIssuerById(userId)).walletAddress;
-     const bonds = await getBondsByUserId(userId);
-     const invoices = await getPaymentInvoicesByUserId(userId);
+    const bonds = await getBondsByUserId(userId);
+    const invoices = await getPaymentInvoicesByUserId(userId);
     const userResponse: UserInfo = { tokenList: [], upcomingPayment: [] };
     const today = dayjs();
 
@@ -116,30 +116,30 @@ export const getTokenListAndUpcomingPaymentsByIssuer = async (req: express.Reque
           bondName: bond.bondName,
           network: token.blockchain,
           amountAvaliable: token.amount - Number(balanceResponse.message),
-            price: amountAvailable * bond.price,
+          price: amountAvailable * bond.price,
         });
 
 
-            const relatedInvoice = invoices.find(inv =>
-                inv.bonoId === bond.id &&
-                inv.network === token.blockchain.toUpperCase()
-            );
+        const relatedInvoice = invoices.find(inv =>
+          inv.bonoId === bond.id &&
+          inv.network === token.blockchain.toUpperCase()
+        );
 
-            if (relatedInvoice) {
-                for (const payment of relatedInvoice.payments) {
-                    const paymentDate = dayjs(payment.timeStamp);
+        if (relatedInvoice) {
+          for (const payment of relatedInvoice.payments) {
+            const paymentDate = dayjs(payment.timeStamp);
 
-                    if (!payment.paid && paymentDate.year() === today.year()) {
-                        const paymentAmount = bond.price * (bond.interestRate / 100);
-                        userResponse.upcomingPayment.push({
-                            bondName: bond.bondName,
-                            paymentDate: paymentDate.format("D/MM/YYYY"),
-                            paymentAmount: amountAvailable * paymentAmount,
-                        });
-                    }
-                }
+            if (!payment.paid && paymentDate.year() === today.year()) {
+              const paymentAmount = bond.price * (bond.interestRate / 100);
+              userResponse.upcomingPayment.push({
+                bondName: bond.bondName,
+                paymentDate: paymentDate.format("D/MM/YYYY"),
+                paymentAmount: amountAvailable * paymentAmount,
+              });
             }
+          }
         }
+      }
     }
     console.log("userResponse: ", userResponse)
     res.status(200).json(userResponse);
@@ -169,49 +169,46 @@ export const getPendingPayments = async (req: express.Request, res: express.Resp
     //pòr cada bonoId hay q buscar en invoice todo y meterlo en una lista de usuario q se guardara en cada bono        
     for (const bond of bonds) {
 
-
       const invoices = await getPaymentInvoicesByBonoId(bond.id);
+
       for (const invoice of invoices) {
 
-        // comprobamos si en final response, ya hay un payment con el mismo nombre y mismo network,
-        // si existe, crearemos un nuevo registros en el array investors, metiendo su id, q esta en el invoice
-        // si no existe , crearemos un nuevo payment rellenandolo y crearemos un nuevo registro enm el array investors.
-        const isUnpaid = invoice.paid === false;
-        const endDate = dayjs(invoice.endDate);
-        const isPastDue = endDate.isBefore(today, "day");
-        const isUpcoming = endDate.isBefore(today.add(30, "day")) && endDate.isAfter(today, "day");
+        for (const payment of invoice.payments) {
 
-        if (!isUnpaid) continue;
+          if (payment.paid) continue;
+          const paymentDate = dayjs(payment.timeStamp);
+          const isPastDue = paymentDate.isBefore(today, "day");
+          const isUpcoming = paymentDate.isBefore(today.add(30, "day")) && paymentDate.isAfter(today, "day");
 
-        const investor: Investors = {
-          userId: invoice.userId,
-          numberToken: invoice.amount,
-          amount: invoice.amount * bond.price,
-          paid: invoice.paid
-        };
-
-        const targetList = isPastDue ? pastDuePayments : upcomingPayments;
-        if (!targetList) continue;
-
-        let existingPayment = targetList.find(
-          p => p.bondName === bond.bondName && p.network === invoice.network
-        );
-
-        if (existingPayment) {
-          existingPayment.investors.push(investor);
-          existingPayment.numberToken += invoice.amount;
-          existingPayment.amount += (investor.amount);
-        } else {
-          const newPayment: Payment = {
-            bondName: bond.bondName,
-            bondId: bond._id.toString(),
-            network: invoice.network,
+          const investor: Investors = {
+            userId: invoice.userId,
             numberToken: invoice.amount,
-            amount: investor.amount,
-            paymentDate: invoice.endDate,
-            investors: [investor]
+            amount: invoice.amount * bond.price,
+            paid: false,
           };
-          targetList.push(newPayment);
+
+          const targetList = isPastDue ? pastDuePayments : isUpcoming ? upcomingPayments : null;
+          if (!targetList) continue;
+          let existingPayment = targetList.find(
+            p => p.bondName === bond.bondName && p.network === invoice.network
+          );
+
+          if (existingPayment) {
+            existingPayment.investors.push(investor);
+            existingPayment.numberToken += invoice.amount;
+            existingPayment.amount += investor.amount;
+          } else {
+            const newPayment: Payment = {
+              bondName: bond.bondName,
+              bondId: bond._id.toString(),
+              network: invoice.network,
+              numberToken: invoice.amount,
+              amount: investor.amount,
+              paymentDate: payment.timeStamp.toISOString(),
+              investors: [investor],
+            };
+            targetList.push(newPayment);
+          }
         }
       }
     }

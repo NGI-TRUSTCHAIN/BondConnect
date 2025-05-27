@@ -209,7 +209,6 @@ const FormBondCreationC = () => {
                 />
               </div>
               <div className="col-sm-6 mb-3">
-                // Tiene que ser minimo un año despues de bondStartDate
                 <label htmlFor="bondMaturityDate" className="form-label">
                   Maturity Date:
                 </label>
