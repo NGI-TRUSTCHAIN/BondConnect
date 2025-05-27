@@ -36,3 +36,18 @@
   padding: 6px;
   text-align: left;
 }
+
+/* Admin table cell style */
+.admin-table-cell {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  white-space: nowrap;
+}
+
+/* Admin table header cell style */
+.admin-table-header {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  white-space: nowrap;
+  color: white;
+}

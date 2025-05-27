@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { getTrxSuccess, getTrxError } from "../features/adminSlice";
-import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
+import { Container, Form, Button, Dropdown } from 'react-bootstrap';
 
 const Admin = () => {
   const dispatch = useAppDispatch();
   const { trxSuccess, trxError } = useAppSelector(state => state.admin);
   const [status, setStatus] = useState<"success" | "error">("success");
+  const [trxTypeFilter, setTrxTypeFilter] = useState<string>("");
+  const [searchUserId, setSearchUserId] = useState<string>("");
 
   useEffect(() => {
     dispatch(getTrxSuccess());
@@ -17,113 +19,183 @@ const Admin = () => {
     console.log("Faucet");
   }
 
-  return (
-    <Container fluid className="p-4">
-      <h1 className="mb-4">Admin Dashboard</h1>
-      
-      <Row className="mb-4">
-        <Col>
-          <Card>
-            <Card.Body>
-              <h5 className="mb-3">Faucet</h5>
-              <Form className="d-flex gap-2">
-                <Form.Control type="text" placeholder="Wallet Address" />
-                <Form.Control type="number" placeholder="Amount" />
-                <Button variant="primary" onClick={handleFaucet}>Faucet</Button>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+  const getPrefixedTrx = (network: string, trx: string) => {
+    switch (network) {
+      case 'ALASTRIA':
+        return `https://testnet.bscscan.com/tx/${trx}`;
+      case 'AMOY':
+        return `https://amoy.polygonscan.com/tx/${trx}`;
+      default:
+        return trx; // Sin prefijo si no coincide
+    }
+  };
 
-      <Card>
-        <Card.Body>
-          <div className="mb-4">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="mb-0">Transactions {status === "success" ? "exitosas" : "fallidas"}</h5>
-              <div className="d-flex gap-2">
-                <Button 
-                  style={{ 
-                    backgroundColor: status === "success" ? "#7ba6e9" : "white",
-                    color: status === "success" ? "white" : "#7ba6e9",
-                    border: "1px solid #7ba6e9",
-                    padding: "8px 16px",
-                    borderRadius: "4px"
-                  }}
-                  onClick={() => setStatus("success")}
-                >
-                  Success
-                </Button>
-                <Button 
-                  style={{ 
-                    backgroundColor: status === "error" ? "#7ba6e9" : "white",
-                    color: status === "error" ? "white" : "#7ba6e9",
-                    border: "1px solid #7ba6e9",
-                    padding: "8px 16px",
-                    borderRadius: "4px"
-                  }}
-                  onClick={() => setStatus("error")}
-                >
-                  Error
-                </Button>
+  const filteredTrxSuccess = trxSuccess.filter(trx =>
+    trxTypeFilter ? trx.trx_type === trxTypeFilter : true
+  ).filter(trx =>
+    searchUserId ? trx.userId.includes(searchUserId) : true
+  );
+  const filteredTrxError = trxError.filter(trx =>
+    trxTypeFilter ? trx.trx_type === trxTypeFilter : true
+  ).filter(trx =>
+    searchUserId ? trx.userId.includes(searchUserId) : true
+  );
+
+  return (
+    <Container fluid className="p-4" style={{ maxWidth: '140vh' }}>
+      <h1 className="mb-4">Admin Dashboard</h1>
+
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        padding: '20px',
+        marginBottom: '24px'
+      }}>
+        <h5 className="mb-3">Faucet</h5>
+        <div className="row">
+          <div className="col-md-6">
+            <Form className="d-flex gap-2 mb-4">
+              <Form.Control type="text" placeholder="Wallet Address" />
+              <Form.Control type="number" placeholder="Amount" />
+              <Button variant="primary" onClick={handleFaucet}>Faucet</Button>
+            </Form>
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <h5 style={{
+            fontSize: '24px',
+            color: '#7ba6e9',
+            margin: 0,
+            marginBottom: '20px'
+          }}>
+            Transactions {status === "success" ? "exitosas" : "fallidas"}
+          </h5>
+
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="row">
+              <div className="col-md-6">
+                <Form className="d-flex gap-2">
+                  <Form.Control 
+                    type="text" 
+                    placeholder="Search..." 
+                    style={{ width: "300px" }}
+                    value={searchUserId}
+                    onChange={(e) => setSearchUserId(e.target.value)}
+                  />
+                  {/* <Button variant="primary" onClick={() => setSearchUserId(searchUserId)}>Search</Button> */}
+                </Form>
               </div>
             </div>
 
-            <Form className="d-flex gap-2">
-              <Form.Control type="text" placeholder="Search..." className="w-25" />
-              <Button 
-                style={{ 
-                  backgroundColor: "#7ba6e9",
-                  border: "none",
-                  padding: "8px 16px",
-                  borderRadius: "4px"
-                }}
-              >
-                Search
+            <div className="d-flex gap-2">
+              <Button
+                variant={status === "success" ? "primary" : "outline-secondary"}
+                onClick={() => setStatus("success")}>
+                Success
               </Button>
-            </Form>
+              <Button
+                variant={status === "error" ? "primary" : "outline-secondary"}
+                onClick={() => setStatus("error")}>
+                Error
+              </Button>
+            </div>
           </div>
+        </div>
 
-          <div className="table-responsive" style={{ margin: "-1px" }}>
-            <table border={1} style={{ 
-              borderCollapse: "collapse", 
-              width: "100%", 
-              textAlign: "center", 
-              backgroundColor: "#d9e8fc"
+        <div style={{ overflowX: 'auto', margin: '0 -24px', width: '135vh' }}>
+          <div style={{ minWidth: '100%', padding: '0 24px', width: '135vh' }}>
+            <table style={{
+              borderCollapse: "collapse",
+              width: "100%",
+              textAlign: "center",
+              backgroundColor: "#d9e8fc",
+              border: "1px solid #dee2e6",
+              borderRadius: "4px",
+              overflow: "hidden",
+              tableLayout: "fixed"
             }}>
-              <thead style={{ backgroundColor: "#7ba6e9", color: "white" }}>
+              <thead style={{ backgroundColor: "#7ba6e9" }}>
                 <tr>
-                  <th style={{ padding: "12px" }}>User ID</th>
-                  <th style={{ padding: "12px" }}>Trx Type</th>
-                  <th style={{ padding: "12px" }}>Network</th>
-                  <th style={{ padding: "12px" }}>Date</th>
-                  <th style={{ padding: "12px" }}>trx id</th>
+                  <th className="admin-table-header" style={{ width: "20%" }}>User ID</th>
+                  <th className="admin-table-header" style={{ width: "20%" }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', position: 'relative' }}>
+                      Trx Type
+                      <Dropdown>
+                        <Dropdown.Toggle variant="link" id="dropdown-trxtype" style={{ padding: 0, border: 'none', background: 'none' }}>
+                          {/* <img src={'/images/sort.svg'} alt="Search Icon" style={{ width: '24px', height: '24px', cursor: 'pointer' }} /> */}
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu style={{ 
+                          maxHeight: '300px', 
+                          overflowY: 'auto', 
+                          zIndex: 2147483647,
+                          position: 'absolute',
+                          top: 'calc(100% + 1px)',
+                          left: '0',
+                        }}>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("")}>All Types</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("purchaseBond")}>Purchase Bond</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("redeemBond")}>Redeem Bond</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("callContractMethodController")}>Call Contract Method</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("executeContractMethodController")}>Execute Contract Method</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("mintBond")}>Mint Bond</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("bridge")}>Bridge</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("burn")}>Burn</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("createBond")}>Create Bond</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("requestTransfer")}>Request Transfer</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("balance")}>Balance</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("getFaucetBalance")}>Get Faucet Balance</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("faucet")}>Faucet</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("requestStable")}>Request Stable</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("createAccountMultiple")}>Create Account Multiple</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("createIndividualAccountRetry")}>Create Individual Account Retry</Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </div>
+                  </th>
+                  <th className="admin-table-header" style={{ width: "10%" }}>Network</th>
+                  <th className="admin-table-header" style={{ width: "10%" }}>Date</th>
+                  <th className="admin-table-header" style={{ width: "40%" }}>trx id</th>
                 </tr>
               </thead>
               <tbody>
-                {status === "success" ? trxSuccess.map(trx =>
+                {status === "success" ? filteredTrxSuccess.length > 0 ? filteredTrxSuccess.map(trx =>
                   <tr key={trx._id}>
-                    <td style={{ padding: "12px" }}>{trx.userId}</td>
-                    <td style={{ padding: "12px" }}>{trx.trx_type}</td>
-                    <td style={{ padding: "12px" }}>{trx.network}</td>
-                    <td style={{ padding: "12px" }}>{new Date(trx.timestamp).toLocaleDateString()}</td>
-                    <td style={{ padding: "12px" }}>{trx.trx}</td>
+                    <td className="admin-table-cell" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{trx.userId}</td>
+                    <td className="admin-table-cell">{trx.trx_type}</td>
+                    <td className="admin-table-cell">{trx.network}</td>
+                    <td className="admin-table-cell">{new Date(trx.timestamp).toLocaleDateString()}</td>
+                    <td className="admin-table-cell" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}><a href={getPrefixedTrx(trx.network, trx.trx)} target="_blank" rel="noopener noreferrer">{trx.trx}</a></td>
                   </tr>)
                   :
-                  trxError.map(trx =>
+                  <tr>
+                    <td colSpan={5} style={{ textAlign: 'center' }}>No hay registros disponibles.</td>
+                  </tr>
+                  :
+                  filteredTrxError.length > 0 ? filteredTrxError.map(trx =>
                     <tr key={trx._id}>
-                      <td style={{ padding: "12px" }}>{trx.userId}</td>
-                      <td style={{ padding: "12px" }}>{trx.trx_type}</td>
-                      <td style={{ padding: "12px" }}>{trx.network}</td>
-                      <td style={{ padding: "12px" }}>{new Date(trx.timestamp).toLocaleDateString()}</td>
-                      <td style={{ padding: "12px" }}>{trx.trx}</td>
+                      <td className="admin-table-cell" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{trx.userId}</td>
+                      <td className="admin-table-cell">{trx.trx_type}</td>
+                      <td className="admin-table-cell">{trx.network}</td>
+                      <td className="admin-table-cell">{new Date(trx.timestamp).toLocaleDateString()}</td>
+                      <td className="admin-table-cell" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}><a href={getPrefixedTrx(trx.network, trx.trx)} target="_blank" rel="noopener noreferrer">{trx.trx}</a></td>
                     </tr>
-                  )}
+                  ) :
+                  <tr>
+                    <td colSpan={5} style={{ textAlign: 'center' }}>No hay registros disponibles.</td>
+                  </tr>
+                }
               </tbody>
             </table>
+            {/* ) : (
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <p>No hay registros disponibles.</p>
+              </div>
+            )} */}
           </div>
-        </Card.Body>
-      </Card>
+        </div>
+      </div>
     </Container>
   );
 };
