@@ -88,7 +88,7 @@ const InvestmentWallet: React.FC = () => {
       <div className="wallet-address col-12">
         <p id="copyLabel" className="copy-label" onClick={handleCopy}>
           {wallet}
-          <img src="/src/clip.png" id="copyButton" className="copy-button" />
+          <img src="/images/clip.png" id="copyButton" className="copy-button" />
         </p>
       </div>
       {!isDataLoaded ? (

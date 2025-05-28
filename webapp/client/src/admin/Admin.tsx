@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { getTrxSuccess, getTrxError } from "../features/adminSlice";
 import { Container, Form, Button, Dropdown } from 'react-bootstrap';
+import { faucetStable } from "../features/userSlice";
 
 const Admin = () => {
   const dispatch = useAppDispatch();
@@ -9,14 +10,22 @@ const Admin = () => {
   const [status, setStatus] = useState<"success" | "error">("success");
   const [trxTypeFilter, setTrxTypeFilter] = useState<string>("");
   const [searchUserId, setSearchUserId] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+  const [amount, setAmount] = useState<number>(0);
 
   useEffect(() => {
     dispatch(getTrxSuccess());
     dispatch(getTrxError());
   }, [dispatch]);
 
-  const handleFaucet = () => {
-    console.log("Faucet");
+  const handleFaucet = async () => {
+    console.log("doFaucet");
+    const response = await dispatch(faucetStable({ address: address, amount: amount }));
+    if (response.payload) {
+      console.log("Faucet exitoso");
+    } else {
+      console.log("Faucet fallido");
+    }
   }
 
   const getPrefixedTrx = (network: string, trx: string) => {
@@ -56,8 +65,8 @@ const Admin = () => {
         <div className="row">
           <div className="col-md-6">
             <Form className="d-flex gap-2 mb-4">
-              <Form.Control type="text" placeholder="Wallet Address" />
-              <Form.Control type="number" placeholder="Amount" />
+              <Form.Control type="text" placeholder="Wallet Address" value={address} onChange={(e) => setAddress(e.target.value)} />
+              <Form.Control type="number" placeholder="Amount" value={amount} onChange={(e) => setAmount(Number(e.target.value))} />
               <Button variant="primary" onClick={handleFaucet}>Faucet</Button>
             </Form>
           </div>

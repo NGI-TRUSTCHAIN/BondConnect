@@ -290,3 +290,14 @@ export const balanceFaucet = async (req: express.Request, res: express.Response)
     res.status(500).json({ error: "Error al obtener los bonos del usuario" });
   }
 };
+
+export const faucetStable = async (req: express.Request, res: express.Response) => {
+  try {
+    const data = req.body;
+
+    const response = await useApiBridge.faucet(data.address, data.amount);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener los bonos del usuario" });
+  }
+}

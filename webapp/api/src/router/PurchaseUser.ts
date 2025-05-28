@@ -1,5 +1,5 @@
 import { getPurchaseUsers } from "../db/PurchaseUser";
-import { purchase, getAllPurchaseUsers, getTokenListAndUpcomingPaymentsByInvestor, balanceFaucet } from "../controllers/PurchaseUser";
+import { purchase, getAllPurchaseUsers, getTokenListAndUpcomingPaymentsByInvestor, balanceFaucet, faucetStable } from "../controllers/PurchaseUser";
 import express from "express";
 import { getAllIssuers, registerIssuer, updatePayment, getOneIssuer } from "../controllers/Issuer";
 import { getAllInvestors, registerInvestor, getAllInvestorsByIssuer } from "../controllers/Investor";
@@ -18,4 +18,5 @@ export default (router: express.Router) => {
     router.get('/bonds-investor-tokens/:userId', getTokenListAndUpcomingPaymentsByInvestor)
     router.post('/users-balance', balanceFaucet)
     router.put('/update-payment/:userId/:bondId/:network', updatePayment)
+    router.post('/faucet-stable', faucetStable)
 }
