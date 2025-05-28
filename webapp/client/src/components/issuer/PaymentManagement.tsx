@@ -9,6 +9,7 @@ import { getPayments } from "../../features/userSlice";
 
 const PaymentManagement = () => {
   const [record, setRecord] = useState<PaymentRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const registeredBonds = useAppSelector((state) => state.bond.bonds);
@@ -48,6 +49,7 @@ const PaymentManagement = () => {
 
   async function handlePay(payments: Array<{userId: string, bondId: string, network: string}>): Promise<void> {
     try {
+      setIsLoading(true);
       for (const payment of payments) {
         console.log("Llamar funcion Update para cambiar estado del pago de ", payment.userId, " en el bono ", payment.bondId);
         await dispatch(updatePayment({ 
@@ -63,6 +65,8 @@ const PaymentManagement = () => {
       console.log('Pagos procesados exitosamente');
     } catch (error) {
       console.error('Error al procesar los pagos:', error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -126,6 +130,7 @@ const PaymentManagement = () => {
         <button 
           className="btn-pay-now" 
           style={{ marginLeft: "30px" }}
+          disabled={isLoading}
           onClick={() => {
             const payment = upcomingPayments.find((payment) => payment.bondName === selectedBond?.bondName);
             console.log('Procesando pagos seleccionados');
@@ -148,7 +153,11 @@ const PaymentManagement = () => {
               console.log('No se encontró el pago para el bono seleccionado');
             }
           }}>
-          Pay Now
+          {isLoading ? (
+            <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          ) : (
+            'Pay Now'
+          )}
         </button>
       </p>
       {(() => {
@@ -179,8 +188,15 @@ const PaymentManagement = () => {
                     <td>{investor.amount}</td>
                     <td>{investor.numberToken}</td>
                     <td>
-                      <button className="btn-pay-now" onClick={() => handlePay([{userId: investor.userId, bondId: selectedBond?._id!, network: payment.network}])}>
-                        Pay
+                      <button 
+                        className="btn-pay-now" 
+                        disabled={isLoading}
+                        onClick={() => handlePay([{userId: investor.userId, bondId: selectedBond?._id!, network: payment.network}])}>
+                        {isLoading ? (
+                          <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        ) : (
+                          'Pay'
+                        )}
                       </button>
                     </td>
                   </tr>
