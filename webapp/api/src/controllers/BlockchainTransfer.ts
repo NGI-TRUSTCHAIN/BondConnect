@@ -42,6 +42,7 @@ export const addTransferTicket = async (req: express.Request, res: express.Respo
     const orgContractAddress = bond.tokenState.find((block: any) => 
       block.blockchain === transferData.originBlockchain).contractAddress;
     
+    let response;
     if (transferData.destinationBlockchain === bond.blockchainNetwork) {
       // Si la blockchain de destino es la misma que la del bond
       console.log('contrato AMOy', orgContractAddress);
@@ -50,7 +51,6 @@ export const addTransferTicket = async (req: express.Request, res: express.Respo
       console.log('tokenNumber', transferData.tokenNumber);
       console.log('bond: ', bond.tokenState.find((token: any) => (token.blockchain === 'ALASTRIA')).contractAddress);
       
-      let response;
       try {
         response = await useApiBridge.burn(orgContractAddress, transferData.tokenNumber, transferData.originBlockchain, 
           issuer.walletAddress, bond.tokenState.find((token: any) => (token.blockchain === 'ALASTRIA')).contractAddress);
@@ -76,7 +76,6 @@ export const addTransferTicket = async (req: express.Request, res: express.Respo
       console.log('bond.contractAddress', bond.contractAddress);
       console.log('issuer: ', issuer.walletAddress);
       
-      let response;
       try {
         response = await useApiBridge.bridge(bond.tokenState.find((token: any) => (token.blockchain === 'ALASTRIA')).contractAddress, issuer.walletAddress,transferData.tokenNumber,
           bond.bondName, bond.bondSymbol, Math.floor(bond.price));
@@ -103,7 +102,7 @@ export const addTransferTicket = async (req: express.Request, res: express.Respo
     await updateBondById(bond._id.toString(), bond);
     const transferTicket = await createTransferData(transferData);
 
-    res.status(201).json(transferTicket);
+    res.status(201).json({transferTicket, trx: response.message});
   } catch (error) {
     console.error(error);
     res.status(500).json({

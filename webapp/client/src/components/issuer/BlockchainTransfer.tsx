@@ -57,6 +57,9 @@ const BlockchainTransfer = () => {
   const userLoged = useAppSelector((state) => state.user.userLoged);
   const userId = userLoged?._id;
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // State for success/error modal
+  const [transactionDetails, setTransactionDetails] = useState<any>(null); // State for transaction details
+  const [requestResult, setRequestResult] = useState<any>(null); // State for request result
 
   useEffect(() => {
     document.title = "Blockchain Transfer";
@@ -112,24 +115,30 @@ const BlockchainTransfer = () => {
 
     try {
       console.log("transferData: ", transferData);
-      await dispatch(createTransferHistoric(transferData)).unwrap();
-      toast.success("Success");
+      const result = await dispatch(createTransferHistoric(transferData));
+      if (result.meta.requestStatus === 'fulfilled') {
+        setRequestResult(result);
+        setTransactionDetails(result.payload); // Guardar los detalles de la transacción
+        setShowSuccessModal(true); // Mostrar el modal de éxito
+        toast.success("Success");
+      } else {
+        setTransactionDetails(result.payload); // Guardar los detalles del error
+        setShowSuccessModal(true); // Mostrar el modal de error
+        toast.error(`Failed to transfer tokens. Please try again.\n ${result.payload}`);
+      }
     } catch (error) {
+      setTransactionDetails(error); // Guardar el error
+      setShowSuccessModal(true); // Mostrar el modal de error
       toast.error(`Failed to transfer tokens. Please try again.\n ${error}`);
-      // Refresh bonds list even after error to ensure data consistency
-      await dispatch(readBonds(userId || ""));
-      // Reset form values
-      setTransferData({
-        _id: undefined,
-        tokenName: '',
-        originBlockchain: '',
-        destinationBlockchain: '',
-        tokenNumber: undefined,
-      });
     } finally {
       setIsLoading(false);
-      setShowPopup(false); // Close the popup
+      setShowPopup(false);
     }
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    navigate('/issuer-dash');
   };
 
   return (
@@ -284,6 +293,39 @@ const BlockchainTransfer = () => {
                 </button>
                 <button className="btn btn-secondary" onClick={handleClosePopup} disabled={isLoading}>
                   Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {showSuccessModal && (
+          <div className="popup-overlay">
+            <div className="popup" style={{ width: '600px' }}>
+              <h2 className="text-success mb-4" style={{ textAlign: "center" }}>
+                {requestResult?.meta?.requestStatus === 'rejected' ? 'Transfer Error!' : 'Successful Transfer!'}
+              </h2>
+              <div className="purchase-details mb-4">
+                {requestResult?.meta?.requestStatus === 'rejected' ? (
+                  <div className="alert alert-danger" role="alert">
+                    {JSON.stringify(transactionDetails, null, 2)}
+                  </div>
+                ) : (
+                  <>
+                    <h4 className="text-primary mb-3">Transaction Details:</h4>
+                    <ul className="list-unstyled">
+                      <li className="mb-3">
+                        <strong>Transaction:</strong>
+                        <div className="text-break" style={{ wordBreak: 'break-all' }}>
+                          {transactionDetails?.trx}
+                        </div>
+                      </li>
+                    </ul>
+                  </>
+                )}
+              </div>
+              <div className="popup-actions mt-5" style={{ textAlign: "center" }}>
+                <button className="btn btn-success" onClick={handleCloseSuccessModal}>
+                  Continue
                 </button>
               </div>
             </div>

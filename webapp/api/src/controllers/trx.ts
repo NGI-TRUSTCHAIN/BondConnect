@@ -2,7 +2,7 @@ import { getAllTrxSuccessfulls } from "../db/trxSuccessful";
 import { getAllTrxErrors } from "../db/trxError";
 import express from "express";
 import { getInvestors } from "../db/Investor";
-
+import { getIssuers } from "../db/Issuer";
 
 
 export const getAllTrxSuccess = async (req: express.Request, res: express.Response) => {
@@ -10,27 +10,15 @@ export const getAllTrxSuccess = async (req: express.Request, res: express.Respon
     const trxSuccessfulls = await getAllTrxSuccessfulls();
     console.log(trxSuccessfulls);
     const investors = await getInvestors();
-    console.log('investors', investors);
+    const issuers = await getIssuers();
+    const users = [...investors, ...issuers];
     const trxSuccessfullsWithInvestor = trxSuccessfulls.map(trxs => {
-        const investor = investors.find((investor: any) => investor._id.toString() === trxs.userId);
+        const user = users.find((investor: any) => investor._id.toString() === trxs.userId);
         const { userId, timestamp, network, trx_type, trx } = trxs;
-        console.log('investor', investor);
-        if (investor) {
-            return { 
-                timestamp,
-                network,
-                trx_type,
-                trx,
-                userId: investor.walletAddress
-            };
+        if (user) {
+            return { timestamp, network, trx_type, trx, userId: user.walletAddress };
         }
-        return { 
-            timestamp,
-            network,
-            trx_type,
-            trx,
-            userId
-        };
+        return { timestamp, network, trx_type, trx, userId };
     });
         
     res.status(200).json(trxSuccessfullsWithInvestor);

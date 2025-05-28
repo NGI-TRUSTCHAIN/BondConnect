@@ -208,7 +208,13 @@ export const addBond = async (req: express.Request, res: express.Response) => {
         }]
       });
       // //¡¡¡¡ OPCIONAL !!!!  Añadir trx a una pagina de TRX en mongo  !!!
-      res.status(201).json(createdBond);
+      res.status(201).json({
+        createdBond, 
+        trx: {
+          createCompanyBond: responseCreateCompanyBond.message,
+          mintBond: responseMintBond.message
+        }
+      });
     } catch (error) {
       // Si algo falla en las operaciones de blockchain, eliminamos el documento creado
       await deleteBondById(createdBond._id.toString());

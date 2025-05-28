@@ -33,6 +33,10 @@ const BuyToken = () => {
     investToken: "",
     purchasedTokens: undefined,
   });
+  const [isLoading, setIsLoading] = useState(false); // State for loader
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // State for success/error modal
+  const [transactionDetails, setTransactionDetails] = useState<any>(null); // State for transaction details
+  const [requestResult, setRequestResult] = useState<any>(null); // State for request result
 
   const handleData = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -83,10 +87,31 @@ const BuyToken = () => {
   };
   const handleConfirmSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await dispatch(registerPurchase(purchaseData));
-    setShowPopup(false);
+    setIsLoading(true); // Activar el loader
+    try {
+      const result = await dispatch(registerPurchase(purchaseData));
+      if (result.meta.requestStatus === 'fulfilled') {
+        setRequestResult(result);
+        setTransactionDetails(result.payload.transactions); // Guardar los detalles de la transacción
+        setShowSuccessModal(true); // Mostrar el modal de éxito
+      } else {
+        setTransactionDetails(result.payload); // Guardar los detalles del error
+        setShowSuccessModal(true); // Mostrar el modal de error
+      }
+    } catch (error) {
+      setTransactionDetails(error); // Guardar el error
+      setShowSuccessModal(true); // Mostrar el modal de error
+    } finally {
+      setIsLoading(false); // Desactivar el loader
+      setShowPopup(false); // Cerrar el popup de confirmación
+    }
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
     navigate("/issuer-dash");
   };
+
   return (
     <div className="container-fluid mt-3 d-flex justify-content-center align-items-center">
       <div className="card mt-3">
@@ -231,11 +256,50 @@ const BuyToken = () => {
               </ul>
 
               <div className="popup-actions mt-5" style={{ textAlign: "center" }}>
-                <button className="btn btn-primary" onClick={handleConfirmSubmit}>
-                  CONFIRM
+                <button className="btn btn-primary" onClick={handleConfirmSubmit} disabled={isLoading}>
+                  {isLoading ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : 'CONFIRM'}
                 </button>
                 <button className="btn btn-secondary" onClick={() => setShowPopup(false)}>
                   Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {showSuccessModal && (
+          <div className="popup-overlay">
+            <div className="popup" style={{ width: '600px' }}>
+              <h2 className="text-success mb-4" style={{ textAlign: "center" }}>
+                {requestResult?.meta?.requestStatus === 'rejected' ? 'Purchase Error!' : 'Successful Purchase!'}
+              </h2>
+              <div className="purchase-details mb-4">
+                {requestResult?.meta?.requestStatus === 'rejected' ? (
+                  <div className="alert alert-danger" role="alert">
+                    {JSON.stringify(transactionDetails, null, 2)}
+                  </div>
+                ) : (
+                  <>
+                    <h4 className="text-primary mb-3">Transaction Details:</h4>
+                    <ul className="list-unstyled">
+                      <li className="mb-3">
+                        <strong>Stable:</strong> 
+                        <div className="text-break" style={{ wordBreak: 'break-all' }}>
+                          {transactionDetails?.stable}
+                        </div>
+                      </li>
+                      <li className="mb-3">
+                        <strong>Transfer:</strong>
+                        <div className="text-break" style={{ wordBreak: 'break-all' }}>
+                          {transactionDetails?.transfer}
+                        </div>
+                      </li>
+                    </ul>
+                  </>
+                )}
+              </div>
+              <div className="popup-actions mt-5" style={{ textAlign: "center" }}>
+                <button className="btn btn-success" onClick={handleCloseSuccessModal}>
+                  Continue
                 </button>
               </div>
             </div>

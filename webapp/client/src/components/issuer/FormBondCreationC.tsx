@@ -40,6 +40,9 @@ const FormBondCreationC = () => {
   });
 
   const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // State for success modal
+  const [transactionMessages, setTransactionMessages] = useState<{ createCompanyBond?: string; mintBond?: string }>({}); // State for transaction messages
+  const [loading, setLoading] = useState(false); // State for loading indicator
   const dispatch = useAppDispatch();
 
   const handleConfirmSubmit = async () => {
@@ -57,12 +60,17 @@ const FormBondCreationC = () => {
       price,
     };
     try {
+      setLoading(true); // Set loading to true when starting the process
       console.log("Form data submitted:", bond);
-      await dispatch(newBond(bond)).unwrap(); // Dispatch the data
+      const response = await dispatch(newBond(bond)).unwrap(); // Dispatch the data and capture the response
       toast.success("Bond created successfully!");
+      setLoading(false); // Reset loading state
+      setTransactionMessages(response.trx); // Set transaction messages from the response
+      setShowSuccessModal(true); // Show success modal
     } catch (error) {
       toast.error(`Failed to create bond. Please try again.\n ${error}`);
     } finally {
+
       setShowPopup(false); // Close the popup
       // navigate('/')
     }
@@ -123,10 +131,10 @@ const FormBondCreationC = () => {
         name === "bondMaturityDate" || name === "bondStartDate" || name === "redemptionFinishDate"
           ? new Date(value) // Convierte cadena a Date
           : name === "walletAddress"
-          ? value // No convertir walletAddress
-          : value
-          ? value
-          : value, // Convierte a número si es posible
+            ? value // No convertir walletAddress
+            : value
+              ? value
+              : value, // Convierte a número si es posible
     }));
   };
 
@@ -218,7 +226,7 @@ const FormBondCreationC = () => {
                   name="bondMaturityDate"
                   className="form-control bg-form"
                   value={formData.bondMaturityDate ? formData.bondMaturityDate.toISOString().split("T")[0] : ""}
-                  min={formData.bondStartDate ? new Date(formData.bondStartDate.getTime() + 365*24*60*60*1000).toISOString().split("T")[0] : ""}
+                  min={formData.bondStartDate ? new Date(formData.bondStartDate.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0] : ""}
                   onChange={handleChange}
                 />
               </div>
@@ -451,11 +459,46 @@ const FormBondCreationC = () => {
               </ul>
 
               <div className="popup-actions mt-5">
-                <button className="btn btn-primary" onClick={handleConfirmSubmit}>
-                  Create bond
+                <button className="btn btn-primary" onClick={handleConfirmSubmit} disabled={loading}>
+                  {loading ? (
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  ) : (
+                    "Create bond"
+                  )}
                 </button>
                 <button className="btn btn-secondary" onClick={() => setShowPopup(false)}>
                   Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {showSuccessModal && (
+          <div className="popup-overlay">
+            <div className="popup" style={{ width: '600px' }}>
+              <h2 className="text-success mb-4" style={{ textAlign: "center" }}>
+                Successful Bond Creation!
+              </h2>
+              <div className="purchase-details mb-4">
+                <h4 className="text-primary mb-3">Bond Details:</h4>
+                <ul className="list-unstyled">
+                  <li className="mb-3">
+                    <strong>Bond Name:</strong> <em>{formData.bondName}</em>
+                  </li>
+                  <li className="mb-3">
+                    <strong>Create Company Bond Message:</strong> <em>{transactionMessages.createCompanyBond}</em>
+                  </li>
+                  <li className="mb-3">
+                    <strong>Mint Bond Message:</strong> <em>{transactionMessages.mintBond}</em>
+                  </li>
+                </ul>
+              </div>
+              <div className="popup-actions mt-5" style={{ textAlign: "center" }}>
+                <button className="btn btn-success" onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate('/issuer-dash');
+                }}>
+                  Continue
                 </button>
               </div>
             </div>
