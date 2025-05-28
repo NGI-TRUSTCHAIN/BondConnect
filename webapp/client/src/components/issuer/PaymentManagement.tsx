@@ -9,6 +9,7 @@ import { getPayments } from "../../features/userSlice";
 
 const PaymentManagement = () => {
   const [record, setRecord] = useState<PaymentRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const registeredBonds = useAppSelector((state) => state.bond.bonds);
@@ -47,15 +48,25 @@ const PaymentManagement = () => {
   }
 
   async function handlePay(payments: Array<{userId: string, bondId: string, network: string}>): Promise<void> {
-    for (const payment of payments) {
-      console.log("Llamar funcion Update para cambiar estado del pago de ", payment.userId, " en el bono ", payment.bondId);
-      await dispatch(updatePayment({ 
-        userId: payment.userId,
-        bondId: payment.bondId, 
-        network: payment.network 
-      }));
-      // Refresh payment data after each update
+    try {
+      setIsLoading(true);
+      for (const payment of payments) {
+        console.log("Llamar funcion Update para cambiar estado del pago de ", payment.userId, " en el bono ", payment.bondId);
+        await dispatch(updatePayment({ 
+          userId: payment.userId,
+          bondId: payment.bondId, 
+          network: payment.network 
+        }));
+      }
+      // Refresh payment data after all updates
       await dispatch(getPayments(user?._id!));
+      // Limpiar la selección después de procesar los pagos
+      payBatch.length = 0;
+      console.log('Pagos procesados exitosamente');
+    } catch (error) {
+      console.error('Error al procesar los pagos:', error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -81,13 +92,13 @@ const PaymentManagement = () => {
         role="button"
         aria-expanded="false"
         aria-controls="balance-collapse">
-        <strong>Total Available Balance:</strong> “50.000€”
+        <strong>Total Available Balance:</strong> "50.000€"
       </p>
       <div className="collapse" id="balance-collapse">
         <ul>
-          <li>Alastria: “20.000€”</li>
-          <li>Ethereum: “20.000€”</li>
-          <li>Polygon: “10.000€”</li>
+          <li>Alastria: "20.000€"</li>
+          <li>Ethereum: "20.000€"</li>
+          <li>Polygon: "10.000€"</li>
         </ul>
       </div> */}
 
@@ -116,7 +127,38 @@ const PaymentManagement = () => {
       <p className="text-danger">**Only if there are pending payments</p>
       <p>
         Total amount to pay: {upcomingPayments.find((payment) => payment.bondName === selectedBond?.bondName)?.amount}
-        <button className="btn-pay-now" style={{ marginLeft: "30px" }}>Pay Now</button>
+        <button 
+          className="btn-pay-now" 
+          style={{ marginLeft: "30px" }}
+          disabled={isLoading}
+          onClick={() => {
+            const payment = upcomingPayments.find((payment) => payment.bondName === selectedBond?.bondName);
+            console.log('Procesando pagos seleccionados');
+            if (payment) {
+              const paymentsToProcess = payment.investors
+                .filter((investor: { userId: string, amount: number, numberToken: number }) => 
+                  payBatch.includes(investor.userId))
+                .map((investor: { userId: string, amount: number, numberToken: number }) => ({
+                  userId: investor.userId,
+                  bondId: selectedBond?._id!,
+                  network: payment.network
+                }));
+              console.log('Pagos a procesar:', paymentsToProcess);
+              if (paymentsToProcess.length > 0) {
+                handlePay(paymentsToProcess);
+              } else {
+                console.log('No hay pagos seleccionados para procesar');
+              }
+            } else {
+              console.log('No se encontró el pago para el bono seleccionado');
+            }
+          }}>
+          {isLoading ? (
+            <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          ) : (
+            'Pay Now'
+          )}
+        </button>
       </p>
       {(() => {
         const payment = upcomingPayments.find((payment) => payment.bondName === selectedBond?.bondName);
@@ -146,8 +188,15 @@ const PaymentManagement = () => {
                     <td>{investor.amount}</td>
                     <td>{investor.numberToken}</td>
                     <td>
-                      <button className="btn-pay-now" onClick={() => handlePay([{userId: investor.userId, bondId: selectedBond?._id!, network: payment.network}])}>
-                        Pay
+                      <button 
+                        className="btn-pay-now" 
+                        disabled={isLoading}
+                        onClick={() => handlePay([{userId: investor.userId, bondId: selectedBond?._id!, network: payment.network}])}>
+                        {isLoading ? (
+                          <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        ) : (
+                          'Pay'
+                        )}
                       </button>
                     </td>
                   </tr>

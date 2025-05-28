@@ -57,14 +57,14 @@ export const addTransferTicket = async (req: express.Request, res: express.Respo
           console.log("response BURN", response);
         await handleTransactionSuccess(
           issuer.id,
-          transferData.originBlockchain.toUpperCase(),
+          transferData.destinationBlockchain.toUpperCase(),
           BURN,
           response
         );
       } catch (error) {
         await handleTransactionError(
           issuer.id,
-          transferData.originBlockchain.toUpperCase(),
+          transferData.destinationBlockchain.toUpperCase(),
           BURN,
           error
         );  
