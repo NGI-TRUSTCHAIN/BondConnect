@@ -104,7 +104,14 @@ const Admin = () => {
           </div>
         </div>
 
-        <div style={{ overflowX: 'auto', margin: '0 -24px', width: '135vh' }}>
+        <div style={{ 
+          overflowX: 'visible',
+          overflowY: 'visible', 
+          position: 'relative', 
+          zIndex: 1, 
+          margin: '0 -24px', 
+          width: '135vh' 
+        }}>
           <div style={{ minWidth: '100%', padding: '0 24px', width: '135vh' }}>
             <table style={{
               borderCollapse: "collapse",
@@ -113,7 +120,9 @@ const Admin = () => {
               backgroundColor: "#d9e8fc",
               border: "1px solid #dee2e6",
               borderRadius: "4px",
-              overflow: "hidden",
+              overflowX: "hidden",
+              overflowY: "visible",
+              position: "relative",
               tableLayout: "fixed"
             }}>
               <thead style={{ backgroundColor: "#7ba6e9" }}>
@@ -123,33 +132,31 @@ const Admin = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', position: 'relative' }}>
                       Trx Type
                       <Dropdown>
-                        <Dropdown.Toggle variant="link" id="dropdown-trxtype" style={{ padding: 0, border: 'none', background: 'none' }}>
-                          {/* <img src={'/images/sort.svg'} alt="Search Icon" style={{ width: '24px', height: '24px', cursor: 'pointer' }} /> */}
-                        </Dropdown.Toggle>
+                        <Dropdown.Toggle variant="link" id="dropdown-trxtype" style={{ padding: 0, border: 'none', background: 'none' }}></Dropdown.Toggle>
                         <Dropdown.Menu style={{ 
-                          maxHeight: '300px', 
-                          overflowY: 'auto', 
-                          zIndex: 2147483647,
-                          position: 'absolute',
+                          maxHeight: '200px', 
+                          overflowY: 'scroll', 
+                          zIndex: 9999,
+                          position: 'fixed',
                           top: 'calc(100% + 1px)',
                           left: '0',
                         }}>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("")}>All Types</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("purchaseBond")}>Purchase Bond</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("redeemBond")}>Redeem Bond</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("callContractMethodController")}>Call Contract Method</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("executeContractMethodController")}>Execute Contract Method</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("mintBond")}>Mint Bond</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("bridge")}>Bridge</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("burn")}>Burn</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("createBond")}>Create Bond</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("requestTransfer")}>Request Transfer</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("balance")}>Balance</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("getFaucetBalance")}>Get Faucet Balance</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("faucet")}>Faucet</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("requestStable")}>Request Stable</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("createAccountMultiple")}>Create Account Multiple</Dropdown.Item>
-                          <Dropdown.Item onClick={() => setTrxTypeFilter("createIndividualAccountRetry")}>Create Individual Account Retry</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("")} active={trxTypeFilter === ""}>All Types</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("purchaseBond")} active={trxTypeFilter === "purchaseBond"}>Purchase Bond</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("redeemBond")} active={trxTypeFilter === "redeemBond"}>Redeem Bond</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("callContractMethodController")} active={trxTypeFilter === "callContractMethodController"}>Call Contract Method</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("executeContractMethodController")} active={trxTypeFilter === "executeContractMethodController"}>Execute Contract Method</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("mintBond")} active={trxTypeFilter === "mintBond"}>Mint Bond</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("bridge")} active={trxTypeFilter === "bridge"}>Bridge</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("burn")} active={trxTypeFilter === "burn"}>Burn</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("createBond")} active={trxTypeFilter === "createBond"}>Create Bond</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("requestTransfer")} active={trxTypeFilter === "requestTransfer"}>Request Transfer</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("balance")} active={trxTypeFilter === "balance"}>Balance</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("getFaucetBalance")} active={trxTypeFilter === "getFaucetBalance"}>Get Faucet Balance</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("faucet")} active={trxTypeFilter === "faucet"}>Faucet</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("requestStable")} active={trxTypeFilter === "requestStable"}>Request Stable</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("createAccountMultiple")} active={trxTypeFilter === "createAccountMultiple"}>Create Account Multiple</Dropdown.Item>
+                          <Dropdown.Item onClick={() => setTrxTypeFilter("createIndividualAccountRetry")} active={trxTypeFilter === "createIndividualAccountRetry"}>Create Individual Account Retry</Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
                     </div>
