@@ -17,7 +17,7 @@ const TrxErrorSchema = new mongoose.Schema({
   trx_type: {type: String,enum: [ PURCHASE_BOND, REDEEM_BOND, CALL_CONTRACT_METHOD_CONTROLLER, EXECUTE_CONTRACT_METHOD_CONTROLLER, MINT_BOND, BRIDGE, BURN, CREATE_BOND, REQUEST_TRANSFER, BALANCE, GET_FAUCET_BALANCE, FAUCET, REQUEST_STABLE, CREATE_ACCOUNT_MULTIPLE, CREATE_INDIVIDUAL_ACCOUNT_RETRY],required: true,},
   data: { type: String, required: true }
 });
-TrxErrorSchema.index({ userId: 1 }, { unique: true });
+
 
 // Exportar el modelo
 export const TrxErrorModel = mongoose.model<ITrxError>('TrxError', TrxErrorSchema); 

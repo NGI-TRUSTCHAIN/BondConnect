@@ -18,9 +18,6 @@ const TrxSuccessfulSchema = new mongoose.Schema({
   trx: { type: String, required: true }
 });
 
-// Índice para búsquedas por userId
-TrxSuccessfulSchema.index({ userId: 1 });
-
 export const TrxSuccessfulModel = mongoose.model<ITrxSuccessful>("TrxSuccessful", TrxSuccessfulSchema); 
 
 export const createTrxSuccessful = (values: Record<string, any>) => new TrxSuccessfulModel(values).save();
