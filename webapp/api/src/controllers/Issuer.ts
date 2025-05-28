@@ -10,7 +10,7 @@ import { getIssuerById } from '../db/Issuer';
 import dayjs from "dayjs";
 import { getInvestorById } from '../db/Investor';
 import { useApiBridge } from '../services/api-bridge.service';
-import { REQUEST_TRANSFER } from 'utils/Constants';
+import { REQUEST_TRANSFER } from '../utils/Constants';
 import { handleTransactionSuccess, handleTransactionError } from '../services/trx.service';
 /**
  * Obtener todos los usuarios
