@@ -10,7 +10,8 @@ import { getIssuerById } from '../db/Issuer';
 import dayjs from "dayjs";
 import { getInvestorById } from '../db/Investor';
 import { useApiBridge } from '../services/api-bridge.service';
-
+import { REQUEST_TRANSFER } from '../utils/Constants';
+import { handleTransactionSuccess, handleTransactionError } from '../services/trx.service';
 /**
  * Obtener todos los usuarios
  */
@@ -240,10 +241,25 @@ export const updatePayment = async (req: express.Request, res: express.Response)
 
   try {
     // Pagar al inversor por el bono. REVISAR: solo he inertido las wallet
-    const responseTransfer = await useApiBridge.requestTransfer(issuer.walletAddress, inversor.walletAddress, Math.floor(amount),
+    let responseTransfer;
+    responseTransfer = await useApiBridge.requestTransfer(issuer.walletAddress, inversor.walletAddress, Math.floor(amount),
       network.toUpperCase(), contractAddress);
+      if(responseTransfer){
+        await handleTransactionSuccess(
+          userId,
+          network.toUpperCase(),
+          REQUEST_TRANSFER,
+          responseTransfer
+      );
+    }
     console.log("Response Transfer:", responseTransfer);
   } catch (error) {
+    await handleTransactionError(
+      userId,
+      network.toUpperCase(),
+      REQUEST_TRANSFER,
+      error
+    );
     console.log("Error al transferir el dinero:", error);
     res.status(500).json({ error: "Error al transferir el dinero" });
     return;
