@@ -1,5 +1,5 @@
 import express from 'express';
-import { createIssuer, getIssuerByEmail, getIssuers, updateIssuerById } from '../db/Issuer'; // Asegúrate de importar el modelo correctamente
+import { createIssuer, getIssuerByEmail, getIssuers, updateIssuerById, deleteIssuerById } from '../db/Issuer'; // Asegúrate de importar el modelo correctamente
 import { MongoServerError } from 'mongodb';
 import { useBlockchainService } from '../services/blockchain.service'
 import { UserInfo } from "../models/Payment";
@@ -10,7 +10,7 @@ import { getIssuerById } from '../db/Issuer';
 import dayjs from "dayjs";
 import { getInvestorById } from '../db/Investor';
 import { useApiBridge } from '../services/api-bridge.service';
-import { REQUEST_TRANSFER } from '../utils/Constants';
+import { CREATE_ACCOUNT_MULTIPLE, REQUEST_TRANSFER } from '../utils/Constants';
 import { handleTransactionSuccess, handleTransactionError } from '../services/trx.service';
 /**
  * Obtener todos los usuarios
@@ -45,6 +45,9 @@ export const getOneIssuer = async (req: express.Request, res: express.Response) 
  * Crear un nuevo usuario
  */
 export const registerIssuer = async (req: express.Request, res: express.Response) => {
+  let newIssuer = null;
+  let foundIssuerId = null;
+
   try {
     console.log("📩 Recibido en req.body:", req.body);
     const issuer = req.body;
@@ -63,32 +66,63 @@ export const registerIssuer = async (req: express.Request, res: express.Response
     console.log('✅ Validación de datos correcta');
 
     // Creación del nuevo usuario
-    const newIssuer = await createIssuer(issuer).catch((error: MongoServerError) => {
-      if (error.code === 11000) {
+    try {
+      newIssuer = await createIssuer(issuer);
+    } catch (error) {
+      if (error instanceof MongoServerError && error.code === 11000) {
         res.status(400).json({
           error: "Issuer already exists",
           message: `The value for ${Object.keys(error.keyValue).join(", ")} already exists.`,
         });
         return;
       }
-    });
+      throw error; // Lanza otros errores para que sean manejados en el catch principal
+    }
 
     if (!newIssuer) return;
-    // Crear company en blockchain y guardar wallet address
+    const foundIssuer = await getIssuerByEmail(newIssuer.email);
+    foundIssuerId = foundIssuer._id.toString();
+    console.log(foundIssuerId);
 
-    const foundIssuer = (await getIssuerByEmail(newIssuer.email))._id.toString();
-    console.log(foundIssuer)
-    const { address, createdAt, accounts } = await createCompany(foundIssuer)
+    let response = null;
+    try {
+      response = await createCompany(foundIssuerId);
+      for (const account of response.accounts) {
+        await handleTransactionSuccess(
+          foundIssuerId,
+          account.network.toUpperCase(),
+          CREATE_ACCOUNT_MULTIPLE,
+          account
+        );
+      }
+    } catch (error) {
+      for (const account of response.accounts) {
+        await handleTransactionError(
+          foundIssuerId,
+          account.network.toUpperCase(),
+          CREATE_ACCOUNT_MULTIPLE,
+          error
+        );
+      }
+      throw error; // Lanza el error para que sea manejado en el catch principal
+    }
 
-    const updatedIssuer = await updateIssuerById(foundIssuer, { walletAddress: address, accounts: accounts });
+    // Actualizar el emisor con la dirección de la wallet y las cuentas
+    const updatedIssuer = await updateIssuerById(foundIssuerId, { 
+      walletAddress: response.address, 
+      accounts: response.accounts 
+    });
 
-    console.log("nuevo", updatedIssuer)
+    console.log("nuevo", updatedIssuer);
     res.status(201).json(updatedIssuer);
   } catch (error) {
     console.error(error);
+    if (foundIssuerId) {
+      await deleteIssuerById(foundIssuerId);
+    }
     res.status(500).json({
-      error: "User creation failed",
-      message: "An unexpected error occurred while creating the user.",
+      error: "Issuer creation failed",
+      message: "An unexpected error occurred while creating the issuer.",
     });
   }
 };
@@ -239,29 +273,36 @@ export const updatePayment = async (req: express.Request, res: express.Response)
   const inversor = await getInvestorById(userId);
   const amount = invoice.amount * (bond.price * (bond.interestRate / 100)); // dinero que transferir entre cuentas
   console.log('amount', amount);
-
-  // let responseTransfer;
-  // try {
+  let responseTransfer;
+  try {
     // Pagar al inversor por el bono. REVISAR: solo he inertido las wallet
-  //   responseTransfer = await useApiBridge.requestTransfer(issuer.walletAddress, inversor.walletAddress, Math.floor(amount),
-  //     network.toUpperCase(), contractAddress);
-  //     if(responseTransfer){
-  //       await handleTransactionSuccess(
-  //         userId,
-  //         network.toUpperCase(),
-  //         REQUEST_TRANSFER,
-  //         responseTransfer
-  //     );
-  //   }
-  //   console.log("Response Transfer:", responseTransfer);
-  // } catch (error) {
-  //   await handleTransactionError(
-  //     userId,
-  //     network.toUpperCase(),
-  //     REQUEST_TRANSFER,
-  //     error
-  //   );
-  //   console.log("Error al transferir el dinero:", error);
+
+    responseTransfer = await useApiBridge.requestTransfer(issuer.walletAddress, inversor.walletAddress, Math.floor(amount),
+      network.toUpperCase(), contractAddress);
+    if (responseTransfer) {
+      await handleTransactionSuccess(
+        userId,
+        network.toUpperCase(),
+        REQUEST_TRANSFER,
+        responseTransfer
+      );
+    }
+    console.log("Response Transfer:", responseTransfer);
+  } catch (error) {
+    await handleTransactionError(
+      userId,
+      network.toUpperCase(),
+      REQUEST_TRANSFER,
+      error
+    );
+    console.log("Error al transferir el dinero:", error);
+    res.status(500).json({ error: "Error al transferir el dinero" });
+    return;
+  }
+  // if (responseTransfer.status === 200) {
+  //   const payment = await updatePaymentInvoiceByData(userId, bondId, network, { paid });
+  //   res.status(200).json(payment);
+  // } else {
   //   res.status(500).json({ error: "Error al transferir el dinero" });
   //   return;
   // }
@@ -272,7 +313,7 @@ export const updatePayment = async (req: express.Request, res: express.Response)
   console.log('network', network);
   console.log('paid', paid);  
 
-  const payment = await updatePaymentInvoiceByData(userId, bondId, network, { payments: [{ paid: true, trxPaid: "responseTransfer"}] });
+  const payment = await updatePaymentInvoiceByData(userId, bondId, network, { payment: { paid: true, trxPaid: responseTransfer.message } });
 
   res.status(200).json(payment);
 }

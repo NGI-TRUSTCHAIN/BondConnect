@@ -22,7 +22,7 @@ const SALT_ROUNDS = 10; // Número de rondas de hashing
 
 const InvestorSchema = new mongoose.Schema({
   entityLegalName: { type: String },
-  taxIdNumber: { type: String, unique: true },
+  taxIdNumber: { type: String, unique: true, sparse: true },
   website: { type: String },
   name: { type: String, required: true },
   surname: { type: String, required: true },

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { encodeBytes32String, ethers } from 'ethers';
-import { createAccount } from './api-smart-account.service'; // Simulando tu servicio ApiSmartAccount
+import { createAccount, createAccountSimple } from './api-smart-account.service'; // Simulando tu servicio ApiSmartAccount
 import { useApiBridge } from './api-bridge.service'; // Simulando tu servicio ApiBridge
-
+import { SmartAccount } from '../models/company.model';
+import { CREATE_ACCOUNT_MULTIPLE, CREATE_INDIVIDUAL_ACCOUNT_RETRY } from '../utils/Constants';
+import { handleTransactionError, handleTransactionSuccess } from './trx.service';
 export const useBlockchainService = () => {
   // const [provider, setProvider] = useState(null);
   // const [mockBalance, setMockBalance] = useState(0);
@@ -24,10 +26,29 @@ export const useBlockchainService = () => {
       console.log('Cuentas creadas:', accounts.length);
       console.log('Cuentas faltantes:', missingAccounts.length);
 
-      // Lógica para reintentar cuentas faltantes
-      // Puedes llamar a apiSmartAccount.retryAccountSimple() en un bucle si lo necesitas.
+      for (const acc of missingAccounts) {
+        try {
+          await createAccountSimple(acc.address, acc.network);
+          await handleTransactionSuccess(
+            companyName,
+            acc.network.toUpperCase(),
+            CREATE_INDIVIDUAL_ACCOUNT_RETRY,
+            acc
+          );
+          console.log(`Cuenta ${acc.address} reintentada con éxito.`);
+        } catch (retryErr) {
+          console.error(`Error al reintentar cuenta ${acc.address}:`, retryErr);
+          await handleTransactionError(
+            companyName,
+            acc.network.toUpperCase(),
+            CREATE_INDIVIDUAL_ACCOUNT_RETRY,
+            retryErr
+          );
+        }
+      }
 
       return {
+        message: response.message,
         address: accounts[0]?.address || '0x0000000000000000000000000000000000000000',
         createdAt: new Date(),
         accounts,
@@ -36,9 +57,10 @@ export const useBlockchainService = () => {
       console.error('Error al crear cuenta en backend:', err);
 
       return {
+        message: err.message,
         address: '0x' + Math.floor(Math.random() * 1e16).toString(16).padStart(40, '0'),
         createdAt: new Date(),
-        accounts: [],
+        accounts: [] as SmartAccount[],
       };
     }
   };
