@@ -63,7 +63,7 @@ export async function executeContractMethodController(req: Request): Promise<App
   const contracts = await loadAllContracts(config, logger);
  //initContractsService(logger, contracts, config);
 
-  const result: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, args, options);
+  const result: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, args, options, "ALASTRIA");
 
   return {
     statusCode: 201,
@@ -103,9 +103,9 @@ export async function createAccountMultiple(req: Request): Promise<AppResult> {
     const encoded = encodeBytes32String(salt);
 
     const newArgs: any[] = [encoded, bytecode];
-
+    let network = "ALASTRIA";
     initContractsService(logger, contracts, config, "ALASTRIA" );
-    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, newArgs, options);
+    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, newArgs, options, network);
     if (resultAlastria && 'logs' in resultAlastria && resultAlastria.logs.length > 0) {
         address = resultAlastria.logs[0].address;
         transactionHash = resultAlastria.hash;      
@@ -123,9 +123,9 @@ export async function createAccountMultiple(req: Request): Promise<AppResult> {
     try {
         logger.info(`CREATING IN amoy`);
         initContractsService(logger, contracts, config, "AMOY");
-
+        network = "AMOY"
         const resultAmoy: ContractTransactionResponse | ContractTransactionReceipt | null =
-            await executeContractMethod(contractName, contractAddress, methodName, newArgs, options);
+            await executeContractMethod(contractName, contractAddress, methodName, newArgs, options, network);
 
         let addressAmoy: string | null = null;
         let transactionHashAmoy: string | null = null;
@@ -198,7 +198,7 @@ export async function createIndividualAccountRetry(req: Request): Promise<AppRes
     initContractsService(logger, contracts, config, network);
 
     const result: ContractTransactionResponse | ContractTransactionReceipt | null =
-        await executeContractMethod(contractName, contractAddress, methodName, newArgs, options);
+        await executeContractMethod(contractName, contractAddress, methodName, newArgs, options, network);
 
     let address = null;
     let transactionHash = null;  

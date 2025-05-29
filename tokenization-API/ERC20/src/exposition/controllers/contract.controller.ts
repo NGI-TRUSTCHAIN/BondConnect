@@ -62,7 +62,7 @@ export async function executeContractMethodController(req: Request): Promise<App
   const contracts = await loadAllContracts(config, logger);
  //initContractsService(logger, contracts, config);
 
-  const result: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, args, options);
+  const result: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, args, options, "ALASTRIA");
 
   return {
     statusCode: 201,
@@ -87,7 +87,7 @@ export async function createBond(req: Request): Promise<AppResult> {
     initContractsService(logger, contracts, config, "ALASTRIA");
 
 
-    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, args, options);
+    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, args, options, "ALASTRIA");
 
     if (resultAlastria && 'logs' in resultAlastria && resultAlastria.logs.length > 0) {
         const address = resultAlastria.logs[0].address;
@@ -135,7 +135,7 @@ export async function balance(req: Request): Promise<AppResult> {
     const newArgs: any[] = [accountAddressOwner];
 
     initContractsService(logger, contracts, config, network);
-    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, bondAddress, methodName, newArgs, options);
+    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, bondAddress, methodName, newArgs, options, network);
 
     return {
         statusCode: 201,
@@ -163,7 +163,7 @@ export async function mintBond(req: Request): Promise<AppResult> {
     const newArgs: any[] = [accountAddressOwner, amount];
 
     initContractsService(logger, contracts, config, "ALASTRIA" );
-    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, bondAddress, methodName, newArgs, options);
+    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, bondAddress, methodName, newArgs, options, "ALASTRIA");
        
     const transactionHash = resultAlastria && 'hash' in resultAlastria ? resultAlastria.hash : 'N/A';
 
@@ -202,7 +202,7 @@ export async function bridge(req: Request): Promise<AppResult> {
     const contracts = await loadAllContracts(config, logger);
     initContractsService(logger, contracts, config, "ALASTRIA");
 
-    const resultApprove: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractNameApprove, contractAddressApprove, methodNameApprove, approveArgs, options);
+    const resultApprove: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractNameApprove, contractAddressApprove, methodNameApprove, approveArgs, options, "ALASTRIA");
 
     if (resultApprove && 'status' in resultApprove && resultApprove.status === 1) {
         logger.info("Approve transaction succeeded. Waiting 10 seconds...");
@@ -218,7 +218,7 @@ export async function bridge(req: Request): Promise<AppResult> {
 
         initContractsService(logger, contracts, config, "ALASTRIA");
 
-        const result: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddressVault, methodName, newArgs, options);
+        const result: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddressVault, methodName, newArgs, options, "ALASTRIA");
 
         if (result && "status" in result && result.status === 1) {
 
@@ -233,7 +233,7 @@ export async function bridge(req: Request): Promise<AppResult> {
 
             initContractsService(logger, contracts, config, "AMOY");
            
-            const resultAmoy: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddressRepresentative, methodName, representativeArgs, options);
+            const resultAmoy: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddressRepresentative, methodName, representativeArgs, options, "AMOY");
             let addressTokenAmoy = "";
 
             if (resultAmoy && 'logs' in resultAmoy && resultAmoy.logs.length > 0) {
@@ -250,7 +250,7 @@ export async function bridge(req: Request): Promise<AppResult> {
                 const mintRepresentativeArgs: any[] = [accountAddressOwner, amount];
 
                 initContractsService(logger, contracts, config, "AMOY");
-                const resultTokenMint: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, addressTokenAmoy, methodName, mintRepresentativeArgs, options);
+                const resultTokenMint: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, addressTokenAmoy, methodName, mintRepresentativeArgs, options, "AMOY");
 
                 return {
                     statusCode: 201,
@@ -310,7 +310,7 @@ export async function requestTransfer(req: Request): Promise<AppResult> {
     const contracts = await loadAllContracts(config, logger);
     initContractsService(logger, contracts, config, network);
 
-    const resultBurn: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, fromAddress, methodName, burnArgs, options);
+    const resultBurn: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, fromAddress, methodName, burnArgs, options, network);
     if (resultBurn && "status" in resultBurn && resultBurn.status === 1) {
 
         const transactionHash = resultBurn && 'hash' in resultBurn ? resultBurn.hash : 'N/A';
@@ -352,7 +352,7 @@ export async function burn(req: Request): Promise<AppResult> {
     const contracts = await loadAllContracts(config, logger);
     initContractsService(logger, contracts, config, network);
 
-    const resultBurn: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, companyAddress, methodName, burnArgs, options);
+    const resultBurn: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, companyAddress, methodName, burnArgs, options, "AMOY");
     if (resultBurn && "status" in resultBurn && resultBurn.status === 1) {
 
         const contractName: string = "Vault";
@@ -360,16 +360,15 @@ export async function burn(req: Request): Promise<AppResult> {
         logger.info(`Start  ---    UNLOCK`);
 
         const unlockArgs: any[] = [bondAddress, companyAddress, amount];
-
+        logger.info(`Start  ---    UNLOCK`);
         initContractsService(logger, contracts, config, "ALASTRIA");
-        const resultUnlock: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddressVault, methodName, unlockArgs, options);
-
+        const resultUnlock: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddressVault, methodName, unlockArgs, options, "ALASTRIA");
         const transactionHash = resultUnlock && 'hash' in resultUnlock ? resultUnlock.hash : 'N/A';
+       
         return {
             statusCode: 201,
             body: {
-                message: transactionHash,
-                resultUnlock
+                message: transactionHash                
             }
         }
     } else {
@@ -405,7 +404,7 @@ export async function faucet(req: Request): Promise<AppResult> {
 
     const contractAddress = config.CONTRACT.STABLECOIN_ALASTRIA;
 
-    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, newArgs, options);
+    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, newArgs, options, "ALASTRIA");
 
     return {
         statusCode: 201,
@@ -437,7 +436,7 @@ export async function getFaucetBalance(req: Request): Promise<AppResult> {
     initContractsService(logger, contracts, config, "ALASTRIA");
     const contractAddress = config.CONTRACT.STABLECOIN_ALASTRIA;
 
-    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, newArgs, options);
+    const resultAlastria: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, contractAddress, methodName, newArgs, options, "ALASTRIA");
     
     return {
         statusCode: 201,
@@ -470,7 +469,7 @@ export async function requestStable(req: Request): Promise<AppResult> {
     const contracts = await loadAllContracts(config, logger);
     initContractsService(logger, contracts, config, network);
 
-    const resultBurn: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, fromAddress, methodName, burnArgs, options);
+    const resultBurn: ContractTransactionResponse | ContractTransactionReceipt | null = await executeContractMethod(contractName, fromAddress, methodName, burnArgs, options, "ALASTRIA");
     if (resultBurn && "status" in resultBurn && resultBurn.status === 1) {
 
         const transactionHash = resultBurn && 'hash' in resultBurn ? resultBurn.hash : 'N/A';
