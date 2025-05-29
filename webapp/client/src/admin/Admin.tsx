@@ -32,7 +32,7 @@ const Admin = () => {
   const getPrefixedTrx = (network: string, trx: string) => {
     switch (network) {
       case 'ALASTRIA':
-        return `https://testnet.bscscan.com/tx/${trx}`;
+        return `https://b-network.alastria.izer.tech/tx/${trx}`;
       case 'AMOY':
         return `https://amoy.polygonscan.com/tx/${trx}`;
       default:

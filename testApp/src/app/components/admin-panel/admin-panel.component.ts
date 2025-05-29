@@ -104,7 +104,7 @@ export class AdminPanelComponent implements OnInit {
 
   getExplorerUrl(network: string, txHash: string): string {
     const explorers: Record<string, string> = {
-      ALASTRIA: 'https://testnet.bscscan.com/tx/',
+      ALASTRIA: 'https://b-network.alastria.izer.tech/tx/',
       AMOY: 'https://amoy.polygonscan.com/tx/'
     };
 
