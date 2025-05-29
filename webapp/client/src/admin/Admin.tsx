@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { getTrxSuccess, getTrxError } from "../features/adminSlice";
 import { Container, Form, Button, Dropdown } from 'react-bootstrap';
 import { faucetStable } from "../features/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const Admin = () => {
   const dispatch = useAppDispatch();
@@ -49,7 +50,7 @@ const Admin = () => {
   ).filter(trx =>
     searchUserId ? trx.userId.includes(searchUserId) : true
   );
-
+  const navigate = useNavigate();
   return (
     <Container fluid className="p-4" style={{ maxWidth: '140vh' }}>
       <h1 className="mb-4">Admin Dashboard</h1>
@@ -69,6 +70,11 @@ const Admin = () => {
               <Form.Control type="number" placeholder="Amount" value={amount} onChange={(e) => setAmount(Number(e.target.value))} />
               <Button variant="primary" onClick={handleFaucet}>Faucet</Button>
             </Form>
+          </div>
+          <div className="col-md-6 text-end">
+            <Button variant="primary" onClick={() => navigate("/")}>
+              Log out
+            </Button>
           </div>
         </div>
 
