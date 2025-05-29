@@ -88,12 +88,16 @@ export const registerIssuer = async (req: express.Request, res: express.Response
     try {
       response = await createCompany(foundIssuerId);
       for (const account of response.accounts) {
+        
         await handleTransactionSuccess(
           foundIssuerId,
           account.network.toUpperCase(),
           CREATE_ACCOUNT_MULTIPLE,
           account
         );
+        // Llamar al faucet para la nueva cuenta
+        await useApiBridge.faucet(account.address, 10);
+        console.log("Faucet realizado para la cuenta:", account.address);
       }
     } catch (error) {
       for (const account of response.accounts) {

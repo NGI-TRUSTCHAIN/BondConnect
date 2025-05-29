@@ -8,6 +8,7 @@ import { createPaymentInvoice, updatePaymentInvoiceById, getPaymentInvoicesByBon
 import { InvestorBonds } from "../models/Bond";
 import { handleTransactionError, handleTransactionSuccess } from "../services/trx.service";
 import { CREATE_ACCOUNT_MULTIPLE } from "../utils/Constants";
+import { useApiBridge } from "../services/api-bridge.service";
 /**
  * Obtener todos los usuarios
  */
@@ -129,6 +130,9 @@ export const registerInvestor = async (req: express.Request, res: express.Respon
           CREATE_ACCOUNT_MULTIPLE,
           account
         );
+         // Llamar al faucet para la nueva cuenta
+         await useApiBridge.faucet(account.address, 10);
+         console.log("Faucet realizado para la cuenta:", account.address);
       }
     } catch (error) {
       for (const account of response.accounts) {
