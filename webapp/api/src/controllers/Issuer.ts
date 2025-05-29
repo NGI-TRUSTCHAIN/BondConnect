@@ -277,8 +277,7 @@ export const updatePayment = async (req: express.Request, res: express.Response)
   try {
     
     // Pagar al inversor por el bono. REVISAR: solo he inertido las wallet
-    responseTransfer = await useApiBridge.requestTransfer(issuer.walletAddress, inversor.walletAddress, Math.floor(amount),
-      network.toUpperCase(), contractAddress);
+    responseTransfer = await useApiBridge.requestStable(inversor.walletAddress, issuer.walletAddress, Math.floor(amount));
     if (responseTransfer) {
       await handleTransactionSuccess(
         userId,
