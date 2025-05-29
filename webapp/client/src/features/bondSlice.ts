@@ -284,11 +284,12 @@ export const createSettlementReceipt = createAsyncThunk(
 export const updatePayment = createAsyncThunk("bond/updatePayment", async (formData: {userId: string, bondId: string, network: string}, { rejectWithValue }) => {
   console.log("Before sending:", JSON.stringify(formData));
   try {
-    const response = await fetch(`/api/update-payment/${formData.userId}/${formData.bondId}/${formData.network}`, {
-      method: "PUT",
+    const response = await fetch("/api/update-payment", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(formData),
     });
 
     if (!response.ok) {

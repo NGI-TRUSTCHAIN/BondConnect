@@ -226,7 +226,8 @@ export const getPendingPayments = async (req: express.Request, res: express.Resp
 };
 
 export const updatePayment = async (req: express.Request, res: express.Response) => {
-  const { userId, bondId, network } = req.params;
+  console.log("📩 Recibido en req.body:", req.body);
+  const { userId, bondId, network } = req.body;
   const paid = true;
 
   const invoice = await getPaymentInvoiceByData(userId, bondId, network);
@@ -239,39 +240,39 @@ export const updatePayment = async (req: express.Request, res: express.Response)
   const amount = invoice.amount * (bond.price * (bond.interestRate / 100)); // dinero que transferir entre cuentas
   console.log('amount', amount);
 
-  try {
+  // let responseTransfer;
+  // try {
     // Pagar al inversor por el bono. REVISAR: solo he inertido las wallet
-    let responseTransfer;
-    responseTransfer = await useApiBridge.requestTransfer(issuer.walletAddress, inversor.walletAddress, Math.floor(amount),
-      network.toUpperCase(), contractAddress);
-      if(responseTransfer){
-        await handleTransactionSuccess(
-          userId,
-          network.toUpperCase(),
-          REQUEST_TRANSFER,
-          responseTransfer
-      );
-    }
-    console.log("Response Transfer:", responseTransfer);
-  } catch (error) {
-    await handleTransactionError(
-      userId,
-      network.toUpperCase(),
-      REQUEST_TRANSFER,
-      error
-    );
-    console.log("Error al transferir el dinero:", error);
-    res.status(500).json({ error: "Error al transferir el dinero" });
-    return;
-  }
-  // if (responseTransfer.status === 200) {
-  //   const payment = await updatePaymentInvoiceByData(userId, bondId, network, { paid });
-  //   res.status(200).json(payment);
-  // } else {
+  //   responseTransfer = await useApiBridge.requestTransfer(issuer.walletAddress, inversor.walletAddress, Math.floor(amount),
+  //     network.toUpperCase(), contractAddress);
+  //     if(responseTransfer){
+  //       await handleTransactionSuccess(
+  //         userId,
+  //         network.toUpperCase(),
+  //         REQUEST_TRANSFER,
+  //         responseTransfer
+  //     );
+  //   }
+  //   console.log("Response Transfer:", responseTransfer);
+  // } catch (error) {
+  //   await handleTransactionError(
+  //     userId,
+  //     network.toUpperCase(),
+  //     REQUEST_TRANSFER,
+  //     error
+  //   );
+  //   console.log("Error al transferir el dinero:", error);
   //   res.status(500).json({ error: "Error al transferir el dinero" });
+  //   return;
   // }
 
-  const payment = await updatePaymentInvoiceByData(userId, bondId, network, { paid });
+  // console.log('responseTransfer', responseTransfer);
+  console.log('userId', userId);
+  console.log('bondId', bondId);
+  console.log('network', network);
+  console.log('paid', paid);  
+
+  const payment = await updatePaymentInvoiceByData(userId, bondId, network, { payments: [{ paid: true, trxPaid: "responseTransfer"}] });
 
   res.status(200).json(payment);
 }
