@@ -7,13 +7,13 @@ dotenvx.config();
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.20",
+    version: "0.8.22",
     settings: {
       optimizer: {
         enabled: true,
         runs: 10,
       },
-      evmVersion: "berlin",
+      evmVersion: "byzantium", // alastria
     },
   },
   paths: {
@@ -32,6 +32,11 @@ const config: HardhatUserConfig = {
       accounts: process.env.API_WALLET_PRIV_KEY ? [process.env.API_WALLET_PRIV_KEY] : [],
       gasPrice: 400000000000,
       timeout: 300000, 
+    },
+    alastria: {
+      url: "http://108.142.237.13:8545",
+      accounts: process.env.API_WALLET_PRIV_KEY ? [process.env.API_WALLET_PRIV_KEY] : [],
+ 
     },
   },
 };

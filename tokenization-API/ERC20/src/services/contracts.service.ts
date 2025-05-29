@@ -138,15 +138,23 @@ export async function executeContractMethod(
     contractAddress: string,
     methodName: string,
     args: any[],
-    options: Overrides
+    options: Overrides,
+    network: string
 ): Promise<ContractTransactionResponse | ContractTransactionReceipt | null> {
     const func: ContractMethod = await getContractMethod(contractName, contractAddress, methodName, args);
 
-    const gasEstimate = await func.estimateGas(...args);
+    if (network != "ALASTRIA") {
+        const gasEstimate = await func.estimateGas(...args);
 
-    options.gasPrice = "60000000000";
-    options.gasLimit = gasEstimate;
-
+        options.gasPrice = "60000000000";
+        options.gasLimit = gasEstimate;
+        console.log("GAS", gasEstimate)
+    } else {
+        logger.info('sin calculo de gas ');       
+        options.gasLimit = 2000000;
+        if (methodName === "withdraw")
+            options.gasPrice = 0; 
+    }
     let executeTransaction: ContractTransactionResponse = await func(...args, options);
     logger.debug(`Tx response: ${JSON.stringify(executeTransaction)}`);
 
