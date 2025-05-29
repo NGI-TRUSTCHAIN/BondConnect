@@ -35,7 +35,7 @@ const config: HardhatUserConfig = {
     },
      alastria: {
       url: "http://108.142.237.13:8545",
-      accounts: process.env.API_WALLET_PRIV_KEY ? [process.env.API_WALLET_PRIV_KEY] : [],
+      accounts: process.env.ADMIN_WALLET_PRIV_KEY ? [process.env.ADMIN_WALLET_PRIV_KEY] : [],
  
     },
   },
