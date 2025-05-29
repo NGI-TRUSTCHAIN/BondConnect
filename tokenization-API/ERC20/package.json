@@ -3,6 +3,7 @@
     "node": ">=20.13.1"
   },
   "scripts": {
+    "build": "npx tsc",
     "start": "npx ts-node src/main.ts"
   },
   "dependencies": {

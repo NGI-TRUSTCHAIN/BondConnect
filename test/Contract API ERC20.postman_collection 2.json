@@ -1,0 +1,349 @@
+{
+	"info": {
+		"_postman_id": "9916a144-c21d-460e-b2ae-750ee891c9d8",
+		"name": "Contract API ERC20",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "IERC20",
+			"item": [
+				{
+					"name": "1.CreateAccount",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"args\": [\n        \"0x0000000000000000000000000000000000000000\",\n        \"0x0000000000000000000000000000000000000000\",\n        0\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/transferFrom",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"transferFrom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.1RetryCreateAccount",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"args\": [\n        \"0x0000000000000000000000000000000000000000\",\n        \"0x0000000000000000000000000000000000000000\",\n        0\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/transferFrom",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"transferFrom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.CreateBond",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"args\": [\n        \"0x0000000000000000000000000000000000000000\",\n        \"0x0000000000000000000000000000000000000000\",\n        0\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/transferFrom",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"transferFrom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.MintBond",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"args\": [\n        \"0x0000000000000000000000000000000000000000\",\n        \"0x0000000000000000000000000000000000000000\",\n        0\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/transferFrom",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"transferFrom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.1Balance",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"args\": [\n        \"0x0000000000000000000000000000000000000000\",\n        \"0x0000000000000000000000000000000000000000\",\n        0\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/transferFrom",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"transferFrom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.Bridge",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"args\": [\n        \"0x0000000000000000000000000000000000000000\",\n        \"0x0000000000000000000000000000000000000000\",\n        0\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/transferFrom",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"transferFrom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.Burn",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"args\": [         \n        \"0x3d3A4437436d1fFd78d3b039dE5a8366a79720C9\", \n        1,\n        \"AMOY\",       \n        \"0x66f4f02D8A6cbb1929d148BA6726cA50E0140676\",\n        \"0xFE295EED41FCdBefF63d6e0fa0814c13E945F422\"        \n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/burn",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"burn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.RequestTransfer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"args\": [\n        \"0x0000000000000000000000000000000000000000\",\n        \"0x0000000000000000000000000000000000000000\",\n        0\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/transferFrom",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"transferFrom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.1TrasnferStableCoin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"args\": [\n         \"0x0000000000000000000000000001b3d01f498d08\",\n        \"0x251536F1DD55ffCcDe005657944C869b88312bBc\",\n       \n        10\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/requestStable",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"requestStable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6.Faucet",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"args\": [\n        \"0x0000000000000000000000000000000000000000\",\n        \"0x0000000000000000000000000000000000000000\",\n        0\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/transferFrom",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"transferFrom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.GetFaucetBalance",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"args\": [\n        \"0x0000000000000000000000000000000000000000\",\n        \"0x0000000000000000000000000000000000000000\",\n        0\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/transferFrom",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"transferFrom"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "{{api-key}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "X-API-Key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:3000"
+		},
+		{
+			"key": "api-key",
+			"value": "574c8880-3456-11ef-9a9c-0800200c9a66"
+		},
+		{
+			"key": "host2",
+			"value": "http://localhost:4000"
+		}
+	]
+}
