@@ -127,7 +127,7 @@ describe('contracts.service', () => {
       // @ts-ignore
       ethers.Contract.mockImplementation(() => contractInstance);
 
-      const result = await executeContractMethod('ERC20MintableAndBurnable', '0x123', 'burn', [500], {});
+      const result = await executeContractMethod('ERC20MintableAndBurnable', '0x123', 'burn', [500], {}, '');
       expect(result).toBe('Burned');
     });
   });

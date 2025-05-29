@@ -52,7 +52,7 @@ const Admin = () => {
   );
   const navigate = useNavigate();
   return (
-    <Container fluid className="p-4" style={{ maxWidth: '140vh' }}>
+    <Container fluid className="p-4" style={{ maxWidth: '100%' }}>
       <h1 className="mb-4">Admin Dashboard</h1>
 
       <div style={{
@@ -64,14 +64,14 @@ const Admin = () => {
       }}>
         <h5 className="mb-3">Faucet</h5>
         <div className="row">
-          <div className="col-md-6">
-            <Form className="d-flex gap-2 mb-4">
+          <div className="col-12 col-md-6 mb-3">
+            <Form className="d-flex gap-2">
               <Form.Control type="text" placeholder="Wallet Address" value={address} onChange={(e) => setAddress(e.target.value)} />
               <Form.Control type="number" placeholder="Amount" value={amount} onChange={(e) => setAmount(Number(e.target.value))} />
               <Button variant="primary" onClick={handleFaucet}>Faucet</Button>
             </Form>
           </div>
-          <div className="col-md-6 text-end">
+          <div className="col-12 col-md-6 text-end mb-3">
             <Button variant="primary" onClick={() => navigate("/")}>
               Log out
             </Button>
@@ -125,7 +125,7 @@ const Admin = () => {
           position: 'relative', 
           zIndex: 1, 
           margin: '0 -24px', 
-          width: '135vh' 
+          width: '100%'
         }}>
           <div style={{ minWidth: '100%', padding: '0 24px', width: '135vh' }}>
             <table style={{
