@@ -275,8 +275,8 @@ export const updatePayment = async (req: express.Request, res: express.Response)
   console.log('amount', amount);
   let responseTransfer;
   try {
+    
     // Pagar al inversor por el bono. REVISAR: solo he inertido las wallet
-
     responseTransfer = await useApiBridge.requestTransfer(issuer.walletAddress, inversor.walletAddress, Math.floor(amount),
       network.toUpperCase(), contractAddress);
     if (responseTransfer) {
@@ -299,20 +299,7 @@ export const updatePayment = async (req: express.Request, res: express.Response)
     res.status(500).json({ error: "Error al transferir el dinero" });
     return;
   }
-  // if (responseTransfer.status === 200) {
-  //   const payment = await updatePaymentInvoiceByData(userId, bondId, network, { paid });
-  //   res.status(200).json(payment);
-  // } else {
-  //   res.status(500).json({ error: "Error al transferir el dinero" });
-  //   return;
-  // }
-
-  // console.log('responseTransfer', responseTransfer);
-  console.log('userId', userId);
-  console.log('bondId', bondId);
-  console.log('network', network);
-  console.log('paid', paid);  
-
+  
   const payment = await updatePaymentInvoiceByData(userId, bondId, network, { payment: { paid: true, trxPaid: responseTransfer.message } });
 
   res.status(200).json(payment);
