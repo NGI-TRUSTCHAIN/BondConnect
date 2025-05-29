@@ -88,12 +88,16 @@ export const registerIssuer = async (req: express.Request, res: express.Response
     try {
       response = await createCompany(foundIssuerId);
       for (const account of response.accounts) {
+        
         await handleTransactionSuccess(
           foundIssuerId,
           account.network.toUpperCase(),
           CREATE_ACCOUNT_MULTIPLE,
           account
         );
+        // Llamar al faucet para la nueva cuenta
+        await useApiBridge.faucet(account.address, 10);
+        console.log("Faucet realizado para la cuenta:", account.address);
       }
     } catch (error) {
       for (const account of response.accounts) {
@@ -277,8 +281,7 @@ export const updatePayment = async (req: express.Request, res: express.Response)
   try {
     
     // Pagar al inversor por el bono. REVISAR: solo he inertido las wallet
-    responseTransfer = await useApiBridge.requestTransfer(issuer.walletAddress, inversor.walletAddress, Math.floor(amount),
-      network.toUpperCase(), contractAddress);
+    responseTransfer = await useApiBridge.requestStable(inversor.walletAddress, issuer.walletAddress, Math.floor(amount));
     if (responseTransfer) {
       await handleTransactionSuccess(
         userId,

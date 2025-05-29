@@ -1,15 +1,17 @@
 {
   "ExpandedNodes": [
     "",
-    "\\tokenization-API\\SA",
+    "\\tokenization-API",
+    "\\tokenization-API\\ERC20",
+    "\\tokenization-API\\ERC20\\src",
+    "\\tokenization-API\\ERC20\\src\\bootstrap",
+    "\\tokenization-API\\ERC20\\src\\exposition",
+    "\\tokenization-API\\ERC20\\src\\exposition\\api",
+    "\\tokenization-API\\ERC20\\src\\exposition\\controllers",
     "\\tokenization-API\\SA\\src",
-    "\\webapp",
-    "\\webapp\\api",
-    "\\webapp\\api\\src",
-    "\\webapp\\api\\src\\controllers",
-    "\\webapp\\api\\src\\db",
-    "\\webapp\\api\\src\\models"
+    "\\tokenization-API\\SA\\src\\exposition",
+    "\\tokenization-API\\SA\\src\\exposition\\api"
   ],
-  "SelectedNode": "\\webapp\\api\\src\\controllers\\Issuer.ts",
+  "SelectedNode": "\\tokenization-API\\ERC20\\.env",
   "PreviewInSolutionExplorer": false
 }
