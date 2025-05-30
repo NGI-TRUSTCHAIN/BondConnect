@@ -33,6 +33,11 @@ const config: HardhatUserConfig = {
       gasPrice: 400000000000,
       timeout: 300000, 
     },
+     alastria: {
+      url: "http://108.142.237.13:8545",
+      accounts: process.env.ADMIN_WALLET_PRIV_KEY ? [process.env.ADMIN_WALLET_PRIV_KEY] : [],
+ 
+    },
   },
 };
 

@@ -53,4 +53,4 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-// npx hardhat run ignition/bsc.ts --network bscTestnet
+// npx hardhat run ignition/bond-factory-vault.ts --network <network_name>
