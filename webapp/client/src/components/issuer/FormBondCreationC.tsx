@@ -9,31 +9,40 @@ import "react-toastify/dist/ReactToastify.css";
 const FormBondCreationC = () => {
   // const dispatch = useAppDispatch();
   const errorMessage = useAppSelector((state) => state.bond.error);
+  const user = useAppSelector((state) => state.user.userLoged);
   const navigate = useNavigate();
+
+  const bonds = useAppSelector((state) => state.bond.bonds);
+  const [errors, setErrors] = useState<{ bondName?: string; bondSymbol?: string }>({});
 
   // Define the state to manage form inputs
   const [formData, setFormData] = useState<Bond>({
     _id: undefined,
     bondName: "",
+    bondSymbol: "",
     bondStartDate: new Date(),
     bondMaturityDate: undefined,
     bondPurpose: "",
     interestRate: undefined,
-    paymentFreq: "",
+    paymentFreq: "Annualy",
     goalAmount: undefined,
     numberTokens: undefined,
+    price: 0,
     earlyRedemptionClauses: "no",
     penalty: undefined,
     // redemptionPeriods: "",
     redemptionStartDate: undefined,
     redemptionFinishDate: undefined,
-    blockchainNetwork: "",
-    otherBlockchainNetwork: undefined,
-    walletAddress: "",
+    blockchainNetwork: "ALASTRIA",
+    // walletAddress: "",
     tokenState: [],
+    creatorCompany: user?._id,
   });
 
   const [showPopup, setShowPopup] = useState(false); // State to toggle popup visibility
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // State for success modal
+  const [transactionMessages, setTransactionMessages] = useState<{ createCompanyBond?: string; mintBond?: string }>({}); // State for transaction messages
+  const [loading, setLoading] = useState(false); // State for loading indicator
   const dispatch = useAppDispatch();
 
   const handleConfirmSubmit = async () => {
@@ -44,18 +53,24 @@ const FormBondCreationC = () => {
       },
     ];
     console.log(tokenState);
-
+    const price = formData.goalAmount! / formData.numberTokens!;
     const bond: Bond = {
       ...formData,
       tokenState,
+      price,
     };
     try {
+      setLoading(true); // Set loading to true when starting the process
       console.log("Form data submitted:", bond);
-      await dispatch(newBond(bond)).unwrap(); // Dispatch the data
+      const response = await dispatch(newBond(bond)).unwrap(); // Dispatch the data and capture the response
       toast.success("Bond created successfully!");
+      setLoading(false); // Reset loading state
+      setTransactionMessages(response.trx); // Set transaction messages from the response
+      setShowSuccessModal(true); // Show success modal
     } catch (error) {
       toast.error(`Failed to create bond. Please try again.\n ${error}`);
     } finally {
+
       setShowPopup(false); // Close the popup
       // navigate('/')
     }
@@ -68,6 +83,32 @@ const FormBondCreationC = () => {
       toast.success("Draft created successfully!");
     } catch (error) {
       toast.error(`Failed to save draft.\n Erorr: ${error}`);
+    }
+  };
+
+  const validateUniqueness = (field: "bondName" | "bondSymbol", value: string) => {
+    const normalizedValue = value.trim().toLowerCase();
+    return !bonds!.some((bond) => bond[field]?.trim().toLowerCase() === normalizedValue);
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    if (name === "bondName" || name === "bondSymbol") {
+      const isUnique = validateUniqueness(name, value);
+
+      if (!isUnique) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: `${name === "bondName" ? "Bond name" : "Bond symbol"} already exists.`,
+        }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[name];
+          return newErrors;
+        });
+      }
     }
   };
 
@@ -90,10 +131,10 @@ const FormBondCreationC = () => {
         name === "bondMaturityDate" || name === "bondStartDate" || name === "redemptionFinishDate"
           ? new Date(value) // Convierte cadena a Date
           : name === "walletAddress"
-          ? value // No convertir walletAddress
-          : value
-          ? value
-          : value, // Convierte a número si es posible
+            ? value // No convertir walletAddress
+            : value
+              ? value
+              : value, // Convierte a número si es posible
     }));
   };
 
@@ -118,7 +159,7 @@ const FormBondCreationC = () => {
           <div className="container-md m-3">
             <h4 className="text-primary">Basic Bond Information</h4>
             <div className="row">
-              <div className="col-12 mb-3">
+              <div className="col-8 mb-3">
                 <label htmlFor="bondName" className="form-label">
                   Enter Name:
                 </label>
@@ -130,8 +171,24 @@ const FormBondCreationC = () => {
                   placeholder="E.g., SME Bond 2024"
                   value={formData.bondName}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                 />
-              </div>
+              </div>{errors.bondName && <div className="invalid-feedback">{errors.bondName}</div>}
+              <div className="col-4 mb-3">
+                <label htmlFor="bondSymbol" className="form-label">
+                  Enter Name:
+                </label>
+                <input
+                  type="text"
+                  id="bondSymbol"
+                  name="bondSymbol"
+                  className="form-control bg-form"
+                  placeholder="E.g., SME-24"
+                  value={formData.bondSymbol}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              </div>{errors.bondSymbol && <div className="invalid-feedback">{errors.bondSymbol}</div>}
               <div className="mb-3">
                 <label htmlFor="bondPurpose" className="form-label">
                   Bond Purpose:
@@ -169,6 +226,7 @@ const FormBondCreationC = () => {
                   name="bondMaturityDate"
                   className="form-control bg-form"
                   value={formData.bondMaturityDate ? formData.bondMaturityDate.toISOString().split("T")[0] : ""}
+                  min={formData.bondStartDate ? new Date(formData.bondStartDate.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0] : ""}
                   onChange={handleChange}
                 />
               </div>
@@ -202,14 +260,9 @@ const FormBondCreationC = () => {
                   name="paymentFreq"
                   className="form-control bg-form"
                   value={formData.paymentFreq}
-                  onChange={handleChange}>
-                  <option value="" disabled>
-                    Select payment frequency
-                  </option>
-                  <option value="Monthly">Monthly</option>
-                  <option value="Quarterly">Quarterly</option>
-                  <option value="Semi-annualy">Semi-annually</option>
-                  <option value="Annualy">Annually</option>
+                  onChange={handleChange}
+                  disabled>
+                  <option value="Annualy" disabled>Annually</option>
                 </select>
               </div>
               <div className="col-sm-6 mb-3">
@@ -300,43 +353,15 @@ const FormBondCreationC = () => {
             <h4 className="text-primary">DLT Network Selection</h4>
             <div className="row">
               <div className=" mb-3">
-                <label htmlFor="blockchainNetwork" className="form-label">
-                  DLT Network:
-                </label>
                 <select
                   id="blockchainNetwork"
                   name="blockchainNetwork"
                   className="form-control bg-form"
-                  value={formData.blockchainNetwork}
-                  onChange={handleChange}>
-                  <option value="" disabled>
-                    Select blockchain network
-                  </option>
-                  <option value="Ethereum">Ethereum</option>
-                  <option value="Alastria">Alastria</option>
-                  <option value="Binance Smart Chain">Binance Smart Chain</option>
-                  <option value="Polygon">Polygon</option>
-                  <option value="Other">Other</option>
+                  value="ALASTRIA"
+                  disabled>
+                  <option value="ALASTRIA">Alastria</option>
                 </select>
               </div>
-              {formData.blockchainNetwork === "Other" && (
-                // Show input field for custom blockchain network
-                <div className="col-sm-8">
-                  <label
-                    htmlFor="otherBlockchainNetwork"
-                    className="form-label"
-                    style={{ marginBottom: "10px" }}></label>
-                  <input
-                    type="text"
-                    id="otherBlockchainNetwork"
-                    name="otherBlockchainNetwork"
-                    className="form-control bg-form mb-3"
-                    placeholder="Specify different blockchain network"
-                    value={formData.otherBlockchainNetwork}
-                    onChange={handleChange}
-                  />
-                </div>
-              )}
             </div>
           </div>
 
@@ -434,11 +459,46 @@ const FormBondCreationC = () => {
               </ul>
 
               <div className="popup-actions mt-5">
-                <button className="btn btn-primary" onClick={handleConfirmSubmit}>
-                  Create bond
+                <button className="btn btn-primary" onClick={handleConfirmSubmit} disabled={loading}>
+                  {loading ? (
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  ) : (
+                    "Create bond"
+                  )}
                 </button>
                 <button className="btn btn-secondary" onClick={() => setShowPopup(false)}>
                   Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {showSuccessModal && (
+          <div className="popup-overlay">
+            <div className="popup" style={{ width: '600px' }}>
+              <h2 className="text-success mb-4" style={{ textAlign: "center" }}>
+                Successful Bond Creation!
+              </h2>
+              <div className="purchase-details mb-4">
+                <h4 className="text-primary mb-3">Bond Details:</h4>
+                <ul className="list-unstyled">
+                  <li className="mb-3">
+                    <strong>Bond Name:</strong> <em>{formData.bondName}</em>
+                  </li>
+                  <li className="mb-3">
+                    <strong>Create Company Bond Message:</strong> <em>{transactionMessages.createCompanyBond}</em>
+                  </li>
+                  <li className="mb-3">
+                    <strong>Mint Bond Message:</strong> <em>{transactionMessages.mintBond}</em>
+                  </li>
+                </ul>
+              </div>
+              <div className="popup-actions mt-5" style={{ textAlign: "center" }}>
+                <button className="btn btn-success" onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate('/issuer-dash');
+                }}>
+                  Continue
                 </button>
               </div>
             </div>

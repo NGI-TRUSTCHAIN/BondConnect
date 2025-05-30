@@ -1,21 +1,24 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { readBonds } from "../../features/bondSlice";
+import { readUserBonds } from "../../features/bondSlice";
 import { useNavigate } from "react-router-dom";
 
 const ManageBonds = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const bonds = useAppSelector((state) => state.bond.bonds);
+  const userLoged = useAppSelector((state) => state.user.userLoged);
+  const userId = userLoged?._id;
+  const wallet = userLoged?.walletAddress;
   useEffect(() => {
-    dispatch(readBonds());
+    dispatch(readUserBonds({userId: userId || "", walletAddress: wallet || ""}));
   }, [dispatch]);
 
   return (
     <div
-      className="container-fluid d-flex justify-content-center align-items-center min-vh-100 bg-light"
-      style={{ width: "100vw", height: "100vh", backgroundColor: "#f8f9fa" }}>
-      <div className="card shadow-lg p-5" style={{ width: "75%", margin: "auto" }}>
+      className="container-fluid d-flex justify-content-center align-items-center bg-light"
+      style={{ height: "100vh", backgroundColor: "#f8f9fa" }}>
+      <div className="card shadow-lg p-5" style={{  width: "100vw", margin: "auto" }}>
         <h1 className="text-primary text-center mb-5 fw-bold">MANAGE MY BONDS</h1>
 
         <div className="d-flex justify-content-center gap-5 mb-5 ms-4">
@@ -42,7 +45,7 @@ const ManageBonds = () => {
           </thead>
           <tbody>
             {bonds?.map((bond, index) => (
-              <tr key={index} className="bg-light">
+              (userLoged?._id === bond.creatorCompany) && <tr key={index} className="bg-light">
                 <td className="p-3 fst-italic">"{bond.bondName}"</td>
                 <td className="p-3">{bond.blockchainNetwork}</td>
                 <td className="p-3 fst-italic">{bond.numberTokens}</td>

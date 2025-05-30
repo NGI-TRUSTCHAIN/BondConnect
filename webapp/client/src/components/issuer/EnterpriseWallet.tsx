@@ -3,7 +3,8 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { readBonds } from "../../features/bondSlice";
 import "../components.css";
 import { useNavigate } from "react-router-dom";
-import { generatePaymentRecords } from "../../utils";
+import { getTokenListAndUpcomingPaymentsByIssuer } from "../../features/bondSlice";
+import { getFaucetBalance } from "../../features/userSlice";
 
 export interface PaymentRecord {
   bondName: string;
@@ -16,24 +17,70 @@ const EnterpriseWallet = () => {
   const [clipboardCopy, setClipboardCopy] = useState("");
   const [record, setRecord] = useState<PaymentRecord[]>([]);
   const [visibleCount, setVisibleCount] = useState(5); // Número inicial de registros visibles
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const bonds = useAppSelector((state) => state.bond.bonds);
+  const tokenList = useAppSelector((state) => state.bond.tokenList);
+  const upcomingPayment = useAppSelector((state) => state.bond.upcomingPayment);
+  console.log("tokenList: ",tokenList);
+  console.log("upcomingPayment: ",upcomingPayment);
+  const [balanceData, setBalanceData] = useState(null);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate()
 
+  const userId = useAppSelector((state) => state.user.userLoged?._id);
+  const wallet = useAppSelector((state) => state.user.userLoged?.walletAddress);
+
+  const priceTotal = tokenList?.reduce((acc, token) => {
+    if (!acc[token.network]) {
+      acc[token.network] = [];
+    }
+    acc[token.network].push(token.amountAvaliable || 0);
+    return acc;
+  }, {} as Record<string, number[]>);
+
+  // Calcular suma por red
+  const sumByNetwork = priceTotal ? Object.entries(priceTotal).reduce((acc, [network, values]) => {
+    acc[network] = values.reduce((sum, value) => sum + value, 0);
+    return acc;
+  }, {} as Record<string, number>) : {};
+
+  // Calcular total general
+  const totalSum = Object.values(sumByNetwork).reduce((sum, value) => sum + value, 0);
+  
   // Reads the available bonds
   useEffect(() => {
-    dispatch(readBonds());
+    dispatch(readBonds(userId || ""));
   }, [dispatch]);
 
-  // Creates an interface for the object array record to render a table with the payment
-  // records
+  useEffect(() => {
+    dispatch(getTokenListAndUpcomingPaymentsByIssuer(userId || ""))
+      .then(() => {
+        setIsDataLoaded(true);
+      });
+  }, [dispatch]);
 
   useEffect(() => {
-    const rec = generatePaymentRecords(bonds!)
-    setRecord(rec)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    dispatch(readBonds(userId || ""));
+    
+    const fetchData = async () => {
+      try {
+        console.log(userId + " USER ID");
+        // const data = await dispatch(getInvestorWalletData(userId || "")).unwrap();
+        // setWalletData(data);
+        console.log(wallet + " WALLET DATA");
+
+          const dataFaucet = await dispatch(getFaucetBalance(wallet!)).unwrap();
+          console.log(dataFaucet + " BALANCE");
+          setBalanceData(dataFaucet);
+        
+      } catch (error) {
+        console.error('Error fetching wallet data:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleCopy = (e: React.MouseEvent<HTMLParagraphElement>) => {
@@ -63,11 +110,20 @@ const EnterpriseWallet = () => {
         <h3 className="section-title">Your Wallet Address:</h3>
         <div className="wallet-address col-12">
           <p id="copyLabel" className="copy-label" onClick={handleCopy}>
-            Wallet address
-            <img src="/src/clip.png" id="copyButton" className="copy-button" />
+            {wallet}
+            <img src="/images/clip.png" id="copyButton" className="copy-button" />
           </p>
         </div>
-
+        {!isDataLoaded ? (
+          <div className="d-flex justify-content-center" style={{ width: '100%', margin: '0 0 400px 0' }}>
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : (
+        <>
+        <h3 className="section-title mt-4">Total stable coins: {balanceData}</h3>
+      
         <h3 className="section-title mt-4">Overview of Balance</h3>
         <h4
           data-bs-toggle="collapse"
@@ -75,58 +131,51 @@ const EnterpriseWallet = () => {
           role="button"
           aria-expanded="false"
           aria-controls="balance-collapse">
-          <strong>Total Available Balance:</strong> 50.000€
+          <strong>Total Available Balance:</strong> {totalSum}
         </h4>
         <div className="collapse" id="balance-collapse">
           <ul>
             <li>
-              <strong>Alastria:</strong> 20.000€
+              <strong>Alastria:</strong> {sumByNetwork.ALASTRIA}
             </li>
             <li>
-              <strong>Ethereum:</strong> 20.000€
-            </li>
-            <li>
-              <strong>Polygon:</strong> 10.000€
+              <strong>Amoy:</strong> {sumByNetwork.AMOY}
             </li>
           </ul>
         </div>
 
         <h3 className="section-title mt-4">Tokens in circulation</h3>
 
-        {/* <h4 data-bs-toggle="collapse" data-bs-target="#tokens-collapse" role="button" aria-expanded="false" aria-controls="tokens-collapse">
-                <strong>“Bond 1” Tokens in circulation:</strong> “5.000” 
-            </h4>
-            <div className="collapse" id="tokens-collapse">
-                <ul>
-                    <li><strong>Alastria:</strong> 2000</li>
-                    <li><strong>Ethereum:</strong> 2000</li>
-                    <li><strong>Polygon:</strong> 1000</li>
-                </ul>
-            </div>   */}
+            {tokenList && tokenList.length > 0 ? (
+              <table
+                border={1}
+                style={{ borderCollapse: "collapse", width: "100%", textAlign: "center", backgroundColor: "#d9e8fc" }}>
+                <thead style={{ backgroundColor: "#7ba6e9", color: "white" }}>
+                  <tr>
+                    <th>Bond Name</th>
+                    <th>DLT Network</th>
+                    <th>Amount of Tokens</th>
+                    <th>Amount in €</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tokenList.map((token) => (
+                    <tr key={token.bondName}>
+                      <td>{token.bondName}</td>
+                      <td>{token.network}</td>
+                      <td>{token.amountAvaliable}</td>
+                      <td>{token.price.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>There are no tokens available in circulation.</p>
+            )}
+          </>
+        )}
 
-        {bonds?.map((bond) => (
-          <Fragment key={bond._id}>
-            <h4
-              data-bs-toggle="collapse"
-              data-bs-target={`#tokens-collapse-${bond._id}`}
-              role="button"
-              aria-expanded="false"
-              aria-controls={`tokens-collapse-${bond._id}`}>
-              <strong>{bond.bondName} Tokens in circulation:</strong> {bond.numberTokens}
-            </h4>
-            <div className="collapse" id={`tokens-collapse-${bond._id}`}>
-              <ul>
-                {bond.tokenState.map((block) => (
-                  <li key={`${bond._id}-${block.blockchain}`}>
-                    <strong>{block.blockchain}:</strong> {block.amount}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Fragment>
-        ))}
-
-        <h3 className="section-title mt-4">Upcoming payments</h3>
+        {/* <h3 className="section-title mt-4">Upcoming payments</h3>
         <table
           border={1}
           style={{ borderCollapse: "collapse", width: "100%", textAlign: "center", backgroundColor: "#d9e8fc" }}>
@@ -138,11 +187,6 @@ const EnterpriseWallet = () => {
             </tr>
           </thead>
           <tbody>
-            {/* <tr>
-                        <td>Bond 1</td>
-                        <td>01/01/2026</td>
-                        <td>20.000€</td>
-                    </tr> */}
             {record.slice(0, visibleCount).map((record: PaymentRecord) => (
               <tr key={record.paymentDate}>
                 <td>{record.bondName}</td>
@@ -154,7 +198,7 @@ const EnterpriseWallet = () => {
         </table>
         {visibleCount < record.length && ( // Muestra el botón si hay más registros
           <button onClick={handleShowMore}>Show More</button>
-        )}
+        )} */}
       </div>
     </>
   );

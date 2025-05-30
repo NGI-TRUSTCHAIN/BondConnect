@@ -1,3 +1,201 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+[ERC20 Contract API] [2025-05-21 08:55:47] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-21 08:55:47] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-21 08:55:47] [INFO] - STARTING API EXPOSITION
+[Default] [2025-05-21 08:55:47] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-21 08:55:47] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-21 08:55:47] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-21 08:55:50] [INFO] - POST /requestTransfer
+[ERC20 Contract API] [2025-05-21 08:55:50] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 08:55:50] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 08:55:50] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 08:55:50] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 08:55:52] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 08:56:06] [INFO] - POST /requestTransfer
+[ERC20 Contract API] [2025-05-21 08:56:06] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 08:56:06] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 08:56:06] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 08:56:06] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 08:56:08] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 08:56:33] [INFO] - POST /requestTransfer
+[ERC20 Contract API] [2025-05-21 08:56:33] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 08:56:33] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 08:56:33] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 08:56:33] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 08:56:36] [INFO] - Waiting for confirmations
+[Default] [2025-05-21 08:56:48] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-21 08:56:48] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-21 08:56:48] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-21 08:56:48] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-21 08:56:48] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-21 08:56:48] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-21 08:57:01] [INFO] - POST /requestTransfer
+[ERC20 Contract API] [2025-05-21 08:57:01] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 08:57:01] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 08:57:01] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 08:57:01] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 08:57:03] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 08:57:08] [ERROR] - Error: transaction execution reverted (action="sendTransaction", data=null, reason=null, invocation=null, revert=null, transaction={ "data": "", "from": "0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462", "to": "0xf8Ea46221cDc412Adc61B1c6d8d08B70C0eB798C" }, receipt={ "_type": "TransactionReceipt", "blobGasPrice": null, "blobGasUsed": null, "blockHash": "0xbe4711e8f1810106d4f788b49d88b474c38f2a94d4e401ebb67997e8f629c348", "blockNumber": 21929138, "contractAddress": null, "cumulativeGasUsed": "30462", "from": "0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462", "gasPrice": "30000000000", "gasUsed": "30462", "hash": "0xe60a9d227b6484e6c04057a9fac25c59c15c134a8325f59330c4708c17206f3d", "index": 0, "logs": [ { "_type": "log", "address": "0x0000000000000000000000000000000000001010", "blockHash": "0xbe4711e8f1810106d4f788b49d88b474c38f2a94d4e401ebb67997e8f629c348", "blockNumber": 21929138, "data": "0x00000000000000000000000000000000000000000000000000033f269ca5af1e000000000000000000000000000000000000000000000000655a80a0856ead8b00000000000000000000000000000000000000000000081722c684fe76c6699c00000000000000000000000000000000000000000000000065574179e8c8fe6d00000000000000000000000000000000000000000000081722c9c425136c18ba", "index": 0, "removed": null, "topics": [ "0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63", "0x0000000000000000000000000000000000000000000000000000000000001010", "0x00000000000000000000000086df4b738d592c31f4a9a657d6c8d6d05dc1d462", "0x000000000000000000000000915a2284d28bd93de7d6f31173b981204bb666e6" ], "transactionHash": "0xe60a9d227b6484e6c04057a9fac25c59c15c134a8325f59330c4708c17206f3d", "transactionIndex": 0 } ], "logsBloom": "0x00000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000080000000800000000000000000000100000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000004000000000000000000001000000000000000002000000000000100000001000000000000000000000000000000000000000000000400000040000000000100000", "root": null, "status": 0, "to": "0xf8Ea46221cDc412Adc61B1c6d8d08B70C0eB798C" }, code=CALL_EXCEPTION, version=6.13.2)
+[ERC20 Contract API] [2025-05-21 08:57:19] [INFO] - POST /requestTransfer
+[ERC20 Contract API] [2025-05-21 08:57:19] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 08:57:19] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 08:57:19] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 08:57:19] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 08:57:20] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 08:57:38] [INFO] - POST /requestTransfer
+[ERC20 Contract API] [2025-05-21 08:57:38] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 08:57:38] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 08:57:38] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 08:57:38] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 08:57:40] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 08:57:45] [ERROR] - Error: transaction execution reverted (action="sendTransaction", data=null, reason=null, invocation=null, revert=null, transaction={ "data": "", "from": "0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462", "to": "0xf8Ea46221cDc412Adc61B1c6d8d08B70C0eB798C" }, receipt={ "_type": "TransactionReceipt", "blobGasPrice": null, "blobGasUsed": null, "blockHash": "0x53711a2becea217cc09632b5cea885bfef59f4b4a8d00a6aed7cfc67c75654d6", "blockNumber": 21929156, "contractAddress": null, "cumulativeGasUsed": "30462", "from": "0x86DF4B738D592c31F4A9A657D6c8d6D05DC1D462", "gasPrice": "30000000000", "gasUsed": "30462", "hash": "0xfac99c9d61017ecb757076e6197906e41207ac7fcec94098c430df4763144fc5", "index": 0, "logs": [ { "_type": "log", "address": "0x0000000000000000000000000000000000001010", "blockHash": "0x53711a2becea217cc09632b5cea885bfef59f4b4a8d00a6aed7cfc67c75654d6", "blockNumber": 21929156, "data": "0x00000000000000000000000000000000000000000000000000033f269ca5af1e00000000000000000000000000000000000000000000000065574179e8c2058b00000000000000000000000000000000000000000000013701bc20e73f85febb000000000000000000000000000000000000000000000000655402534c1c566d00000000000000000000000000000000000000000000013701bf600ddc2badd9", "index": 0, "removed": null, "topics": [ "0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63", "0x0000000000000000000000000000000000000000000000000000000000001010", "0x00000000000000000000000086df4b738d592c31f4a9a657d6c8d6d05dc1d462", "0x0000000000000000000000006c095a53250dd250797ff915a716cca690ad8842" ], "transactionHash": "0xfac99c9d61017ecb757076e6197906e41207ac7fcec94098c430df4763144fc5", "transactionIndex": 0 } ], "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000080000000800000000000000000000100000000000000000000000000000000000000000000000000000000040080000000000000000000000000000000400000000000000000000000000000000000000000000000200000000000000000008000000000000000000000000000000000000000004000000000000000000001000000000000000000000000000000100000001000000000000000000000000000000000000000000000000000040000000000100000", "root": null, "status": 0, "to": "0xf8Ea46221cDc412Adc61B1c6d8d08B70C0eB798C" }, code=CALL_EXCEPTION, version=6.13.2)
+[ERC20 Contract API] [2025-05-21 08:57:54] [INFO] - POST /requestTransfer
+[ERC20 Contract API] [2025-05-21 08:57:54] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 08:57:54] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 08:57:54] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 08:57:54] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 08:57:56] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 08:57:57] [ERROR] - Error: could not coalesce error (error={ "code": 19, "message": "Unable to perform request" }, payload={ "id": 14, "jsonrpc": "2.0", "method": "eth_getTransactionReceipt", "params": [ "0x201be2de266519ff645f3eee3019e9fe865b4fc1afadb9708933f1f893a97cda" ] }, code=UNKNOWN_ERROR, version=6.13.2)
+=======
+[Default] [2025-05-16 11:31:28] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-16 11:31:28] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-16 11:31:28] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-16 11:31:28] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-16 11:31:28] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-16 11:31:28] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-16 11:31:36] [INFO] - POST /burn
+[ERC20 Contract API] [2025-05-16 11:31:36] [INFO] - INITIALIZING SERVICES  ---      BURN
+[ERC20 Contract API] [2025-05-16 11:31:36] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-16 11:31:36] [INFO] - Loading 6 contracts...
+[ERC20 Contract API] [2025-05-16 11:31:36] [INFO] - Loaded 6 contracts successfully.
+[ERC20 Contract API] [2025-05-16 11:31:37] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-16 11:31:46] [INFO] - INITIALIZING SERVICES  ---    UNLOCK
+[ERC20 Contract API] [2025-05-16 11:31:49] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-19 10:26:11] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-19 10:26:11] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-19 10:26:11] [INFO] - STARTING API EXPOSITION
+[Default] [2025-05-19 10:26:11] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-19 10:26:11] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-19 10:26:11] [INFO] - Express server running on port 3000...
+[Default] [2025-05-19 10:27:11] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-19 10:27:11] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-19 10:27:11] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-19 10:27:11] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-19 10:27:11] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-19 10:27:11] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-19 10:27:53] [INFO] - POST /faucet
+[ERC20 Contract API] [2025-05-19 10:27:53] [INFO] - Faucet 
+[ERC20 Contract API] [2025-05-19 10:27:53] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-19 10:27:53] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-19 10:27:53] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-19 10:27:56] [INFO] - Waiting for confirmations
+[Default] [2025-05-19 10:28:51] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-19 10:28:51] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-19 10:28:51] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-19 10:28:51] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-19 10:28:51] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-19 10:28:51] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-19 10:29:07] [INFO] - POST /faucetBalance
+[ERC20 Contract API] [2025-05-19 10:29:07] [INFO] - Faucet 
+[ERC20 Contract API] [2025-05-19 10:29:07] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-19 10:29:07] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-19 10:29:07] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 10:45:04] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-21 10:45:04] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-21 10:45:04] [INFO] - STARTING API EXPOSITION
+[Default] [2025-05-21 10:45:04] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-21 10:45:04] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-21 10:45:04] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-21 10:45:09] [INFO] - POST /requestStable
+[ERC20 Contract API] [2025-05-21 10:45:09] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 10:45:09] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 10:45:09] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 10:45:09] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 10:45:33] [INFO] - POST /faucet
+[ERC20 Contract API] [2025-05-21 10:45:33] [INFO] - Faucet 
+[ERC20 Contract API] [2025-05-21 10:45:33] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 10:45:33] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 10:45:33] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 10:45:36] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 10:45:47] [INFO] - POST /faucet
+[ERC20 Contract API] [2025-05-21 10:45:47] [INFO] - Faucet 
+[ERC20 Contract API] [2025-05-21 10:45:47] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 10:45:47] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 10:45:47] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 10:45:50] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 10:46:02] [INFO] - POST /requestStable
+[ERC20 Contract API] [2025-05-21 10:46:02] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 10:46:02] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 10:46:02] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 10:46:02] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 10:46:16] [INFO] - POST /requestStable
+[ERC20 Contract API] [2025-05-21 10:46:16] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 10:46:16] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 10:46:16] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 10:46:16] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 10:46:19] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 10:46:49] [INFO] - POST /requestStable
+[ERC20 Contract API] [2025-05-21 10:46:49] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 10:46:49] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 10:46:49] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 10:46:49] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 10:46:51] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 10:47:04] [INFO] - POST /requestStable
+[ERC20 Contract API] [2025-05-21 10:47:04] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 10:47:04] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 10:47:04] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 10:47:04] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 10:48:07] [INFO] - POST /requestStable
+[ERC20 Contract API] [2025-05-21 10:48:07] [INFO] - INITIALIZING SERVICES  ---      Transfer
+[ERC20 Contract API] [2025-05-21 10:48:07] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 10:48:07] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 10:48:07] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 10:48:10] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 13:07:10] [INFO] - POST /bridge
+[ERC20 Contract API] [2025-05-21 13:07:10] [INFO] - INITIALIZING SERVICES    --     approveERC20
+[ERC20 Contract API] [2025-05-21 13:07:10] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 13:07:10] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 13:07:10] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 13:07:14] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 13:07:19] [INFO] - Approve transaction succeeded. Waiting 10 seconds...
+[ERC20 Contract API] [2025-05-21 13:07:29] [INFO] - INITIALIZING SERVICES    --     deposit
+[ERC20 Contract API] [2025-05-21 13:07:32] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 13:07:38] [INFO] - INITIALIZING SERVICES    --     createRepresentativeBondToken
+[ERC20 Contract API] [2025-05-21 13:07:40] [INFO] - Waiting for confirmations
+[ERC20 Contract API] [2025-05-21 13:07:40] [ERROR] - Error: could not coalesce error (error={ "code": 19, "message": "Unable to perform request" }, payload={ "id": 15, "jsonrpc": "2.0", "method": "eth_getTransactionReceipt", "params": [ "0x48ebcfdbb933030e79496b80f556e1ae3979bd0558177e993d615b08c0383861" ] }, code=UNKNOWN_ERROR, version=6.13.2)
+[Default] [2025-05-21 13:17:37] [INFO] - STARTING APPLICATION
+[ERC20 Contract API] [2025-05-21 13:17:37] [INFO] - INITIALIZING CONTROLLERS
+[Default] [2025-05-21 13:17:37] [INFO] - BOOTSTRAPING APPLICATION
+[ERC20 Contract API] [2025-05-21 13:17:37] [INFO] - STARTING API EXPOSITION
+[ERC20 Contract API] [2025-05-21 13:17:37] [INFO] - STARTING API
+[ERC20 Contract API] [2025-05-21 13:17:37] [INFO] - Express server running on port 3000...
+[ERC20 Contract API] [2025-05-21 14:06:27] [INFO] - POST /createIndividualAccountRetry
+[ERC20 Contract API] [2025-05-21 14:06:27] [INFO] - INITIALIZING SERVICES
+[ERC20 Contract API] [2025-05-21 14:06:27] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 14:06:27] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 14:06:27] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 14:06:27] [ERROR] - TypeError: Cannot read properties of undefined (reading '')
+[ERC20 Contract API] [2025-05-21 14:06:50] [INFO] - POST /createIndividualAccountRetry
+[ERC20 Contract API] [2025-05-21 14:06:50] [INFO] - INITIALIZING SERVICES
+[ERC20 Contract API] [2025-05-21 14:06:50] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 14:06:50] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 14:06:50] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 14:06:50] [ERROR] - TypeError: Cannot read properties of undefined (reading '')
+[ERC20 Contract API] [2025-05-21 14:07:16] [INFO] - POST /createIndividualAccountRetry
+[ERC20 Contract API] [2025-05-21 14:07:16] [INFO] - INITIALIZING SERVICES
+[ERC20 Contract API] [2025-05-21 14:07:16] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 14:07:16] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 14:07:16] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 14:07:16] [ERROR] - TypeError: Cannot read properties of undefined (reading '')
+[ERC20 Contract API] [2025-05-21 14:07:20] [INFO] - POST /createIndividualAccountRetry
+[ERC20 Contract API] [2025-05-21 14:07:20] [INFO] - INITIALIZING SERVICES
+[ERC20 Contract API] [2025-05-21 14:07:20] [INFO] - Loading contract file from ./contracts.json...
+[ERC20 Contract API] [2025-05-21 14:07:20] [INFO] - Loading 7 contracts...
+[ERC20 Contract API] [2025-05-21 14:07:20] [INFO] - Loaded 7 contracts successfully.
+[ERC20 Contract API] [2025-05-21 14:07:20] [ERROR] - TypeError: Cannot read properties of undefined (reading '')
+>>>>>>> origin/dev
+=======
 [ERC20 Contract API] [2025-05-29 11:56:04] [INFO] - INITIALIZING CONTROLLERS
 [Default] [2025-05-29 11:56:04] [INFO] - STARTING APPLICATION
 [ERC20 Contract API] [2025-05-29 11:56:04] [INFO] - STARTING API EXPOSITION
@@ -539,3 +737,4 @@
 [ERC20 Contract API] [2025-05-29 13:13:38] [INFO] - Start  ---    UNLOCK
 [ERC20 Contract API] [2025-05-29 13:13:38] [INFO] - sin calculo de gas 
 [ERC20 Contract API] [2025-05-29 13:13:38] [INFO] - Waiting for confirmations
+>>>>>>> origin/dev

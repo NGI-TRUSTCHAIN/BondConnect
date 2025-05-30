@@ -31,7 +31,17 @@ const SignIn = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     console.log(userProfile);
-    const {message, user} = await dispatch(login({profile:userProfile, email, password})).unwrap()
+    let  message, user = undefined
+    if (userProfile === 'issuer' || userProfile === 'investor') {
+      ({message, user} = await dispatch(login({profile:userProfile, email, password})).unwrap())
+    } else if (userProfile === 'admin') {
+      if (email === 'admin' && password === '123456') {
+        navigate('/admin-dash')
+      } else {
+        message = 'Invalid credentials'
+      }
+    }
+
     toast.success(message, {
       position: "top-right",
       autoClose: 3000,
@@ -79,6 +89,20 @@ const SignIn = () => {
               />
               <label className="form-check-label" htmlFor="issuer">
                 Issuer
+              </label>
+            </div>
+            <div className="form-check mr-4" style={{ marginRight: "20px", marginLeft: "20px" }}>
+              <input
+                type="radio"
+                id="admin"
+                name="userProfile"
+                value="admin"
+                className="form-check-input"
+                checked={userProfile === "admin"}
+                onChange={(e) => setUserProfile(e.target.value)}
+              />
+              <label className="form-check-label" htmlFor="admin">
+                Admin
               </label>
             </div>
           </div>

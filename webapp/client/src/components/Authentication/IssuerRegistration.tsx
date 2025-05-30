@@ -16,6 +16,8 @@ export interface Issuer {
   idCard: string;
   email: string;
   password: string;
+  walletAddress: string;
+  accounts: any;
 }
 
 type Props = {
@@ -33,6 +35,7 @@ const IssuerRegistration: React.FC<Props> = ({ investor = false }) => {
   const [confimPass, setConfirmPass] = useState("");
   const [errorPass, setErrorPass] = useState(false);
   const [user, setUser] = useState<Issuer | Investor | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const error = useAppSelector((state) => state.user.error)
   const [issuer, setIssuer] = useState<Issuer>({
     _id: undefined,
@@ -45,6 +48,8 @@ const IssuerRegistration: React.FC<Props> = ({ investor = false }) => {
     idCard: "",
     email: "",
     password: "",
+    walletAddress: "",
+    accounts: {},
   });
 
 
@@ -94,182 +99,215 @@ const IssuerRegistration: React.FC<Props> = ({ investor = false }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     if (pass !== "" && confimPass !== "") {
       if (pass === confimPass) {
         console.log(issuer, investor);
         setErrorPass(false);
-        if (investor) {
-          const user = await dispatch(registerInvestor({ investor: issuer, particular: false })).unwrap()
-          setUser(user);
-        } else {
-          const user = await dispatch(registerIssuer(issuer)).unwrap()
-          setUser(user);
+        try {
+          if (investor) {
+            const user = await dispatch(registerInvestor({ investor: issuer, particular: false })).unwrap()
+            setUser(user);
+          } else {
+            const user = await dispatch(registerIssuer(issuer)).unwrap()
+            setUser(user);
+          }
+        } catch (error) {
+          console.error("Error en el registro:", error);
+        } finally {
+          setIsLoading(false);
         }
       } else {
         console.log("Data not ok", "Password don't match");
         setErrorPass(true);
+        setIsLoading(false);
       }
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="container row mt-4" style={{ textAlign: "left" }}>
-      <h2 className="text-primary mb-4" style={{ textAlign: "center" }}>
-        ISSUER REGISTRATION
-      </h2>
+    <>
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div className="text-center">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="mt-2">Creating account...</p>
+          </div>
+        </div>
+      )}
+      <form onSubmit={handleSubmit} className="container row mt-4" style={{ textAlign: "left" }}>
+        <h2 className="text-primary mb-4" style={{ textAlign: "center" }}>
+          ISSUER REGISTRATION
+        </h2>
 
-      <h4 className="text-primary mt-4">Entity Information</h4>
-      <div className="col-sm-6 mb-3">
-        <label htmlFor="entityLegalName" className="form-label">
-          Entity Full Legal Name:
-        </label>
-        <input
-          type="text"
-          id="entityLegalName"
-          name="entityLegalName"
-          className="form-control bg-form"
-          placeholder={`Company's name`}
-          onChange={handleData}
-        />
-      </div>
-      <div className="col-sm-6 mb-3">
-        <label htmlFor="taxIdNumber" className="form-label">
-          Tax ID Number:
-        </label>
-        <input
-          type="text"
-          id="taxIdNumber"
-          name="taxIdNumber"
-          className="form-control bg-form"
-          placeholder={`Tax ID Number`}
-          onChange={handleData}
-        />
-      </div>
-      <div className="col-sm-12 mb-3">
-        <label htmlFor="website" className="form-label">
-          Website:
-        </label>
-        <input
-          type="text"
-          id="website"
-          name="website"
-          className="form-control bg-form"
-          placeholder={`Company's website`}
-          onChange={handleData}
-        />
-      </div>
-      <h4 className="text-primary mt-4">Legal representative</h4>
-      <div className="col-sm-4 mb-3">
-        <label htmlFor="name" className="form-label">
-          Name:
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          className="form-control bg-form"
-          placeholder={`Investor's name`}
-          onChange={handleData}
-        />
-      </div>
-      <div className="col-sm-4 mb-3">
-        <label htmlFor="surname" className="form-label">
-          Surname:
-        </label>
-        <input
-          type="text"
-          id="surname"
-          name="surname"
-          className="form-control bg-form"
-          placeholder="Investor's surname"
-          onChange={handleData}
-        />
-      </div>
+        <h4 className="text-primary mt-4">Entity Information</h4>
+        <div className="col-sm-6 mb-3">
+          <label htmlFor="entityLegalName" className="form-label">
+            Entity Full Legal Name:
+          </label>
+          <input
+            type="text"
+            id="entityLegalName"
+            name="entityLegalName"
+            className="form-control bg-form"
+            placeholder={`Company's name`}
+            onChange={handleData}
+          />
+        </div>
+        <div className="col-sm-6 mb-3">
+          <label htmlFor="taxIdNumber" className="form-label">
+            Tax ID Number:
+          </label>
+          <input
+            type="text"
+            id="taxIdNumber"
+            name="taxIdNumber"
+            className="form-control bg-form"
+            placeholder={`Tax ID Number`}
+            onChange={handleData}
+          />
+        </div>
+        <div className="col-sm-12 mb-3">
+          <label htmlFor="website" className="form-label">
+            Website:
+          </label>
+          <input
+            type="text"
+            id="website"
+            name="website"
+            className="form-control bg-form"
+            placeholder={`Company's website`}
+            onChange={handleData}
+          />
+        </div>
+        <h4 className="text-primary mt-4">Legal representative</h4>
+        <div className="col-sm-4 mb-3">
+          <label htmlFor="name" className="form-label">
+            Name:
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            className="form-control bg-form"
+            placeholder={`Investor's name`}
+            onChange={handleData}
+          />
+        </div>
+        <div className="col-sm-4 mb-3">
+          <label htmlFor="surname" className="form-label">
+            Surname:
+          </label>
+          <input
+            type="text"
+            id="surname"
+            name="surname"
+            className="form-control bg-form"
+            placeholder="Investor's surname"
+            onChange={handleData}
+          />
+        </div>
 
-      <div className="col-sm-4 mb-3">
-        <label htmlFor="idCard" className="form-label">
-          ID Card:
-        </label>
-        <input
-          type="text"
-          id="idCard"
-          name="idCard"
-          className="form-control bg-form"
-          placeholder="ID Card"
-          onChange={handleData}
-        />
-      </div>
-      <div className="col-sm-6 mb-3">
-        <label htmlFor="country" className="form-label">
-          Country:
-        </label>
-        <select id="country" name="country" value={issuer.country} onChange={handleSelectData} className="form-control">
-          <option value="" disabled hidden>
-            Selecciona un país
-          </option>
-          {europeanCountries.map((country, index) => (
-            <option key={index} value={country}>
-              {country}
+        <div className="col-sm-4 mb-3">
+          <label htmlFor="idCard" className="form-label">
+            ID Card:
+          </label>
+          <input
+            type="text"
+            id="idCard"
+            name="idCard"
+            className="form-control bg-form"
+            placeholder="ID Card"
+            onChange={handleData}
+          />
+        </div>
+        <div className="col-sm-6 mb-3">
+          <label htmlFor="country" className="form-label">
+            Country:
+          </label>
+          <select id="country" name="country" value={issuer.country} onChange={handleSelectData} className="form-control">
+            <option value="" disabled hidden>
+              Selecciona un país
             </option>
-          ))}
-        </select>
-      </div>
-      <div className="col-sm mb-3">
-        <label htmlFor="email" className="form-label">
-          Email:
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          className="form-control bg-form"
-          placeholder="Email"
-          onChange={handleData}
-        />
-      </div>
+            {europeanCountries.map((country, index) => (
+              <option key={index} value={country}>
+                {country}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="col-sm mb-3">
+          <label htmlFor="email" className="form-label">
+            Email:
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            className="form-control bg-form"
+            placeholder="Email"
+            onChange={handleData}
+          />
+        </div>
 
-      <div className="col-sm-6 mb-3">
-        <label htmlFor="password" className="form-label">
-          Password:
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          className="form-control bg-form"
-          placeholder="Password"
-          value={pass}
-          onChange={(e) => setPass(e.target.value)}
-        />
-      </div>
-      <div className="col-sm-6 mb-3">
-        <label htmlFor="password" className="form-label">
-          Confirm Password:
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          className="form-control bg-form"
-          placeholder="Confirm password"
-          value={confimPass}
-          onChange={(e) => setConfirmPass(e.target.value)}
-        />
-      </div>
-      {errorPass && <p className="text-danger">Password doesn't match</p>}
-      <div className="container-md row m-3" style={{ display: "flex", justifyContent: "center", gap: "20px" }}>
-        <button type="submit" className="btn btn-primary col-sm-4" style={{ alignItems: "right" }}>
-          Confirm
-        </button>
-        <button
-          type="button"
-          className="btn btn-primary col-sm-2"
-          onClick={() => navigate("/")}
-          style={{ backgroundColor: "aliceblue", color: "#0d6efd" }}>
-          Cancel
-        </button>
-      </div>
-    </form>
+        <div className="col-sm-6 mb-3">
+          <label htmlFor="password" className="form-label">
+            Password:
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            className="form-control bg-form"
+            placeholder="Password"
+            value={pass}
+            onChange={(e) => setPass(e.target.value)}
+          />
+        </div>
+        <div className="col-sm-6 mb-3">
+          <label htmlFor="password" className="form-label">
+            Confirm Password:
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            className="form-control bg-form"
+            placeholder="Confirm password"
+            value={confimPass}
+            onChange={(e) => setConfirmPass(e.target.value)}
+          />
+        </div>
+        {errorPass && <p className="text-danger">Password doesn't match</p>}
+        <div className="container-md row m-3" style={{ display: "flex", justifyContent: "center", gap: "20px" }}>
+          <button type="submit" className="btn btn-primary col-sm-4" style={{ alignItems: "right" }}>
+            Confirm
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary col-sm-2"
+            onClick={() => navigate("/")}
+            style={{ backgroundColor: "aliceblue", color: "#0d6efd" }}>
+            Cancel
+          </button>
+        </div>
+      </form>
+    </>
   );
 };
 

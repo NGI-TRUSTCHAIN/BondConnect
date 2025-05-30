@@ -24,12 +24,20 @@ const BlockchainTransfer = () => {
   });
 
   const handleData = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target; // Extract name and value from the event
-    //setFormData({ ...formData, [name]: value }); // Update state dynamically
-    setTransferData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    const { name, value } = e.target;
+    
+    // Special handling for tokenNumber to ensure it's converted to a number
+    if (name === 'tokenNumber') {
+      setTransferData((prevData) => ({
+        ...prevData,
+        [name]: value === '' ? undefined : Number(value),
+      }));
+    } else {
+      setTransferData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   // const [token, setToken] = useState("");
@@ -45,29 +53,35 @@ const BlockchainTransfer = () => {
   // const transferHistory = useAppSelector((state) => state.bond.transferHistory);
   const error = useAppSelector((state) => state.bond.error);
   const [showPopup, setShowPopup] = useState(false);
-  const blockchains = ["Ethereum", "Alastria", "Binance Smart Chain", "Polygon"];
+  const blockchains = ["ALASTRIA", "AMOY"];
+  const userLoged = useAppSelector((state) => state.user.userLoged);
+  const userId = userLoged?._id;
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // State for success/error modal
+  const [transactionDetails, setTransactionDetails] = useState<any>(null); // State for transaction details
+  const [requestResult, setRequestResult] = useState<any>(null); // State for request result
 
   useEffect(() => {
     document.title = "Blockchain Transfer";
-    dispatch(readBonds());
-    dispatch(readTransferHistory());
+    dispatch(readBonds(userId || ""));
+    // dispatch(readTransferHistory());
     console.log("Dispatched fetchBonds");
   }, [dispatch]);
 
   useEffect(() => {
     if (transferData.tokenName) {
       console.log(`Input value changed: ${transferData.tokenName}`);
-      const bond = registeredBonds?.find((bond) => bond.bondName === transferData.tokenName) || null;
+      const bond = registeredBonds?.find((bond) => bond._id === transferData.tokenName) || null;
       setSelectedBond(bond);
-      console.log(selectedBond);
-      selectedBond?.tokenState.forEach((block) => {
+      console.log('Selected bond:', bond);
+      bond?.tokenState.forEach((block) => {
         if (block.blockchain === transferData.originBlockchain) {
           setTokensLeft(block.amount);
+          console.log('Tokens left:', block.amount);
         }
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transferData.tokenName, transferData.originBlockchain, selectedBond]);
+  }, [transferData.tokenName, transferData.originBlockchain, registeredBonds]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission behavior
@@ -87,42 +101,57 @@ const BlockchainTransfer = () => {
 
   // Handle the actual form submission or any action when "Create bond" is clicked
   const handleConfirmSubmit = async () => {
-    // console.log("Bond Created:", { token, number, destination, wallet });
-
+    setIsLoading(true);
     const bond = JSON.parse(JSON.stringify(selectedBond));
 
-    bond.tokenState.forEach((block: TokenState) => {
-      if (block.blockchain === transferData.originBlockchain) {
-        block.amount = block.amount - transferData.tokenNumber!;
-      }
-    });
-
-    console.log(bond);
-    const transferBlock: TokenState = bond.tokenState.find(
-      (block: TokenState) => block.blockchain === transferData.destinationBlockchain
-    );
+    const transferBlock: TokenState = bond.tokenState.find((block: TokenState) => block.blockchain === transferData.destinationBlockchain);
 
     if (!transferBlock) {
       bond.tokenState!.push({ blockchain: transferData.destinationBlockchain, amount: transferData.tokenNumber! });
     } else {
       transferBlock.amount += Number(transferData.tokenNumber!);
     }
-
     console.log(bond);
 
     try {
       console.log("transferData: ", transferData);
-      await dispatch(updateBond(bond)).unwrap();
-      await dispatch(createTransferHistoric(transferData)).unwrap();
-      toast.success("Success");
+      const result = await dispatch(createTransferHistoric(transferData));
+      if (result.meta.requestStatus === 'fulfilled') {
+        setRequestResult(result);
+        setTransactionDetails(result.payload); // Guardar los detalles de la transacción
+        setShowSuccessModal(true); // Mostrar el modal de éxito
+        toast.success("Success");
+      } else {
+        setTransactionDetails(result.payload); // Guardar los detalles del error
+        setShowSuccessModal(true); // Mostrar el modal de error
+        toast.error(`Failed to transfer tokens. Please try again.\n ${result.payload}`);
+      }
     } catch (error) {
-      toast.error(`Failed to create bond. Please try again.\n ${error}`);
+      setTransactionDetails(error); // Guardar el error
+      setShowSuccessModal(true); // Mostrar el modal de error
+      toast.error(`Failed to transfer tokens. Please try again.\n ${error}`);
     } finally {
-      setShowPopup(false); // Close the popup
-      // navigate('/')
+      setIsLoading(false);
+      setShowPopup(false);
     }
-    // Handle bond creation logic (e.g., API call)
-    setShowPopup(false); // Close the pop-up after the action is confirmed
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    navigate('/issuer-dash');
+  };
+
+  const getPrefixedTrx = (network: string, trx: string) => {
+    console.log("network: ", network);
+    console.log("trx: ", trx);
+    switch (network) {
+      case 'ALASTRIA':
+        return `https://b-network.alastria.izer.tech/tx/${trx}`;
+      case 'AMOY':
+        return `https://amoy.polygonscan.com/tx/${trx}`;
+      default:
+        return trx; // Sin prefijo si no coincide
+    }
   };
 
   return (
@@ -209,7 +238,7 @@ const BlockchainTransfer = () => {
 
                       return (
                         isBlockchainMatch && (
-                          <option key={bond._id} value={bond.bondName}>
+                          <option key={bond._id} value={bond._id}>
                             {bond.bondName}
                           </option>
                         )
@@ -229,6 +258,7 @@ const BlockchainTransfer = () => {
                   name="tokenNumber"
                   className="form-control bg-form"
                   placeholder={`${tokensLeft} available`}
+                  value={transferData.tokenNumber}
                   onChange={handleData}
                 />
               </div>
@@ -260,15 +290,55 @@ const BlockchainTransfer = () => {
               </h2>
               <h3 style={{ textAlign: "left" }}>Origin: {transferData.originBlockchain}</h3>
               <h3 style={{ textAlign: "left" }}>Destination: {transferData.destinationBlockchain}</h3>
-              <h3 style={{ textAlign: "left" }}>Token: {transferData.tokenName}</h3>
+              <h3 style={{ textAlign: "left" }}>Token: {transferData?.tokenName}</h3>
               <h3 style={{ textAlign: "left" }}>Number: {transferData.tokenNumber}</h3>
 
               <div className="popup-actions">
-                <button className="btn btn-primary" onClick={handleConfirmSubmit}>
-                  Confirm trasaction
+                <button className="btn btn-primary" onClick={handleConfirmSubmit} disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Processing...
+                    </>
+                  ) : (
+                    'Confirm transaction'
+                  )}
                 </button>
-                <button className="btn btn-secondary" onClick={handleClosePopup}>
+                <button className="btn btn-secondary" onClick={handleClosePopup} disabled={isLoading}>
                   Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {showSuccessModal && (
+          <div className="popup-overlay">
+            <div className="popup" style={{ width: '600px' }}>
+              <h2 className="text-success mb-4" style={{ textAlign: "center" }}>
+                {requestResult?.meta?.requestStatus === 'rejected' ? 'Transfer Error!' : 'Successful Transfer!'}
+              </h2>
+              <div className="purchase-details mb-4">
+                {requestResult?.meta?.requestStatus === 'rejected' ? (
+                  <div className="alert alert-danger" role="alert">
+                    {JSON.stringify(transactionDetails, null, 2)}
+                  </div>
+                ) : (
+                  <>
+                    <h4 className="text-primary mb-3">Transaction Details:</h4>
+                    <ul className="list-unstyled">
+                      <li className="mb-3">
+                        <strong>Transaction:</strong>
+                        <div className="text-break" style={{ wordBreak: 'break-all' }}>
+                          <a href={getPrefixedTrx(transferData.destinationBlockchain, transactionDetails.trx)} target="_blank" rel="noopener noreferrer">{transactionDetails.trx}</a>
+                        </div>
+                      </li>
+                    </ul>
+                  </>
+                )}
+              </div>
+              <div className="popup-actions mt-5" style={{ textAlign: "center" }}>
+                <button className="btn btn-success" onClick={handleCloseSuccessModal}>
+                  Continue
                 </button>
               </div>
             </div>

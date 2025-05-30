@@ -1,7 +1,24 @@
-import mongoose from "mongoose";
+import mongoose, { Types, Document } from "mongoose";
 import bcrypt from 'bcryptjs';
 
 const SALT_ROUNDS = 10; // Número de rondas de hashing
+
+export interface IIssuer extends Document {
+  _id: Types.ObjectId;
+  entityLegalName: string;
+  taxIdNumber: string;
+  website: string;
+  name: string;
+  surname: string;
+  country: string;
+  idCard: string;
+  email: string;
+  password: string;
+  walletAddress?: string;
+  accounts?: any;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 const IssuerSchema = new mongoose.Schema({
   entityLegalName: { type: String, required: true },
@@ -13,6 +30,8 @@ const IssuerSchema = new mongoose.Schema({
   idCard: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true, minlength: 6 },
+  walletAddress: { type: String, required: false },
+  accounts: { type: Object, required: false },
 }, { timestamps: true });
 
 
@@ -41,5 +60,6 @@ export const IssuerModel = mongoose.model("Issuer", IssuerSchema);
 export const getIssuers = () => IssuerModel.find();
 export const getIssuerById = (id: string) => IssuerModel.findById(id);
 export const getIssuerByEmail = (email: string) => IssuerModel.findOne({email});
-export const createIssuer = (values: Record<string, any>) => new IssuerModel(values).save();
+export const createIssuer = (values: Record<string, any>): Promise<IIssuer> => new IssuerModel(values).save();
 export const deleteIssuerById = (id: string) => IssuerModel.findOneAndDelete({ _id: id });
+export const updateIssuerById = (id: string, update: Partial<IIssuer>) =>IssuerModel.findByIdAndUpdate(id, update, { new: true });

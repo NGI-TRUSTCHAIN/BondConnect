@@ -14,9 +14,10 @@ import IssuerIndex from "./components/issuer/IssuerIndex";
 import Oportunities from "./components/investor/Oportunities";
 import BondDetails from "./components/investor/BondDetails";
 import ManageBonds from "./components/issuer/ManageBonds";
-import UserRegistration from "./components/UserRegistration";
+import BuyToken from "./components/issuer/BuyToken";
 import RetailMarket from "./components/issuer/RetailMarket";
 import InvestmentWallet from "./components/investor/InvestmentWallet";
+import Admin from "./admin/Admin";
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
       <Route path="/form" element={<FormBondCreationC />} />
       <Route path="/manage-bonds" element={<ManageBonds />} />
       <Route path="/add-to-market" element={<RetailMarket />} />
-      <Route path="/investor-registration" element={<UserRegistration />} />
+      <Route path="/investor-registration" element={<BuyToken />} />
       <Route path="/holder-list" element={<HolderList />} />
       <Route path="/transfer" element={<BlockchainTransfer />} />
       <Route path="/management-menu" element={<EnterpriseWallet />} />
@@ -38,6 +39,7 @@ function App() {
       <Route path="/investor-dash" element={<Oportunities />} />
       <Route path="/investor-wallet" element={<InvestmentWallet />} />
       <Route path="/bond-details/:id" element={<BondDetails />} />
+      <Route path="/admin-dash" element={<Admin />} />
     </Routes>
   );
 }

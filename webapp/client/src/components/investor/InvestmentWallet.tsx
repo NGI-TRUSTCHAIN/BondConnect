@@ -1,16 +1,43 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { readBonds } from "../../features/bondSlice";
+import { getInvestorWalletData, getFaucetBalance } from "../../features/userSlice";
 import { PaymentRecord } from "../issuer/EnterpriseWallet";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { generatePaymentRecords } from "../../utils";
+import { getTokenListAndUpcomingPaymentsByInvestor } from "../../features/bondSlice";
 
 const InvestmentWallet: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const bonds = useAppSelector((state) => state.bond.bonds);
+  const user = useAppSelector((state) => state.user.userLoged);
+  const userId = user?._id;
   const [record, setRecord] = useState<PaymentRecord[]>([]);
+  // const [walletData, setWalletData] = useState(null);
+  const [balanceData, setBalanceData] = useState(null);
   const [clipboardCopy, setClipboardCopy] = useState("");
+  const wallet = user?.walletAddress;
+  const tokenList = useAppSelector((state) => state.bond.tokenList);
+  const upcomingPayment = useAppSelector((state) => state.bond.upcomingPayment);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+  const priceTotal = tokenList?.reduce((acc, token) => {
+    if (!acc[token.network]) {
+      acc[token.network] = [];
+    }
+    acc[token.network].push(token.amountAvaliable || 0);
+    return acc;
+  }, {} as Record<string, number[]>);
+
+  // Calcular suma por red
+  const sumByNetwork = priceTotal ? Object.entries(priceTotal).reduce((acc, [network, values]) => {
+    acc[network] = values.reduce((sum, value) => sum + value, 0);
+    return acc;
+  }, {} as Record<string, number>) : {};
+
+  // Calcular total general
+  const totalSum = Object.values(sumByNetwork).reduce((sum, value) => sum + value, 0);
 
   const handleCopy = (e: React.MouseEvent<HTMLParagraphElement>) => {
     setClipboardCopy(e.currentTarget.innerText);
@@ -19,15 +46,39 @@ const InvestmentWallet: React.FC = () => {
   };
 
   useEffect(() => {
-    dispatch(readBonds());
-    console.log(bonds);
-  }, [bonds, dispatch]);
+    dispatch(getTokenListAndUpcomingPaymentsByInvestor(userId || ""))
+      .then(() => {
+        setIsDataLoaded(true);
+      });
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(readBonds(userId || ""));
+    
+    const fetchData = async () => {
+      try {
+        console.log(userId + " USER ID");
+        // const data = await dispatch(getInvestorWalletData(userId || "")).unwrap();
+        // setWalletData(data);
+        console.log(user?.walletAddress + " WALLET DATA");
+
+          const dataFaucet = await dispatch(getFaucetBalance(user?.walletAddress!)).unwrap();
+          console.log(dataFaucet + " BALANCE");
+          setBalanceData(dataFaucet);
+        
+      } catch (error) {
+        console.error('Error fetching wallet data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const rec = generatePaymentRecords(bonds!);
     setRecord(rec);
     console.log(record);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -36,44 +87,46 @@ const InvestmentWallet: React.FC = () => {
       <h3 className="section-title">Your Wallet Address:</h3>
       <div className="wallet-address col-12">
         <p id="copyLabel" className="copy-label" onClick={handleCopy}>
-          Wallet address
-          <img src="/src/clip.png" id="copyButton" className="copy-button" />
+          {wallet}
+          <img src="/images/clip.png" id="copyButton" className="copy-button" />
         </p>
       </div>
-
-      <div>
-        <h3 className="section-title mt-4">Account Balance:</h3>
-        <strong>Total Available Balance:</strong> 50.000€
+      {!isDataLoaded ? (
+        <div className="d-flex justify-content-center" style={{ width: '100%', margin: '0 0 400px 0' }}>
+          <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}>
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      ) : (
+      <>
+        <div>
+          <h3 className="section-title mt-4">Account Balance:</h3>
+          <strong>Total Available Balance:</strong> {balanceData}
       </div>
+      <div className="collapse" id="balance-collapse">
+          <ul>
+            <li>
+              <strong>Alastria:</strong> {sumByNetwork.ALASTRIA}
+            </li>
+            <li>
+              <strong>Amoy:</strong> {sumByNetwork.AMOY}
+            </li>
+          </ul>
+        </div>
 
       <h3 className="section-title mt-4">Token List:</h3>
-      {bonds?.map((bond) => (
-        <Fragment key={bond._id}>
-          <h4
-            data-bs-toggle="collapse"
-            data-bs-target={`#tokens-collapse-${bond._id}`}
-            role="button"
-            aria-expanded="false"
-            aria-controls={`tokens-collapse-${bond._id}`}>
-            <strong>{bond.bondName} Tokens in circulation:</strong> {bond.numberTokens}
-          </h4>
-          <div className="collapse" id={`tokens-collapse-${bond._id}`}>
-            <ul>
-              {bond.tokenState.map((block) => (
-                <li key={`${bond._id}-${block.blockchain}`}>
-                  <strong>{block.blockchain}:</strong> {block.amount}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Fragment>
+      {tokenList?.map((token) => (
+        <div key={token.bondName} className="mb-2">
+          <strong>"{token.bondName}" Token holdings:</strong> {token.amountAvaliable}
+        </div>
       ))}
 
       <h3 className="section-title mt-4">Upcoming payments</h3>
-      <table
-        border={1}
-        style={{ borderCollapse: "collapse", width: "100%", textAlign: "center", backgroundColor: "#d9e8fc" }}>
-        <thead style={{ backgroundColor: "#7ba6e9", color: "white" }}>
+      {upcomingPayment && upcomingPayment.length > 0 ? (
+        <table
+          border={1}
+          style={{ borderCollapse: "collapse", width: "100%", textAlign: "center", backgroundColor: "#d9e8fc" }}>
+          <thead style={{ backgroundColor: "#7ba6e9", color: "white" }}>
           <tr>
             <th>Bond Name</th>
             <th>Payment Date</th>
@@ -81,15 +134,18 @@ const InvestmentWallet: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {record?.map((bond, index) => (
+          {upcomingPayment?.map((bond, index) => (
             <tr key={index}>
               <td>{bond.bondName}</td>
               <td>{bond.paymentDate}</td>
-              <td>{bond.amount}</td>
+              <td>{bond.paymentAmount}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      ) : (
+        <p>No upcoming payments available</p>
+      )}
       <div className="position-absolute top-0 end-0 m-3" style={{ display: "flex", justifyContent: "end" }}>
         <button
           type="button"
@@ -99,6 +155,8 @@ const InvestmentWallet: React.FC = () => {
           Cancel
         </button>
       </div>
+      </>
+      )}
     </div>
   );
 };

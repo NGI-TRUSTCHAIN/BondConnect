@@ -1,5 +1,5 @@
 SERVICE_NAME: ERC20 Contract API
-PORT: 3000
+PORT: 4000
 CONTRACTS_FILE: ./contracts.json
 CONTRACT:
   NAME: AccountFactory
