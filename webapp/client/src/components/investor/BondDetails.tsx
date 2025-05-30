@@ -126,6 +126,19 @@ const BondDetails = () => {
     navigate("/investor-dash");
   };
 
+  const getPrefixedTrx = (network: string, trx: string) => {
+    console.log("network: ", network);
+    console.log("trx: ", trx);
+    switch (network) {
+      case 'ALASTRIA':
+        return `https://b-network.alastria.izer.tech/tx/${trx}`;
+      case 'AMOY':
+        return `https://amoy.polygonscan.com/tx/${trx}`;
+      default:
+        return trx; // Sin prefijo si no coincide
+    }
+  };
+
   return (
     <div className="container d-flex justify-content-center" style={{ width: "140vh" }}>
       <style>
@@ -400,13 +413,13 @@ const BondDetails = () => {
                       <li className="mb-3">
                         <strong>Stable:</strong> 
                         <div className="text-break" style={{ wordBreak: 'break-all' }}>
-                          {transactionDetails?.stable}
+                          <a href={getPrefixedTrx(purchaseDetails.destinationBlockchain, transactionDetails.stable)} target="_blank" rel="noopener noreferrer">{transactionDetails.stable}</a>
                         </div>
                       </li>
                       <li className="mb-3">
                         <strong>Transfer:</strong>
                         <div className="text-break" style={{ wordBreak: 'break-all' }}>
-                          {transactionDetails?.transfer}
+                          <a href={getPrefixedTrx(purchaseDetails.destinationBlockchain, transactionDetails.transfer)} target="_blank" rel="noopener noreferrer">{transactionDetails.transfer}</a>
                         </div>
                       </li>
                     </ul>

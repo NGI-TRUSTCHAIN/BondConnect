@@ -141,6 +141,19 @@ const BlockchainTransfer = () => {
     navigate('/issuer-dash');
   };
 
+  const getPrefixedTrx = (network: string, trx: string) => {
+    console.log("network: ", network);
+    console.log("trx: ", trx);
+    switch (network) {
+      case 'ALASTRIA':
+        return `https://b-network.alastria.izer.tech/tx/${trx}`;
+      case 'AMOY':
+        return `https://amoy.polygonscan.com/tx/${trx}`;
+      default:
+        return trx; // Sin prefijo si no coincide
+    }
+  };
+
   return (
     <div className="container-fluid mt-3 d-flex justify-content-center align-items-center">
       <div className="card mt-3" style={{ width: "75%" }}>
@@ -316,7 +329,7 @@ const BlockchainTransfer = () => {
                       <li className="mb-3">
                         <strong>Transaction:</strong>
                         <div className="text-break" style={{ wordBreak: 'break-all' }}>
-                          {transactionDetails?.trx}
+                          <a href={getPrefixedTrx(transferData.destinationBlockchain, transactionDetails.trx)} target="_blank" rel="noopener noreferrer">{transactionDetails.trx}</a>
                         </div>
                       </li>
                     </ul>
