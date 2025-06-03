@@ -14,7 +14,6 @@ const Admin = () => {
   const [address, setAddress] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [showBalanceModal, setShowBalanceModal] = useState(false);
-  const [balanceResponse, setBalanceResponse] = useState<any>(null);
 
   useEffect(() => {
     dispatch(getTrxSuccess());
@@ -32,17 +31,7 @@ const Admin = () => {
   }
 
   const handleGetBalance = async () => {
-    try {
-      const response = await dispatch(getFaucetBalance(address));
-      if (response.payload) {
-        setBalanceResponse(response);
-        setShowBalanceModal(true);
-      } else {
-        console.log("Error al obtener balance");
-      }
-    } catch (error) {
-      console.error("Error en handleGetBalance:", error);
-    }
+    setShowBalanceModal(true); 
   };
 
   const getPrefixedTrx = (network: string, trx: string) => {
