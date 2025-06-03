@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { getTrxSuccess, getTrxError } from "../features/adminSlice";
-import { Container, Form, Button, Dropdown } from 'react-bootstrap';
-import { faucetStable } from "../features/userSlice";
+import { Container, Form, Button, Dropdown, Modal } from 'react-bootstrap';
+import { faucetStable, getFaucetBalance } from "../features/userSlice";
 import { useNavigate } from "react-router-dom";
 
 const Admin = () => {
@@ -13,6 +13,8 @@ const Admin = () => {
   const [searchUserId, setSearchUserId] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
+  const [showBalanceModal, setShowBalanceModal] = useState(false);
+  const [balanceResponse, setBalanceResponse] = useState<any>(null);
 
   useEffect(() => {
     dispatch(getTrxSuccess());
@@ -28,6 +30,20 @@ const Admin = () => {
       console.log("Faucet fallido");
     }
   }
+
+  const handleGetBalance = async () => {
+    try {
+      const response = await dispatch(getFaucetBalance(address));
+      if (response.payload) {
+        setBalanceResponse(response);
+        setShowBalanceModal(true);
+      } else {
+        console.log("Error al obtener balance");
+      }
+    } catch (error) {
+      console.error("Error en handleGetBalance:", error);
+    }
+  };
 
   const getPrefixedTrx = (network: string, trx: string) => {
     switch (network) {
@@ -72,6 +88,9 @@ const Admin = () => {
             </Form>
           </div>
           <div className="col-md-6 text-end">
+            <Button variant="success" className="me-2" onClick={handleGetBalance}>
+              Balance
+            </Button>
             <Button variant="primary" onClick={() => navigate("/")}>
               Log out
             </Button>
@@ -218,6 +237,40 @@ const Admin = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal para mostrar el balance */}
+      <Modal show={showBalanceModal} onHide={() => setShowBalanceModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Check Balance of Amoy Networks</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Address</th>
+                  <th>Network</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="https://www.oklink.com/es-la/amoy/address/0x0480927822ba8f929d448b7ec30e65eb4a986983" target="_blank" rel="noopener noreferrer">0x0480927822ba8f929d448b7ec30e65eb4a986983</a></td>
+                  <td>AMOY</td>
+                </tr>
+                <tr>
+                  <td><a href="https://www.oklink.com/es-la/amoy/address/0x86df4b738d592c31f4a9a657d6c8d6d05dc1d462" target="_blank" rel="noopener noreferrer">0x86df4b738d592c31f4a9a657d6c8d6d05dc1d462</a></td>
+                  <td>AMOY</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowBalanceModal(false)}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
