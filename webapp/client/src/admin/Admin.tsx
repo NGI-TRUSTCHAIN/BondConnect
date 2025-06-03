@@ -78,7 +78,7 @@ const Admin = () => {
           </div>
           <div className="col-12 col-md-6 text-end mb-3">
             <Button variant="success" className="me-2" onClick={handleGetBalance}>
-              Balance
+              Check admin amoy balance
             </Button>
             <Button variant="primary" onClick={() => navigate("/")}>
               Log out
