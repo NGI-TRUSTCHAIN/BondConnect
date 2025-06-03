@@ -143,6 +143,10 @@ export const registerInvestor = async (req: express.Request, res: express.Respon
           error
         );
       }
+      console.log('Error BlockchainAcc', error)
+      res.status(500).json({ error: "Error al crear cuenta en blockchain", message: error.message });
+      await deleteInvestorById(foundInvestorId);
+      return
       throw error; // Lanza el error para que sea manejado en el catch principal
     }
 

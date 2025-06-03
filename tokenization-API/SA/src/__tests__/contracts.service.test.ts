@@ -26,15 +26,18 @@ describe('contracts.service', () => {
     contracts = {
       'ERC20MintableAndBurnable': {
         abi: [], // Add the actual ABI here
+        // @ts-ignore
         bytecode: '0x'
       }
     };
     config = {
       NETWORK: {
+        // @ts-ignore
         WALLET_PRIV_KEY: `0x5b3244868464b97618e1545555f5ce5e443ad09dafb72c560a3d8018e1c2b2b3`,
         URL: `http://63.33.55.29/?apikey=018fb8ff-36a1-74ea-9620-3b130fd23d67`
       }
     };
+    // @ts-ignore
     initContractsService(logger, contracts, config);
   });
 
@@ -54,6 +57,7 @@ describe('contracts.service', () => {
       const contractInstance = {
         getDeployedCode: jest.fn().mockResolvedValue('0x')
       };
+      // @ts-ignore
       ethers.Contract.mockImplementation(() => contractInstance);
 
       const instance = await getContractInstance('ERC20MintableAndBurnable', '0x123');
@@ -64,6 +68,7 @@ describe('contracts.service', () => {
       const contractInstance = {
         getDeployedCode: jest.fn().mockResolvedValue(null)
       };
+      // @ts-ignore
       ethers.Contract.mockImplementation(() => contractInstance);
 
       await expect(getContractInstance('ERC20MintableAndBurnable', '0x123')).rejects.toThrow(ContractInstanceNotFoundException);
@@ -77,6 +82,7 @@ describe('contracts.service', () => {
           getFragment: jest.fn().mockReturnValue({ name: 'mint', inputs: [] })
         })
       };
+      // @ts-ignore
       jest.spyOn(ethers, 'Contract').mockImplementation(() => contractInstance);
 
       const method = await getContractMethod('ERC20MintableAndBurnable', '0x123', 'mint', []);
@@ -87,6 +93,7 @@ describe('contracts.service', () => {
       const contractInstance = {
         getFunction: jest.fn().mockImplementation(() => { throw new Error('Method not found'); })
       };
+      // @ts-ignore
       jest.spyOn(ethers, 'Contract').mockImplementation(() => contractInstance);
 
       await expect(getContractMethod('ERC20MintableAndBurnable', '0x123', 'nonExistentMethod', [])).rejects.toThrow(ContractMethodNotFoundException);
@@ -101,6 +108,7 @@ describe('contracts.service', () => {
         }),
         mint: jest.fn().mockResolvedValue('Minted')
       };
+      // @ts-ignore
       jest.spyOn(ethers, 'Contract').mockImplementation(() => contractInstance);
 
       const result = await callContractMethod('ERC20MintableAndBurnable', '0x123', 'mint', [1000], {});
@@ -116,9 +124,10 @@ describe('contracts.service', () => {
         }),
         burn: jest.fn().mockResolvedValue('Burned')
       };
+      // @ts-ignore
       jest.spyOn(ethers, 'Contract').mockImplementation(() => contractInstance);
 
-      const result = await executeContractMethod('ERC20MintableAndBurnable', '0x123', 'burn', [500], {});
+      const result = await executeContractMethod('ERC20MintableAndBurnable', '0x123', 'burn', [500], {}, '');
       expect(result).toBe('Burned');
     });
   });

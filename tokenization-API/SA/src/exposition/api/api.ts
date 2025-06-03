@@ -10,7 +10,7 @@ import { apiKeyMiddleware } from "../middleware/apiKey.middleware";
 const app: Express = express();
 
 app.use(cors({
-    origin: 'http://localhost:4200',
+    origin: '*',
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'X-API-Key']
 }));
@@ -36,7 +36,7 @@ export default async function startApi(
 
   logger.info("STARTING API");
   const appPort = config.PORT || 4000;
-  app.listen(appPort);
+  app.listen(appPort, '0.0.0.0');
   logger.info(`Express server running on port ${appPort}...`);
 }
 
