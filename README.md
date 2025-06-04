@@ -7,6 +7,7 @@
 git clone https://github.com/NGI-TRUSTCHAIN/BondConnect.git
 cd BondConnect
 ```
+#### Option 1 - Run in local in the host machine
 
 2. **Create a `.env` file** in the root with the following:
 ```
@@ -39,6 +40,17 @@ cd tokenization-API/SA
 npm start
 ```
 
-## Note
+##### Note
 
 To use your own MongoDB, register at [https://cloud.mongodb.com/](https://cloud.mongodb.com/) and replace the `MONGO_URL` in your `.env`.
+
+#### Option 2 - Run project in Docker Containers
+
+To initiate the BondConnect project and its associated MongoDB database as outlined in the docker-compose file, execute the following command within the project directory using a command console:
+
+```
+docker-compose up --build -d 
+# The --build option is used to construct the Docker images for the BondConnect web application, SA, and ERC20.
+# The -d option enables detached execution, ensuring the command console remains available for further use.
+```
+

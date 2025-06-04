@@ -17,7 +17,7 @@ COPY . .
 RUN npx tsc
 
 # Expone el puerto que la aplicación usará
-EXPOSE 3000
+EXPOSE 4000
 
 # Comando por defecto al iniciar el contenedor
 CMD ["node", "dist/main.js"]
