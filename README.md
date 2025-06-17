@@ -1,6 +1,62 @@
-# BondConnect – Quick Setup Guide
+# BondConnect
 
-## Steps to Run the Project
+### Architecture
+
+![BondConnect Architecture](arquiBonds/Slide1.jpg "BondConnect Architecture")
+
+--------Revisar por que es autogenerado----------
+
+The above image offers a high-level overview of the BondConnect architecture, showcasing the scope of BondConnect and emphasizing the components and APIs mentioned below.
+
+In general, the BondConnect project provides three main components:
+
+- **WebApp**: User interface for platform management and user experience.
+- **API REST (Node.js Servers)**: API for user management, payments, and communication with the blockchain, protected by API Key.
+- **Smart Contracts on Blockchain**: Set of smart contracts deployed for the issuance, management, and operation of bonds and smart accounts.
+
+Each of these components interacts to provide a secure, efficient, and transparent platform for the issuance, management, and marketing of bonds on blockchain technology.
+
+
+
+## **Project Objective**
+
+The objective of the BondConnect project is to create a secure and efficient platform for issuing, managing, and trading bonds. It aims to bridge the gap between traditional finance and blockchain technology, providing a seamless experience for users. By leveraging cutting-edge technology, BondConnect seeks to increase transparency, reduce costs, and enhance the overall bond market ecosystem.
+
+## Project Motivation
+The BondConnect project is motivated by the need to create a secure, efficient, and transparent platform for issuing, managing, and trading bonds. By leveraging blockchain technology, we aim to bridge the gap between traditional finance and the digital world, providing a seamless experience for users and increasing the overall efficiency of the bond market ecosystem.
+
+
+
+## Essential Functionalities
+BondConnect has several defined functionalities that enhance its capabilities. These functionalities are listed below:
+
+- **F1**: Integration of multiple blockchain networks for bond trading.
+- **F2**: User-friendly interface for managing bond issuance and trading.
+- **F3**: Secure transaction processing with built-in cryptographic features.
+- **F4**: Support for various bond types and structures.
+- **F5**: Comprehensive API documentation for developers to facilitate integration.
+- **F6**: Real-time monitoring of bond transactions and market status.
+<!-- - **F7**: Multi-language support for global accessibility.
+- **F8**: Customizable user settings for enhanced user experience.
+- **F9**: Robust error handling and logging mechanisms.
+- **F10**: Community-driven development and support for continuous improvement. -->
+
+
+## Expected Benefits of BondConnect
+BondConnect is designed to bring numerous benefits to the bond market ecosystem. Some of the expected benefits include:
+
+- **E1**: Increased transparency in bond transactions, enabling stakeholders to track and verify transactions in real-time.
+- **E2**: Reduced costs in bond issuance and trading, achieved through the automation of processes and elimination of intermediaries.
+- **E3**: Enhanced security with built-in cryptographic features, protecting transactions and data from unauthorized access.
+- **E4**: Improved market efficiency with real-time monitoring, enabling stakeholders to make informed decisions and respond to market changes.
+- **E5**: Facilitated integration with comprehensive API documentation, allowing developers to easily integrate BondConnect with existing systems.
+
+
+---------------------------- hasta aqui------------------------------
+## Quick Setup Guide
+
+### Steps to Run the Project
+
 
 1. **Clone the repository**:
 ```bash
