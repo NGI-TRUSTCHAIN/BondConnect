@@ -4,8 +4,6 @@
 
 ![BondConnect Architecture](arquiBonds/Slide1.jpg "BondConnect Architecture")
 
---------Revisar por que es autogenerado----------
-
 The above image offers a high-level overview of the BondConnect architecture, showcasing the scope of BondConnect and emphasizing the components and APIs mentioned below.
 
 In general, the BondConnect project provides three main components:
@@ -52,7 +50,6 @@ BondConnect is designed to bring numerous benefits to the bond market ecosystem.
 - **E5**: Facilitated integration with comprehensive API documentation, allowing developers to easily integrate BondConnect with existing systems.
 
 
----------------------------- hasta aqui------------------------------
 ## Quick Setup Guide
 
 ### Steps to Run the Project
