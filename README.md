@@ -34,10 +34,7 @@ BondConnect has several defined functionalities that enhance its capabilities. T
 - **F4**: Support for various bond types and structures.
 - **F5**: Comprehensive API documentation for developers to facilitate integration.
 - **F6**: Real-time monitoring of bond transactions and market status.
-<!-- - **F7**: Multi-language support for global accessibility.
-- **F8**: Customizable user settings for enhanced user experience.
-- **F9**: Robust error handling and logging mechanisms.
-- **F10**: Community-driven development and support for continuous improvement. -->
+
 
 
 ## Expected Benefits of BondConnect
