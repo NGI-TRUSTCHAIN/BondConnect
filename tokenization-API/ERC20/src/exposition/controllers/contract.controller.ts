@@ -72,6 +72,30 @@ export async function executeContractMethodController(req: Request): Promise<App
     }
   }
 }
+/**
+ * @swagger
+ * /createBond:
+ *   post:
+ *     summary: Create a new Bond
+ *     tags: [Bond]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               args:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       201:
+ *         description: Bond create sucessfully
+ */
+
 export async function createBond(req: Request): Promise<AppResult> {
     const contractName: string = "BondFactory";
     const contractAddress: string = config.CONTRACT.ADDRESS_BOND;    
@@ -106,6 +130,28 @@ export async function createBond(req: Request): Promise<AppResult> {
     };
 }
 
+/**
+ * @swagger
+ * /balance:
+ *   post:
+ *     summary: Get the balance of a bond token
+ *     tags: [Bond]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               args:
+ *                 type: array
+ *                 description: [bondAddress, accountAddressOwner, network]
+ *     responses:
+ *       201:
+ *         description: Returns the token balance
+ */
 export async function balance(req: Request): Promise<AppResult> {
   
     const methodName: string = "balanceOf";
@@ -144,7 +190,28 @@ export async function balance(req: Request): Promise<AppResult> {
         }
     }
 }
-
+/**
+ * @swagger
+ * /mintBond:
+ *   post:
+ *     summary: Mint bond tokens
+ *     tags: [Bond]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               args:
+ *                 type: array
+ *                 description: [bondAddress, accountOwnerAddress, amount]
+ *     responses:
+ *       201:
+ *         description: Mint transaction hash
+ */
 export async function mintBond(req: Request): Promise<AppResult> {   
     const contractName: string = "Bond";    
     const methodName: string = "mint";
@@ -175,7 +242,28 @@ export async function mintBond(req: Request): Promise<AppResult> {
         }
     }
 }
-
+/**
+ * @swagger
+ * /bridge:
+ *   post:
+ *     summary: Bridge bond tokens between networks
+ *     tags: [Bond]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               args:
+ *                 type: array
+ *                 description: [bondAddress, accountOwner, amount, tokenName, tokenSymbol, priceToken]
+ *     responses:
+ *       201:
+ *         description: Representative token created and minted on target network
+ */
 export async function bridge(req: Request): Promise<AppResult> {
 
     const contractAddressVault: string = config.CONTRACT.ADDRESS_VAULT;
@@ -287,7 +375,28 @@ export async function bridge(req: Request): Promise<AppResult> {
         }
     } 
 }
-
+/**
+ * @swagger
+ * /requestTransfer:
+ *   post:
+ *     summary: Transfer ERC20 tokens between accounts
+ *     tags: [Transfer]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               args:
+ *                 type: array
+ *                 description: [toAddress, fromAddress, amount, network, contractAddress]
+ *     responses:
+ *       201:
+ *         description: Transfer transaction hash
+ */
 export async function requestTransfer(req: Request): Promise<AppResult> {
  
     const args: any[] = req.body.args || [];
@@ -330,7 +439,28 @@ export async function requestTransfer(req: Request): Promise<AppResult> {
     }
 
 }
-
+/**
+ * @swagger
+ * /burn:
+ *   post:
+ *     summary: Burn representative bond tokens and unlock collateral
+ *     tags: [Bond]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               args:
+ *                 type: array
+ *                 description: [bondRepresentativeAddress, amount, network, companyAddress, bondAddress]
+ *     responses:
+ *       201:
+ *         description: Burn and unlock transaction hash
+ */
 export async function burn(req: Request): Promise<AppResult> {
 
     const args: any[] = req.body.args || [];
@@ -380,7 +510,28 @@ export async function burn(req: Request): Promise<AppResult> {
         }
     }   
 }
-
+/**
+ * @swagger
+ * /faucet:
+ *   post:
+ *     summary: Mint stable coins for testing (faucet)
+ *     tags: [StableCoin]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               args:
+ *                 type: array
+ *                 description: [toAddress, amount]
+ *     responses:
+ *       201:
+ *         description: Faucet mint transaction result
+ */
 export async function faucet(req: Request): Promise<AppResult> {
     const contractName: string = "StableCoin";
     const methodName: string = "mint";
@@ -414,7 +565,28 @@ export async function faucet(req: Request): Promise<AppResult> {
         }
     }
 }
-
+/**
+ * @swagger
+ * /getFaucetBalance:
+ *   post:
+ *     summary: Get faucet stable coin balance of an address
+ *     tags: [StableCoin]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               args:
+ *                 type: array
+ *                 description: [address]
+ *     responses:
+ *       201:
+ *         description: Current stable coin balance
+ */
 export async function getFaucetBalance(req: Request): Promise<AppResult> {
     const contractName: string = "StableCoin";
     const methodName: string = "balanceOf";
@@ -445,7 +617,28 @@ export async function getFaucetBalance(req: Request): Promise<AppResult> {
         }
     }
 }
-
+/**
+ * @swagger
+ * /requestStable:
+ *   post:
+ *     summary: Transfer stable coins between accounts
+ *     tags: [StableCoin]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               args:
+ *                 type: array
+ *                 description: [toAddress, fromAddress, amount]
+ *     responses:
+ *       201:
+ *         description: Stable coin transfer transaction hash
+ */
 export async function requestStable(req: Request): Promise<AppResult> {
 
     const args: any[] = req.body.args || [];

@@ -4,14 +4,14 @@
     "\\tokenization-API",
     "\\tokenization-API\\ERC20",
     "\\tokenization-API\\ERC20\\src",
-    "\\tokenization-API\\ERC20\\src\\bootstrap",
     "\\tokenization-API\\ERC20\\src\\exposition",
-    "\\tokenization-API\\ERC20\\src\\exposition\\api",
-    "\\tokenization-API\\ERC20\\src\\exposition\\controllers",
+    "\\tokenization-API\\ERC20\\src\\exposition\\middleware",
+    "\\tokenization-API\\SA",
     "\\tokenization-API\\SA\\src",
     "\\tokenization-API\\SA\\src\\exposition",
-    "\\tokenization-API\\SA\\src\\exposition\\api"
+    "\\tokenization-API\\SA\\src\\exposition\\controllers",
+    "\\tokenization-API\\SA\\src\\exposition\\middleware"
   ],
-  "SelectedNode": "\\tokenization-API\\ERC20\\.env",
+  "SelectedNode": "\\tokenization-API\\ERC20\\README.md",
   "PreviewInSolutionExplorer": false
 }

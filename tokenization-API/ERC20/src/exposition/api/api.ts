@@ -7,6 +7,9 @@ import Logger from "../../helpers/logger.helper";
 import Config from "../../types/Config.type";
 import { apiKeyMiddleware } from "../middleware/apiKey.middleware";
 
+import swaggerUi from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
+
 const app: Express = express();
 
 app.use(cors({
@@ -17,6 +20,39 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const swaggerOptions = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "API Doc",
+            version: "1.0.0",
+        },
+        servers: [{ url: "http://localhost:3000" }],
+        components: {
+            securitySchemes: {
+                ApiKeyAuth: {
+                    type: "apiKey",
+                    in: "header",   // la API key se envía en el header
+                    name: "x-api-key" // nombre exacto del header que usas en tu middleware
+                }
+            }
+        },       
+        security: [
+            {
+                ApiKeyAuth: []
+            }
+        ]
+    },
+    apis: ["src/exposition/controllers/*.ts", "src/exposition/api/*.ts"],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+// RUTA DE SWAGGER SIN API KEY
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+
 app.use(apiKeyMiddleware);
 
 let logger: Logger;

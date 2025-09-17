@@ -74,7 +74,31 @@ export async function executeContractMethodController(req: Request): Promise<App
   }
 }
 
-
+/**
+ * @swagger
+ * /createAccountMultiple:
+ *   post:
+ *     summary: Deploy a new account contract on both Alastria and Amoy networks
+ *     tags: [Account]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               args:
+ *                 type: array
+ *                 description: saltString  – optional salt for deterministic deployment
+ *               options:
+ *                 type: object
+ *                 description: Transaction overrides
+ *     responses:
+ *       201:
+ *         description: Returns deployed addresses and transaction hashes for each network
+ */
 export async function createAccountMultiple(req: Request): Promise<AppResult> {   
 
     const contractName: string = "AccountFactory";
@@ -166,7 +190,31 @@ export async function createAccountMultiple(req: Request): Promise<AppResult> {
     }        
 
 }
-
+/**
+ * @swagger
+ * /createIndividualAccountRetry:
+ *   post:
+ *     summary: Deploy a single account contract on the specified network
+ *     tags: [Account]
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               args:
+ *                 type: array
+ *                 description: saltString, network  – salt for address derivation and target network
+ *               options:
+ *                 type: object
+ *                 description: Transaction overrides
+ *     responses:
+ *       201:
+ *         description: Deployed account address and transaction hash
+ */
 export async function createIndividualAccountRetry(req: Request): Promise<AppResult> {
     const contractName: string = "AccountFactory";
     const contractAddress: string = config.CONTRACT.ADDRESS || req.params.address;
